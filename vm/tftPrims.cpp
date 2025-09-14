@@ -1448,7 +1448,7 @@ return falseObj;
 			tft.initDMA();
 		
 			tft.begin();
-			tft.setRotation(1);
+			tft.setRotation(3);
 			//tft.setViewport(0, 20, 240, 300);
 	//			tft._freq = 80000000; // this requires moving _freq to public in AdaFruit_SITFT.h
 			tftClear();
