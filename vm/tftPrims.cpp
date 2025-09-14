@@ -1335,8 +1335,8 @@ XPT2046_Touchscreen ts(XPT2046_CS, XPT2046_IRQ);
 uint16_t touchScreenMinimumX = 200, touchScreenMaximumX = 3700, touchScreenMinimumY = 240,touchScreenMaximumY = 3800;
 
 /*Set to your screen resolution*/
-#define TFT_HOR_RES   320
-#define TFT_VER_RES   240
+#define TFT_HOR_RES   240
+#define TFT_VER_RES   320
 
 
 

@@ -111,7 +111,11 @@ touch.writeto_mem(21, 0xfe, b'\xff') #
 
 
 #elif defined(CYDR) && !defined(USB2)
-#define ILI9341_DRIVER
+#if defined(CYDROT)
+    #define ILI9342_DRIVER
+#else
+    #define ILI9341_DRIVER
+#endif
 
 /*
 ili9341(miso=12, mosi=13, clk=14, cs=15, dc=2, rst=-1, backlight=27, power=-1, width=320, height=240, rot=LANDSCAPE)
@@ -136,8 +140,11 @@ touch.writeto_mem(21, 0xfe, b'\xff') #
 #define TFT_CS 15
 #define TFT_DC 2
 #define TFT_RST -1
-#define TFT_BL 21
-
+#if defined(CYDROT)
+  #define TFT_BL 27
+#else
+  #define TFT_BL 21
+#endif
 #define TP_CLK 25
 #define TP_CS 33
 #define TP_DIN 32
