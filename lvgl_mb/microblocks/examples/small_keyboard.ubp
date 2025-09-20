@@ -45,74 +45,137 @@ to num_but {
 to show_rollers {
   '[tft:LVGLaddobj]' 'roller' 'chars'
   '[tft:LVGLsettext]' 'chars' 'A
+
 B
+
 C
+
 D
+
 E
+
 F
+
 G
+
 H
+
 I
+
 J
+
 K
+
 L
+
 M
+
 N
+
 O
+
 P
+
 Q
+
 R
+
 S
+
 T
+
 U
+
 V
+
 W
+
 X
+
 Y
+
 Z
+
   '
   '[tft:LVGLsetpos]' 'chars' 10 55
   '[tft:LVGLaddobj]' 'roller' 'nums'
   '[tft:LVGLsettext]' 'nums' '0
+
 1
+
 2
+
 3
+
 4
+
 5
+
 6
+
 7
+
 8
+
 9
+
  '
   '[tft:LVGLsetpos]' 'nums' 60 55
   '[tft:LVGLaddobj]' 'roller' 'symbols'
   '[tft:LVGLsettext]' 'symbols' '!
+
 @
+
 #
+
 $
+
 %
+
 ^
+
 &
+
 *
+
 (
+
 )
+
 -
+
 _
+
 =
+
 +
+
 `
+
 ~
+
 <
+
 >
+
 ,
+
 .
+
 /
+
 ?
+
 \
+
 |
+
 ;
+
 :
+
 ''"
+
  '
   '[tft:LVGLsetpos]' 'symbols' 110 55
 }
@@ -127,7 +190,7 @@ to sym_but {
   show_text
 }
 
-script 313 40 {
+script 313 49 {
 whenStarted
 'enable lvgl' true true
 init_callback
@@ -163,32 +226,28 @@ forever {
 }
 }
 
-script 40 696 {
+script 40 705 {
 to show_rollers {}
 }
 
-script 804 729 {
+script 804 738 {
 to show_text {}
 }
 
-script 564 897 {
+script 564 906 {
 to char_but {}
 }
 
-script 860 1159 {
+script 860 1168 {
 to num_but {}
 }
 
-script 717 1332 {
+script 717 1341 {
 to sym_but {}
 }
 
-script 339 1399 {
+script 339 1408 {
 to btns {}
-}
-
-script 698 1812 {
-wifiConnect 'asus' 'Aapnootmies2018'
 }
 
 
@@ -240,7 +299,7 @@ variables _lvgl_call_backs
   spec ' ' '[tft:LVGLsetscroll]' 'set scroll direction of _ to _' 'str str.scroll_dirs' '' 'none'
   spec ' ' '[tft:LVGLloadscreen]' 'load screen _' 'str' ''
   spec ' ' '[tft:LVGLaddtab]' 'tab _ parent _' 'str str' 'tab' ''
-  spec ' ' '[tft:LVGLaddbuttonmatrix]' 'button matrix _ elements _ : parent _' 'str any str' '' nil 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddbuttonmatrix]' 'button matrix _ elements _ : parent _' 'str auto str' '' 'aList' 'lv_scr_act'
   spec ' ' '[tft:LVGLaddchart]' 'chart _ type _ update mode _ : parent _' 'str str.chart_type str.chart_update_mode str' '' 'line' 'shift' 'lv_scr_act'
   spec ' ' '[tft:LVGLaddseries]' 'add series _ chart _ color _' 'str str color' '' ''
   spec ' ' '[tft:LVGLsetnextvalue]' 'add value to series _ from chart _ value _ : value2 _' 'str str num num' '' '' 0 0
@@ -351,6 +410,7 @@ author MicroBlocks
 version 1 10 
 tags communication network 
 description 'Connect to a WiFi network. Used in conjunction with other network libraries, such as HTTP client, HTTP server or Web Thing.
+
 '
 
   spec ' ' 'wifiConnect' 'wifi connect to _ password _ : IP _ gateway _ subnet _' 'str str auto auto auto' 'Network_Name' '' '192.168.1.42' '192.168.1.1' '255.255.255.0'
