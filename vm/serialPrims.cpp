@@ -262,10 +262,10 @@ static void serialOpen(int baudRate) {
 		#else
 			SERIAL_PORT.begin(baudRate, SERIAL_8N1, RX, TX);
 		#endif
-	#elif defined(ESP32)
+	#elif defined(ESP32) && !defined(LMSDISPLAY) && !defined(LMS7789)
 		// all ESP32 boards that do not have cases above
 		SERIAL_PORT.begin(baudRate, SERIAL_8N1, 16, 17);
-	#elif defined(ESP32_ORIGINAL) && !defined(CYDS343)
+	#elif defined(LMSDISPLAY) || defined(LMS7789)
 		// sodb: lms-esp32vw: SERIAL_PORT.begin(baudRate, SERIAL_8N1, 8, 7); rx=8, tx=7
 		// lms-esp32v1 rx=18, tx=19
 

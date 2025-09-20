@@ -1036,9 +1036,9 @@ void hardwareInit() {
 		#define BOARD_TYPE "ESP32"
 	#endif
 	#define DIGITAL_PINS 40
-	#define ANALOG_PINS 40 //sodb was 16
+	#define ANALOG_PINS 16 //sodb was 16
 	#define TOTAL_PINS 40
-	static const int analogPin[] = {34}; //sodb; test for cyd LDR
+	static const int analogPin[] = {}; //sodb; test for cyd LDR
 	#ifdef LED_BUILTIN
 		#define PIN_LED LED_BUILTIN
 	#else

@@ -55,7 +55,7 @@
 	// object store is allocated from heap on ESP32
 	#if defined(USE_NIMBLE)
 		#if defined(BOARD_HAS_PSRAM)
-			#define OBJSTORE_BYTES 38000 //38000 // max that allows both BLE and WiFi is 59000; drops to 38000 w/ ESP Now
+			#define OBJSTORE_BYTES 70000 //38000 // max that allows both BLE and WiFi is 59000; drops to 38000 w/ ESP Now
 		#else
 			#define OBJSTORE_BYTES 20000 //38000 // max that allows both BLE and WiFi is 59000; drops to 38000 w/ ESP Now
 		#endif

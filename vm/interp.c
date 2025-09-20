@@ -1390,8 +1390,8 @@ void vmLoop() {
 			if (LVGL_initialized & useLVGL) {
 					 lv_tick_inc(3);
 					 lv_timer_handler();
-					//yield();
-					vTaskDelay(1);  
+					 //yield();
+					//vTaskDelay(1);  
 				}
 		#endif
 	

@@ -1,0 +1,803 @@
+module main
+author unknown
+version 1 0 
+description ''
+
+  spec ' ' 'led' 'led _ _ _' 'auto auto auto' '10' '10' '10'
+
+to led r g b {
+  '[tft:LVGLsetcolor]' 'led' (makeColor r g b)
+}
+
+script 360 170 {
+whenStarted
+init
+add_command 'led' 0 3 'b'
+'enable lvgl' true true
+'[tft:LVGLaddobj]' 'led' 'led'
+'[tft:LVGLsetpos]' 'led' 100 100
+'[tft:LVGLsetsize]' 'led' 70 70
+forever {
+  process
+}
+}
+
+script 50 493 {
+to led {}
+}
+
+
+module 'HTTP client' Comm
+author MicroBlocks
+version 1 5 
+depends WiFi 
+tags http network get post put delete 
+choices requestTypes GET POST PUT DELETE 
+description 'Send HTTP requests and get responses back. You can use this library to fetch or store data in online servers, or to control other Wifi-enabled boards.
+'
+
+  spec 'r' '_http_body_start' '_http_body_start _' 'auto' ''
+  spec 'r' '_http_header_text' '_http_header_text _' 'auto' ''
+  spec 'r' '_http_status_text' '_http_status_text _' 'auto' ''
+  spec 'r' '_http_header' '_header _ of response _' 'auto auto' 'content-length' ''
+  spec 'r' '_http_status' '_status of response _' 'auto' ''
+  spec 'r' '_line_end' '_line_end'
+  spec 'r' '_lowercase' '_lowercase _' 'auto' 'ABC Def gH'
+  spec 'r' '_request_url' '_request_url _ method _ body _ : port _' 'str menu.requestTypes str num' '' 'GET' '' 80
+  spec 'r' '_readHTTPResponse' '_readHTTPResponse'
+  spec 'r' 'http܃//' 'http #SVG#colon-double-slash _ : port _' 'auto num' 'microblocks.fun/example.txt' 80
+  spec ' ' 'request' '_ data _ to http #SVG#colon-double-slash _ : port _' 'menu.requestTypes str str num' 'POST' 'MicroBlocks is fun' 'microblocks.fun' 80
+
+to '_http_body_start' response {
+  return (('[data:find]' ('[data:unicodeString]' ('[data:makeList]' 13 10 13 10)) response) + 4)
+}
+
+to '_http_header' header response {
+  local 'header text' ('_http_header_text' response)
+  header = ('_lowercase' header)
+  repeatUntil ((size (v 'header text')) < 3) {
+    local 'key' ('[data:copyFromTo]' (v 'header text') 1 (('[data:find]' ':' (v 'header text')) - 1))
+    if (('_lowercase' key) == header) {
+      return ('[data:copyFromTo]' (v 'header text') (('[data:find]' ':' (v 'header text')) + 2) (('[data:find]' ('_line_end') (v 'header text')) - 1))
+    }
+    'header text' = ('[data:copyFromTo]' (v 'header text') (('[data:find]' ('_line_end') (v 'header text')) + 2))
+  }
+  return (booleanConstant false)
+}
+
+to '_http_header_text' response {
+  local 'headersStart' (('[data:find]' ('_line_end') response) + 2)
+  return ('[data:copyFromTo]' response headersStart (('_http_body_start' response) + 2))
+}
+
+to '_http_status' response {
+  return (('[data:copyFromTo]' ('_http_status_text' response) 1 4) + 0)
+}
+
+to '_http_status_text' response {
+  return ('[data:copyFromTo]' response ('[data:find]' ' ' response) ('[data:find]' ('_line_end') response))
+}
+
+to '_line_end' {
+  return ('[data:unicodeString]' ('[data:makeList]' 13 10))
+}
+
+to '_lowercase' string {
+  local 'lowercased' ''
+  local 'char code' ''
+  for c (size string) {
+    'char code' = ('[data:unicodeAt]' c string)
+    if (and ((v 'char code') >= 65) ((v 'char code') <= 90)) {
+      'char code' = ((v 'char code') + 32)
+    }
+    lowercased = ('[data:join]' lowercased ('[data:unicodeString]' (v 'char code')))
+  }
+  return lowercased
+}
+
+to '_readHTTPResponse' {
+  local 'response' ''
+  local 'lastChunkTime' (millisOp)
+  repeatUntil (not ('[net:httpIsConnected]')) {
+    local 'chunk' ('[net:httpResponse]')
+    if ((size chunk) > 0) {
+      response = ('[data:join]' response chunk)
+      lastChunkTime = (millisOp)
+    } (((millisOp) - lastChunkTime) > 10000) {
+      return response
+    }
+    waitMillis 20
+  }
+  response = ('[data:join]' response ('[net:httpResponse]'))
+  return response
+}
+
+to '_request_url' url method body optionalPort {
+  local 'port' 80
+  if ((pushArgCount) > 3) {
+    port = optionalPort
+  }
+  local 'host' ''
+  local 'path' ''
+  local 'slashPosition' ('[data:find]' '/' url)
+  if (slashPosition > 0) {
+    host = ('[data:copyFromTo]' url 1 (slashPosition - 1))
+    path = ('[data:copyFromTo]' url (slashPosition + 1))
+  } else {
+    host = url
+  }
+  if (('[net:wifiStatus]') != 'Connected') {
+    return ('[data:join]' '0 Not Connected' ('_line_end'))
+  }
+  '[net:httpConnect]' host port
+  if (not ('[net:httpIsConnected]')) {
+    return ('[data:join]' '0 Could not connect to server' ('_line_end'))
+  }
+  '[net:httpRequest]' method host path body
+  return ('_readHTTPResponse')
+}
+
+to 'http܃//' url optionalPort {
+  local 'port' 80
+  if ((pushArgCount) > 1) {
+    port = optionalPort
+  }
+  local 'response' ('_request_url' url 'GET' '' port)
+  if (response != '') {
+    if (('_http_status' response) == 200) {
+      return ('[data:copyFromTo]' response ('_http_body_start' response))
+    } else {
+      return ('_http_status_text' response)
+    }
+  } else {
+    return 'Failed to get response'
+  }
+}
+
+to request method data url optionalPort {
+  local 'port' 80
+  if ((pushArgCount) > 3) {
+    port = optionalPort
+  }
+  local 'response' ('_request_url' url method data port)
+  if (response != '') {
+    local 'status' ('_http_status' response)
+    local 'body start' ('_http_body_start' response)
+    if (and (200 == status) ((v 'body start') > 0)) {
+      sayIt ('[data:copyFromTo]' response (v 'body start'))
+    } else {
+      sayIt ('_http_status_text' response)
+    }
+  } else {
+    sayIt 'Failed to get response'
+  }
+}
+
+
+module LVGL Output
+author Ste7an
+version 1 10 
+choices attribute_types range rotation angles brightness 'line width' animation digits increment decrement points length 'tick count' 'major tick every' 'show labels' 'scale mode' 'button ctrl' width focused flags 
+choices style_types 'text font' 'text color' 'bg color' 'bg opa' 'border width' 'border color' radius 'shadow width' 'shadow offset x' 'shadow offset y' 'shadow opa' width 'line width' 'line color' 
+choices obj_types arc bar led list roller scale screen slider spinbox spinner style switch tabview tileview keyboard textarea 
+choices symbols bullet audio video list ok close power settings home download drive refresh mute volume_mid volume_max image tint prev play pause stop next eject left right plus minus eye_open eye_close warning shuffle up down loop directory upload call cut copy save bars envelope charge paste bell keyboard gps file wifi battery_full battery_3 battery_2 battery_1 battery_empty usb bluetooth trash edit backspace sd_card new_line 
+choices chart_update_mode shift circular 
+choices scale_modes 'hor top' 'hor bottom' 'ver left' 'ver right' 'round inner' 'round outer' last 
+choices chart_type line bar scatter 
+choices scroll_dirs none hor ver all 
+description 'LVGL support for MicroBlocks'
+variables _lvgl_call_backs 
+
+  spec ' ' 'enable lvgl' 'enable lvgl _ : delete all _' 'bool bool' true true
+  spec ' ' '[tft:LVGLaddbtn]' 'button _ : scale _ : text _ : parent _' 'str num str str' 'button' 1 'button' 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddlabel]' 'label _ : scale _ : text _ : parent _' 'str num str str' 'label' 1 'label' 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddobj]' 'add _ as _ : parent _' 'str.obj_types str str' 'arc' '' 'lv_scr_act'
+  spec ' ' '[tft:LVGLsetpos]' 'set position _ x _ y _' 'str num num' '' 100 100
+  spec ' ' '[tft:LVGLsetsize]' 'set size _ width _ height _' 'str num num' '' 100 10
+  spec ' ' '[tft:LVGLsetval]' 'set value _ value _' 'str num' '' 10
+  spec 'r' '[tft:LVGLgetval]' 'get value _' 'str' ''
+  spec ' ' '[tft:LVGLsettext]' 'set text _ text _ : scale _' 'str str auto' '' 'text' 1
+  spec ' ' '[tft:LVGLsetcolor]' 'set color _ background _ : indicator _ : knob _' 'str color color color' ''
+  spec 'r' 'lvgl_color' '_' 'color'
+  spec 'r' 'makeColor' 'color r _ g _ b _ (0-255)' 'num num num' 0 100 100
+  space
+  spec 'r' '[tft:LVGLevent]' 'event available'
+  spec 'r' '[tft:LVGLgetevent]' 'get event'
+  space
+  spec 'r' 'screen' 'screen'
+  spec 'r' 'symbol' 'symbol _' 'str.symbols' 'bullet'
+  spec ' ' '[tft:LVGLsetparent]' 'set _ parent _ : states _ : parts _' 'str str num num' '' '' 0 0
+  spec 'r' '[tft:LVGLgetallobjs]' 'get all objects'
+  spec ' ' '[tft:LVGLdelobj]' 'delete object _' 'str' ''
+  spec ' ' 'delete_all_objects' 'delete all objects'
+  spec ' ' '[tft:LVGLaddimg]' 'image path _  as  _ : parent _' 'str str str' '' 'img' 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddfont]' 'font path _  as  _' 'str str' '' ''
+  spec ' ' '[tft:LVGLsetattribute]' 'set attribute _ of _ first _ : second _' 'str.attribute_types str auto auto' 'range' '' '' ''
+  spec ' ' '[tft:LVGLsetstyle]' 'set style _ of _ to _' 'str.style_types str auto' 'text font' '' ''
+  spec 'r' 'set_states' 'state pressed _ : checked _ : scrolled _' 'bool bool bool bool' true false false
+  spec 'r' 'set_parts' 'parts selected _ : indicator _ : knob _ : #BR# items _ : scrollbar _' 'bool bool bool bool bool' true false false false false
+  spec 'r' 'set_scale_mode' 'scale mode _' 'str.scale_modes' 'hor top'
+  spec 'r' 'set_button_ctrl' 'button ctrl checkable _ : checked _ : hidden _ : disabled _' 'bool bool bool bool' true false false false
+  spec 'r' 'set_flag' 'behaviour flags hidden _ : clickable _ : checkable _ : scrollable : _ : scroll one _' 'bool bool bool bool bool' false false false false false
+  spec ' ' '[tft:LVGLsetscroll]' 'set scroll direction of _ to _' 'str str.scroll_dirs' '' 'none'
+  spec ' ' '[tft:LVGLloadscreen]' 'load screen _' 'str' ''
+  spec ' ' '[tft:LVGLaddtab]' 'tab _ parent _' 'str str' 'tab' ''
+  spec ' ' '[tft:LVGLaddbuttonmatrix]' 'button matrix _ elements _ : parent _' 'str auto str' '' 'aList' 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddchart]' 'chart _ type _ update mode _ : parent _' 'str str.chart_type str.chart_update_mode str' '' 'line' 'shift' 'lv_scr_act'
+  spec ' ' '[tft:LVGLaddseries]' 'add series _ chart _ color _' 'str str color' '' ''
+  spec ' ' '[tft:LVGLsetnextvalue]' 'add value to series _ from chart _ value _ : value2 _' 'str str num num' '' '' 0 0
+  spec ' ' '[tft:LVGLaddtile]' 'tile _ parent _ col _ row _ #BR# L _ R _ T _ B _' 'str str num num bool bool bool bool' 'tile' '' 0 0 false false false false
+  spec 'r' '[tft:LVGLpsram]' 'get PSRAM'
+  spec ' ' 'init_callback' 'init callback'
+  spec ' ' 'add_callback' 'add callback _ : function _' 'str str' '' ''
+  spec ' ' 'handle_event' 'handle event'
+
+to add_callback obj function {
+  if (not (isType _lvgl_call_backs 'list')) {_lvgl_call_backs = ('[data:makeList]')}
+  if ((pushArgCount) < 2) {
+    '[data:addLast]' ('[data:makeList]' obj obj) _lvgl_call_backs
+  } else {
+    '[data:addLast]' ('[data:makeList]' obj function) _lvgl_call_backs
+  }
+}
+
+to delete_all_objects {
+  local 'all_objects' ('[tft:LVGLgetallobjs]')
+  for i (size all_objects) {
+    if ((at i all_objects) != '!main_screen_default') {'[tft:LVGLdelobj]' (at i all_objects)}
+  }
+  comment 'load original main screen that is stored'
+  '[tft:LVGLloadscreen]' '!main_screen_default'
+}
+
+to 'enable lvgl' enable delete {
+  callCustomCommand '[tft:LVGLon]' ('[data:makeList]' enable)
+  if delete {
+    delete_all_objects
+  }
+}
+
+to handle_event {
+  if ('[tft:LVGLevent]') {
+    local 'var' 1
+    local 'event' ('[tft:LVGLgetevent]')
+    repeatUntil (or (var > (size _lvgl_call_backs)) (event == (at 1 (at var _lvgl_call_backs)))) {
+      var += 1
+    }
+    if (var <= (size _lvgl_call_backs)) {
+      callCustomCommand (at 2 (at var _lvgl_call_backs))
+    }
+  }
+}
+
+to init_callback {
+  _lvgl_call_backs = 0
+}
+
+to lvgl_color color {
+  return color
+}
+
+to makeColor r g b {
+  r = (maximum 0 (minimum r 255))
+  g = (maximum 0 (minimum g 255))
+  b = (maximum 0 (minimum b 255))
+  return ((r << 16) | ((g << 8) | b))
+}
+
+to screen {
+  return 'lv_scr_act'
+}
+
+to set_button_ctrl checkable checked hidden disabled {
+  return (sum (ifExpression checkable (hexToInt '80') 0) (ifExpression checked (hexToInt '100') 0) (ifExpression hidden (hexToInt '10') 0) (ifExpression disabled (hexToInt '40') 0))
+}
+
+to set_flag hidden clickable checkable scrollable scroll_one {
+  return (sum (ifExpression hidden (hexToInt '1') 0) (ifExpression clickable (hexToInt '2') 0) (ifExpression checkable (hexToInt '8') 0) (ifExpression scrollable (hexToInt '10') 0) (ifExpression scroll_one (hexToInt '80') 0))
+}
+
+to set_parts selected indicator knob items scrollbar {
+  return (sum (ifExpression scrollbar (hexToInt '10000') 0) (ifExpression indicator (hexToInt '20000') 0) (ifExpression knob (hexToInt '30000') 0) (ifExpression selected (hexToInt '40000') 0) (ifExpression items (hexToInt '50000') 0))
+}
+
+to set_scale_mode mode {
+  if (mode == 'hor top') {
+    return 0
+  } (mode == 'hor bottom') {
+    return 1
+  } (mode == 'ver left') {
+    return 2
+  } (mode == 'ver right') {
+    return 4
+  } (mode == 'round inner') {
+    return 8
+  } (mode == 'rounde outer') {
+    return 16
+  } else {
+    return 0
+  }
+}
+
+to set_states pressed checked scrolled {
+  return (sum (ifExpression checked 1 0) (ifExpression pressed (hexToInt '20') 0) (ifExpression scrolled (hexToInt '40') 0))
+}
+
+to symbol symbolname {
+  return ('[data:unicodeString]' (callCustomReporter '[tft:LVGLgetsymbol]' ('[data:makeList]' symbolname)))
+}
+
+
+module WiFi Comm
+author MicroBlocks
+version 1 10 
+tags communication network 
+description 'Connect to a WiFi network. Used in conjunction with other network libraries, such as HTTP client, HTTP server or Web Thing.
+'
+
+  spec ' ' 'wifiConnect' 'wifi connect to _ password _ : IP _ gateway _ subnet _' 'str str auto auto auto' 'Network_Name' '' '192.168.1.42' '192.168.1.1' '255.255.255.0'
+  spec ' ' 'wifiCreateHotspot' 'wifi create hotspot _ password _' 'str str' 'Network_Name' 'Network_Password'
+  spec ' ' '[net:stopWiFi]' 'stop wifi'
+  space
+  spec ' ' '[net:setDomainName]' 'wifi set local domain name _ .local' 'str' 'microblocks'
+  space
+  spec 'r' 'getIPAddress' 'IP address'
+  spec 'r' '[net:myMAC]' 'MAC address'
+  space
+  spec ' ' '[net:allowWiFiAndBLE]' 'allow WiFi while using BLE _' 'bool' true
+
+to getIPAddress {
+  return ('[net:myIPAddress]')
+}
+
+to wifiConnect ssid password fixedIP gatewayIP subnetIP {
+  if (not ('[net:hasWiFi]')) {return}
+  '[net:stopWiFi]'
+  if ((pushArgCount) < 5) {
+    '[net:startWiFi]' ssid password
+  } else {
+    '[net:startWiFi]' ssid password false fixedIP gatewayIP subnetIP
+  }
+  local 'startMSecs' (millisOp)
+  repeatUntil (('[net:myIPAddress]') != '0.0.0.0') {
+    comment 'Timeout after N seconds'
+    if (((millisOp) - startMSecs) > 30000) {
+      sayIt 'Could not connect'
+      return 0
+    }
+    comment 'Slow blink while trying to connect'
+    setUserLED true
+    waitMillis 300
+    setUserLED false
+    waitMillis 300
+  }
+  repeat 6 {
+    comment 'Quick blinks when connected'
+    setUserLED true
+    waitMillis 50
+    setUserLED false
+    waitMillis 50
+  }
+  '[net:setDomainName]' 'microblocks'
+  sayIt 'My IP address is:' ('[net:myIPAddress]')
+}
+
+to wifiCreateHotspot ssid password {
+  if (not ('[net:hasWiFi]')) {return}
+  if ((size password) < 8) {
+    sayIt 'Password must be at least 8 characters'
+    return 0
+  }
+  '[net:startWiFi]' ssid password true
+  if ('Connected' != ('[net:wifiStatus]')) {
+    sayIt 'Could not create hotspot'
+    return 0
+  }
+  repeat 6 {
+    comment 'Quick blinks when connected'
+    setUserLED true
+    waitMillis 50
+    setUserLED false
+    waitMillis 50
+  }
+  '[net:setDomainName]' 'microblocks'
+  sayIt 'My IP address is:' ('[net:myIPAddress]')
+}
+
+
+module micropup
+author Ste7an
+version 1 1 
+choices data_type b h i 
+description 'Library to facilitate communication with Pybricks hubs. See https://github.com/ste7anste7an/micropup'
+variables _pup_sensor_id _pup_commands _pup_nr_modes _pup_cur_mode _pup_last_nack _pup_connected _pup_senddata _pup_payloads 
+
+  spec ' ' 'init' 'init : sensor id _' 'auto' 62
+  spec ' ' 'add_command' 'add command _ to hub _ from hub _ type _' 'str auto auto str.data_type' '' '1' '1' 'b'
+  spec ' ' 'process' 'process'
+  spec 'r' '_tohex' '_tohex _' 'auto' '10'
+  spec 'r' '_bytestowords' '_bytestowords _' 'auto' '10'
+  spec 'r' '_unsignedbytes' '_unsignedbytes _' 'auto' '10'
+  spec 'r' '_bytetoword' '_bytetoword _' 'auto' '10'
+  spec 'r' '_wordstobytes' '_wordstobytes _' 'auto' '10'
+  spec 'r' '_wordtobyte' '_wordtobyte _' 'auto' '10'
+  spec 'r' '_longtobyte' '_longtobyte _' 'auto' '10'
+  spec 'r' '_bytestolongs' '_bytestolongs _' 'auto' '10'
+  spec 'r' '_bytetolong' '_bytetolong _' 'auto' '10'
+  spec 'r' '_longstobytes' '_longstobytes _' 'auto' '10'
+  spec 'r' '_make_payload' '_make_payload _ _ _' 'auto auto auto' '10' '10' '10'
+  spec 'r' '_hextolist' '_hextolist _' 'auto' '10'
+  spec 'r' '_heartbeat' '_heartbeat'
+  spec ' ' '_init_sensor' '_init_sensor'
+  spec ' ' '_initmode' '_initmode _' 'auto' '10'
+  spec ' ' '_sendatachk' '_sendatachk _' 'auto' '10'
+  spec ' ' '_sendhex' '_sendhex _' 'auto' '10'
+  spec 'r' '_calc_len_data' '_calc_len_data _ _ _' 'auto auto auto' '10' '10' '10'
+  spec 'r' '_get_type' '_get_type _' 'auto' '10'
+  spec 'r' '_log_len' '_log_len _' 'auto' '10'
+  spec 'r' '_log2' '_log2 _' 'auto' '10'
+  spec ' ' '_reset' '_reset'
+  spec ' ' '_send_data' '_send_data _' 'auto' '10'
+  spec ' ' '_set_payload' '_set_payload _ _' 'auto auto' '10' '10'
+
+to '_bytestolongs' bytes {
+  local 'longs' ('[data:makeList]')
+  for i ((size bytes) / 4) {
+    local 'cnt' ((i * 4) - 3)
+    '[data:addLast]' ('_bytetolong' ('[data:makeList]' (at (cnt - 0) bytes) (at (cnt + 1) bytes) (at (cnt + 2) bytes) (at (cnt + 3) bytes))) longs
+  }
+  return longs
+}
+
+to '_bytestowords' bytes {
+  local 'len' ((size bytes) / 2)
+  local 'words' (newList len)
+  for i len {
+    local 'cnt' (i * 2)
+    atPut i words ('_bytetoword' ('[data:makeList]' (at (cnt - 1) bytes) (at (cnt + 0) bytes)))
+  }
+  return words
+}
+
+to '_bytetolong' bytes {
+  return ((((at 1 bytes) + ((at 2 bytes) << 8)) + ((at 3 bytes) << 16)) + ((at 4 bytes) << 24))
+}
+
+to '_bytetoword' bytes {
+  local 'unsigned' ((at 1 bytes) + ((at 2 bytes) << 8))
+  if (unsigned > 32767) {
+    unsigned = (unsigned - 65536)
+  }
+  return unsigned
+}
+
+to '_calc_len_data' data_type to_hub from_hub {
+  return ('_log_len' ((1 << data_type) * (maximum to_hub from_hub)))
+}
+
+to '_get_type' type {
+  local 'data_type' 0
+  if (type == 'i') {
+    data_type = 2
+  } (type == 'h') {
+    data_type = 1
+  } else {
+    data_type = 0
+  }
+  return data_type
+}
+
+to '_heartbeat' {
+  if (((millisOp) - _pup_last_nack) > 4000) {'_reset'}
+  if (('[serial:available]') > 0) {
+    local 'cmd' (at 1 ('[serial:readNr]' 1))
+    if (cmd == 2) {
+      _pup_last_nack = (millisOp)
+      '_sendatachk' ('[data:makeList]' ((hexToInt '46') | 0) 0)
+    } (cmd == (hexToInt '46')) {
+      _pup_last_nack = (millisOp)
+      local 'ser_data' ('[serial:read]')
+      comment 'mode = (b & 0b111)'
+      local 'wrtmode' ((at 3 ser_data) & 7)
+      _pup_cur_mode = wrtmode
+      comment ' len = 2 ** ((b & 0b111000) >> 3)'
+      local 'lenpow2' (((at 3 ser_data) & 56) >> 3)
+      local 'len' (1 << lenpow2)
+      local 'list' (newList len)
+      for i len {
+        atPut i list (at (i + 3) ser_data)
+      }
+      return ('[data:makeList]' wrtmode list)
+    } (cmd == (hexToInt '43')) {
+      _pup_last_nack = (millisOp)
+      local 'ser_data' ('[serial:read]')
+      _pup_cur_mode = (at 1 ser_data)
+      '_send_data' _pup_cur_mode
+    }
+  }
+}
+
+to '_hextolist' hexstr {
+  local 'len' ((size hexstr) / 2)
+  local 'data' (newList len)
+  for i len {
+    atPut i data (hexToInt ('[data:copyFromTo]' hexstr ((i * 2) - 1) (i * 2)))
+  }
+  return data
+}
+
+to '_init_sensor' {
+  '_sendhex' 0
+  comment 'TYPE_ID'
+  '_sendatachk' ('[data:makeList]' (hexToInt '40') _pup_sensor_id)
+  comment 'CMD_MODES 0x49 <nr_modes> <nr_views>'
+  '_sendatachk' ('[data:makeList]' (hexToInt '49') (_pup_nr_modes - 1) (_pup_nr_modes - 1))
+  comment 'set baud rate to 115200'
+  '_sendhex' '5200c201006e'
+  comment 'CMD_VERSION'
+  '_sendhex' '5f0000000100000105a5'
+  for i _pup_nr_modes {
+    '_initmode' ((_pup_nr_modes + 0) - i)
+  }
+}
+
+to '_initmode' mode {
+  local 'cur_command' (at (mode + 1) _pup_commands)
+  local 'data_type' (at 4 cur_command)
+  comment 'INFO mode + power'
+  local 'list' ('[data:join]' ('[data:makeList]' ((hexToInt 'a0') | mode)) ('_hextolist' ('[data:toString]' '00646174')) ('[data:makeList]' (hexToInt '30') (48 + mode)) ('_hextolist' ('[data:toString]' '0080000000050400000000')))
+  waitMillis 20
+  '_sendatachk' list
+  comment 'INFO RAW, PCT, SI'
+  for i 3 {
+    local 'list' ('[data:join]' ('[data:makeList]' ((hexToInt '98') | mode) i) ('_hextolist' ('[data:toString]' '000000000000c842')))
+    '_sendatachk' list
+    waitMillis 20
+  }
+  waitMillis 10
+  comment 'INFO UNITS = empty len 0'
+  local 'list' ('[data:makeList]' ((hexToInt '80') | mode) 4 0)
+  '_sendatachk' list
+  comment 'info mapping: 0x88|mode 0x05 input=(abs)0x10 output=(abs)0x10'
+  local 'list' ('[data:makeList]' ((hexToInt '88') | mode) 5 (hexToInt '10') (hexToInt '10'))
+  '_sendatachk' list
+  comment '0x90|mode 0x80 <data_type> <log2(len)> <digits> <decimals>'
+  local 'max_len' (maximum (at 2 cur_command) (at 3 cur_command))
+  local 'list' ('[data:makeList]' ((hexToInt '90') | mode) (hexToInt '80') max_len (at 4 cur_command) 3 0)
+  '_sendatachk' list
+}
+
+to '_log2' len {
+  if (len == 1) {
+    return 0
+  } (len == 2) {
+    return 1
+  } (len == 4) {
+    return 2
+  } (len == 8) {
+    return 3
+  } (len == 16) {
+    return 4
+  } (len == 32) {
+    return 5
+  } else {
+    return 0
+  }
+}
+
+to '_log_len' len {
+  local 'loglen' 0
+  if (len > 16) {
+    return 5
+  } (len > 8) {
+    return 4
+  } (len > 4) {
+    return 3
+  } (len > 2) {
+    return 2
+  } (len > 1) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+to '_longstobytes' longs {
+  local 'bytes' ('[data:makeList]')
+  for i (size longs) {
+    bytes = ('[data:join]' bytes ('_longtobyte' (at i longs)))
+  }
+  return bytes
+}
+
+to '_longtobyte' long {
+  local 'bytes' ('[data:makeList]' (long & 255) ((long >> 8) & 255) ((long >> 16) & 255) ((long >> 24) & 255))
+  return bytes
+}
+
+to '_make_payload' payload data_type tot_len {
+  if (data_type == 0) {
+    local 'raw_bytes' payload
+  } (data_type == 1) {
+    local 'raw_bytes' ('_wordstobytes' payload)
+  } (data_type == 2) {
+    local 'raw_bytes' ('_longstobytes' payload)
+  } else {
+  }
+  comment 'extend raw_bytes to 1>>loglen'
+  local 'pad_len' ((1 << tot_len) - (size raw_bytes))
+  if (pad_len > 0) {
+    return ('[data:join]' raw_bytes (newList pad_len))
+  } else {
+    return raw_bytes
+  }
+}
+
+to '_reset' {
+  '[serial:close]'
+  _pup_last_nack = (millisOp)
+  _pup_cur_mode = 0
+  _pup_connected = 0
+  local 'tmp_var' 0
+  if (('[serial:espversion]') == 2) {
+    tmp_var = (digitalReadOp 8)
+    digitalWriteOp 7 true
+    waitMillis 50
+    digitalWriteOp 7 false
+  } else {
+    '[serial:close]'
+    tmp_var = (digitalReadOp 18)
+    digitalWriteOp 19 true
+    waitMillis 50
+    digitalWriteOp 19 false
+  }
+  waitMillis 450
+  '[serial:open]' 2400
+  '_init_sensor'
+  '_sendhex' 4
+  '[serial:open]' 115200
+  waitMillis 10
+  '_sendhex' 'c0003f'
+  _pup_connected = 1
+  '[serial:open]' 115200
+}
+
+to '_send_data' mode {
+  if (_pup_connected == 1) {
+    local 'payload' (at (mode + 1) _pup_payloads)
+    local 'loglen' (at 5 (at (mode + 1) _pup_commands))
+    local 'list' ('[data:makeList]' (((hexToInt 'c0') | (loglen << 3)) | mode))
+    local 'len' (1 << loglen)
+    local 'datalist' (newList len)
+    for i len {
+      atPut i datalist (at i payload)
+    }
+    '_sendatachk' ('[data:join]' list datalist)
+  }
+}
+
+to '_sendatachk' data {
+  local 'chk' 255
+  for i (size data) {
+    chk = (chk ^ (at i data))
+  }
+  '[serial:write]' ('[data:join]' data ('[data:makeList]' chk))
+}
+
+to '_sendhex' hexstr {
+  if (isType hexstr 'number') {
+    local 'data' (newList 1)
+    atPut 1 data hexstr
+  } else {
+    local 'len' ((size hexstr) / 2)
+    local 'data' (newList len)
+    for i len {
+      atPut i data (hexToInt ('[data:copyFromTo]' hexstr ((i * 2) - 1) (i * 2)))
+    }
+  }
+  '[serial:write]' data
+  waitMillis 1
+}
+
+to '_set_payload' mode payload {
+  atPut (mode + 1) _pup_payloads payload
+}
+
+to '_tohex' data {
+  local 'hexstr' ('[data:toString]' '')
+  for i (size data) {
+    local 'hexstr' ('[data:join]' hexstr ('dec2any Base' '16' (at i data) 2 false))
+  }
+  return hexstr
+}
+
+to '_unsignedbytes' bytes {
+  local 'unsigned' ('[data:makeList]')
+  for i (size bytes) {
+    local 'val' (at i bytes)
+    if (val > 127) {
+      val = (val - 256)
+    }
+    '[data:addLast]' val unsigned
+  }
+  return unsigned
+}
+
+to '_wordstobytes' words {
+  local 'bytes' ('[data:makeList]')
+  for i (size words) {
+    bytes = ('[data:join]' bytes ('_wordtobyte' (at i words)))
+  }
+  return bytes
+}
+
+to '_wordtobyte' word {
+  local 'bytes' ('[data:makeList]' (word & 255) (word >> 8))
+  return bytes
+}
+
+to add_command cmd to_hub from_hub type {
+  comment 'type is dropdown ''b'', ''h'', ''i'' for byte, 16-bit word, 32-bit int'
+  local 'data_type' ('_get_type' type)
+  local 'new_command' ('[data:makeList]' cmd to_hub from_hub data_type ('_calc_len_data' data_type to_hub from_hub))
+  if ((size _pup_commands) == 0) {
+    _pup_commands = ('[data:makeList]' new_command)
+  } else {
+    '[data:addLast]' new_command _pup_commands
+  }
+  _pup_nr_modes = (size _pup_commands)
+  '[data:addLast]' (newList 32) _pup_payloads
+}
+
+to init sensor_id {
+  if (sensor_id == 0) {
+    _pup_sensor_id = 61
+  } else {
+    _pup_sensor_id = sensor_id
+  }
+  comment 'Initialize global variables'
+  _pup_commands = ('[data:makeList]')
+  _pup_cur_mode = 0
+  _pup_senddata = (newList 32)
+  _pup_payloads = ('[data:makeList]')
+  _pup_last_nack = (millisOp)
+}
+
+to process {
+  local 'local_data' ('_heartbeat')
+  local 'data_from_hub' (booleanConstant false)
+  if ((size local_data) > 0) {
+    comment 'arguments passed'
+    data_from_hub = (booleanConstant true)
+    local 'mode' (at 1 local_data)
+    local 'payload_bytes' (at 2 local_data)
+  } else {
+    local 'mode' _pup_cur_mode
+    local 'payload' ('[data:makeList]')
+  }
+  local 'function_name' (at 1 (at (mode + 1) _pup_commands))
+  local 'has_return' ((at 2 (at (mode + 1) _pup_commands)) > 0)
+  local 'has_arg' ((at 3 (at (mode + 1) _pup_commands)) > 0)
+  local 'data_type' (at 4 (at (mode + 1) _pup_commands))
+  local 'tot_len' (at 5 (at (mode + 1) _pup_commands))
+  if data_from_hub {
+    if (data_type == 0) {
+      local 'payload' ('_unsignedbytes' payload_bytes)
+    } (data_type == 1) {
+      local 'payload' ('_bytestowords' payload_bytes)
+    } (data_type == 2) {
+      local 'payload' ('_bytestolongs' payload_bytes)
+    }
+  }
+  if (or (and (not has_arg) has_return) (and has_arg (and has_return data_from_hub))) {
+    local 'ret_val' (callCustomReporter function_name payload)
+    if (isType ret_val 'number') {
+      ret_val = ('[data:makeList]' ret_val)
+    }
+    '_set_payload' mode ('_make_payload' ret_val data_type tot_len)
+  } (and has_arg (and (not has_return) data_from_hub)) {
+    callCustomCommand function_name payload
+  }
+  '_send_data' _pup_cur_mode
+}
+
