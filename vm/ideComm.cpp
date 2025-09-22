@@ -376,7 +376,7 @@ void BLE_setPicoAdvertisingData(char *name, const char *uuidString) {
 	int pos = 0;
 
 	// flags
-	const uint8_t flags[] = { 2, 1, 6 };
+	const uint8_t flags[] = { 2, 1, 6 }; // flags = 6 LE General Discoverable Mode, BR/EDR not supported
 	memcpy(&adv_data[pos], flags, sizeof(flags));
 	pos += sizeof(flags);
 
@@ -392,12 +392,14 @@ void BLE_setPicoAdvertisingData(char *name, const char *uuidString) {
 
 	// name
 	// Note: BTstack only supports 31-byte adverstising packets
-	int nameBytes = strlen(name);
-	if (nameBytes > (29 - pos)) nameBytes = 29 - pos; // truncate name to fit
-	adv_data[pos++] = nameBytes + 1; // field size
-	adv_data[pos++] = 9; // "Complete Local Name"
-	memcpy(&adv_data[pos], name, nameBytes);
-	pos += nameBytes;
+	if (name) {
+		int nameBytes = strlen(name);
+		if (nameBytes > (29 - pos)) nameBytes = 29 - pos; // truncate name to fit
+		adv_data[pos++] = nameBytes + 1; // field size
+		adv_data[pos++] = 9; // "Complete Local Name"
+		memcpy(&adv_data[pos], name, nameBytes);
+		pos += nameBytes;
+	}
 
 	adv_data_len = pos;
 	BTstack.setAdvData(adv_data_len, adv_data);
@@ -431,9 +433,20 @@ void BLE_resumeAdvertising() {
 		return; // don't advertise if connected to IDE
 	}
 
+	// The following experimental alternative code uses scan result to provide the name:
 	BTstack.stopAdvertising();
-	BLE_setPicoAdvertisingData(bleDeviceName, MB_SERVICE_UUID); // resume BLE advertisting
-	setAdvertisingInterval(50, 100);
+
+	// Experimental: use 31-byte scan response to provide the device name since 16-byte UUID
+	// and the full name can not both fit into the Pico's 31-byte advertisting packet.
+	uint8_t scan_resp_data[17] = {
+    	16, 9, 'M', 'i', 'c', 'r', 'o', 'B', 'l', 'o', 'c', 'k', 's', ' ', '0', '0', '0'};
+    scan_resp_data[14] = BLE_ThreeLetterID[0];
+    scan_resp_data[15] = BLE_ThreeLetterID[1];
+    scan_resp_data[16] = BLE_ThreeLetterID[2];
+	gap_scan_response_set_data(sizeof(scan_resp_data), scan_resp_data);
+
+	BLE_setPicoAdvertisingData(NULL, MB_SERVICE_UUID); // resume BLE advertisting
+	setAdvertisingInterval(100, 150);
 	BTstack.startAdvertising();
 }
 

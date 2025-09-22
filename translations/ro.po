@@ -1,323 +1,340 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: interest@microblocks.fun\n"
+"POT-Creation-Date: 2025-09-15 22:39+0200\n"
+"PO-Revision-Date: 2025-09-15 20:53+0000\n"
+"Last-Translator: Ionut Mihai Rosca <rosca.ionut.mihai@gmail.com>\n"
+"Language-Team: Romanian <https://hosted.weblate.org/projects/microblocks/ide/"
+"ro/>\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+"X-Generator: Weblate 5.14-dev\n"
+
 #. "Output" blocks category label
 msgid "cat;Output"
-msgstr ""
+msgstr "Ieșire"
 
 #. Block in Output category
 msgid "set user LED _"
-msgstr ""
+msgstr "setează LED utilizator _"
 
 #. Block in Output category
 msgid "say _"
-msgstr ""
+msgstr "spune _"
 
 #. Block in Output category
 msgid "graph _"
-msgstr ""
+msgstr "grafic _"
 
 #. "Input" blocks category label
 msgid "cat;Input"
-msgstr ""
+msgstr "Intrare"
 
 #. Block in Input category
 msgid "button A"
-msgstr ""
+msgstr "buton A"
 
 #. Block in Input category
 msgid "button B"
-msgstr ""
+msgstr "buton B"
 
 #. Block in Input category
 msgid "timer"
-msgstr ""
+msgstr "cronometru"
 
 #. Block in Input category
 msgid "reset timer"
-msgstr ""
+msgstr "resetează cronometrul"
 
 #. Block in Input category
 msgid "seconds"
-msgstr ""
+msgstr "secunde"
 
 #. Block in Input category
 msgid "microseconds"
-msgstr ""
+msgstr "microsecunde"
 
 #. Block in Input category
 msgid "milliseconds"
-msgstr ""
+msgstr "milisecunde"
 
 #. Block in Input category
 msgid "board type"
-msgstr ""
+msgstr "tip placă"
 
 #. Block in Input category
 msgid "version"
-msgstr ""
+msgstr "versiune"
 
 #. Block in Input category
 msgid "milliseconds since _"
-msgstr ""
+msgstr "milisecunde de la _"
 
 #. Block in Input category
 msgid "end time _"
-msgstr ""
+msgstr "timp final _"
 
 #. Block in Input category
 msgid "microseconds since _"
-msgstr ""
+msgstr "microsecunde de la _"
 
 #. Block in Input category
 msgid "BLE id"
-msgstr ""
+msgstr "ID BLE"
 
 #. Block in Input category
 msgid "BLE connected"
-msgstr ""
+msgstr "conectat la IDE"
 
 #. Block in Input category
 msgid "connected to IDE"
-msgstr ""
+msgstr "Pini"
 
 #. "Pins" blocks category label
 msgid "cat;Pins"
-msgstr ""
+msgstr "Pini"
 
 #. Block in Pins category
 msgid "read digital pin _"
-msgstr ""
+msgstr "citește pin digital _"
 
 #. Block in Pins category
 msgid "read analog pin _"
-msgstr ""
+msgstr "citește pin analogic _"
 
 #. Block in Pins category
 msgid "pullup _"
-msgstr ""
+msgstr "rezistență pull-up _"
 
 #. Block in Pins category
 msgid "set digital pin _ to _"
-msgstr ""
+msgstr "setează pinul digital _ la _"
 
 #. Block in Pins category
 msgid "set pin _ to _"
-msgstr ""
+msgstr "setează pinul _ la _"
 
 #. Block in Pins category
 msgid "analog pins"
-msgstr ""
+msgstr "pini analogici"
 
 #. Block in Pins category
 msgid "digital pins"
-msgstr ""
+msgstr "pini digitali"
 
 #. "Control" blocks category label
 msgid "cat;Control"
-msgstr ""
+msgstr "Control"
 
 #. Block in Control category
 msgid "when started"
-msgstr ""
+msgstr "la pornire"
 
 #. Block in Control category
 msgid "when button _ pressed"
-msgstr ""
+msgstr "când este apăsat butonul _"
 
 #. Block in Control category
 msgid "forever _"
-msgstr ""
+msgstr "pentru totdeauna _"
 
 #. Block in Control category
 msgid "repeat _ _"
-msgstr ""
+msgstr "repetă _ _"
 
 #. Block in Control category
 msgid "wait _ millisecs"
-msgstr ""
+msgstr "așteaptă _ milisecunde"
 
 #. Block in Control category
 msgid "if _ _"
-msgstr ""
+msgstr "dacă _ _"
 
 #. Block in Control category
 msgid "if _ _ else _"
-msgstr ""
+msgstr "dacă _ _ altfel _"
 
 #. Block in Control category
 msgid "else if _ _"
-msgstr ""
+msgstr "altfel dacă _ _"
 
 #. Block in Control category
 msgid "else"
-msgstr ""
+msgstr "altfel"
 
 #. Block in Control category
 msgid "when _"
-msgstr ""
+msgstr "când _"
 
 #. Block in Control category
 msgid "wait until _"
-msgstr ""
+msgstr "așteaptă până când _"
 
 #. Block in Control category
 msgid "wait _ microsecs"
-msgstr ""
+msgstr "așteaptă _ microsecunde"
 
 #. Block in Control category
 msgid "return _"
-msgstr ""
+msgstr "returnează _"
 
 #. Block in Control category
 msgid "when _ received"
-msgstr ""
+msgstr "când este primit _"
 
 #. Example message for [ when _ received ] and [ broadcast _ ] blocks
 msgid "go!"
-msgstr ""
+msgstr "pornește!"
 
 #. Block in Control category
 msgid "broadcast _"
-msgstr ""
+msgstr "transmite _"
 
 #. Block in Control category
 msgid "comment _"
-msgstr ""
+msgstr "comentariu _"
 
 #. Example content for the comment block
 msgid "How this works..."
-msgstr ""
+msgstr "Cum funcționează..."
 
 #. Block in Control category
 msgid "range _ to _"
-msgstr ""
+msgstr "interval _ până la _"
 
 #. Block in Control category
 msgid "by _"
-msgstr ""
+msgstr "cu _"
 
 #. Block in Control category
 msgid "for _ in _ _"
-msgstr ""
+msgstr "pentru _ în _ _"
 
 #. Block in Control category
 msgid "repeat until _ _"
-msgstr ""
+msgstr "repetă până când _ _"
 
 #. Block in Control category
 msgid "stop this task"
-msgstr ""
+msgstr "oprește această sarcină"
 
 #. Block in Control category
 msgid "stop other tasks"
-msgstr ""
+msgstr "oprește celelalte sarcini"
 
 #. Block in Control category
 msgid "stop all"
-msgstr ""
+msgstr "oprește tot"
 
 #. Block in Control category
 msgid "last message"
-msgstr ""
+msgstr "ultimul mesaj"
 
 #. Block in Control category
 msgid "arg _ default _"
-msgstr ""
+msgstr "argument _ implicit _"
 
 #. Block in Control category
 msgid "exit loop"
-msgstr ""
+msgstr "ieși din buclă"
 
 #. Example default value for the ( arg _ default _ ) block
 msgid "default"
-msgstr ""
+msgstr "implicit"
 
 #. Block in Control category
 msgid "call _"
-msgstr ""
+msgstr "apelează _"
 
 #. Example value for ( call _ ) block
 msgid "function name"
-msgstr ""
+msgstr "nume funcție"
 
 #. Example string. Tells the user this input accepts a list of parameters.
 msgid "parameter list"
-msgstr ""
+msgstr "listă parametri"
 
 #. Block in Control category
 msgid "with _"
-msgstr ""
+msgstr "împreună cu _"
 
 #. "Operators" blocks category label
 msgid "cat;Operators"
-msgstr ""
+msgstr "Operatori"
 
 #. Block in Operators category
 msgid "_ mod _"
-msgstr ""
+msgstr "_ mod _"
 
 #. Block in Operators category
 msgid "abs _"
-msgstr ""
+msgstr "valoare absolută _"
 
 #. Block in Operators category
 msgid "min _ _"
-msgstr ""
+msgstr "minim _ _"
 
 #. Block in Operators category
 msgid "max _ _"
-msgstr ""
+msgstr "maxim _ _"
 
 #. Block in Operators category
 msgid "random _ to _"
-msgstr ""
+msgstr "aleator între _ și _"
 
 #. Block in Operators category
 msgid "not _"
-msgstr ""
+msgstr "nu _"
 
 #. Block in Operators category
 msgid "_ and _"
-msgstr ""
+msgstr "_ și _"
 
 #. Block in Operators category
 msgid "and _"
-msgstr ""
+msgstr "și _"
 
 #. Block in Operators category
 msgid "_ or _"
-msgstr ""
+msgstr "_ sau _"
 
 #. Block in Operators category
 msgid "or _"
-msgstr ""
+msgstr "sau _"
 
 #. Block in Operators category
 msgid "_ is a _"
-msgstr ""
+msgstr "_ este un _"
 
 #. Block in Operators category
 msgid "convert _ to _"
-msgstr ""
+msgstr "convertește _ în _"
 
 #. Block in Operators category
 msgid "if _ then _ else _"
-msgstr ""
+msgstr "dacă _ atunci _ altfel _"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "boolean"
-msgstr ""
+msgstr "boolean"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "number"
-msgstr ""
+msgstr "număr"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "string"
-msgstr ""
+msgstr "șir de caractere"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 #. Also label of ( list < > ) block in Data category
 msgid "list"
-msgstr ""
+msgstr "listă"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "byte array"
@@ -1838,7 +1855,7 @@ msgid "fract _ + _"
 msgstr ""
 
 #. Fractions library block
-msgid "fract _ − _"
+msgid "fract _ - _"
 msgstr ""
 
 #. Fractions library block
@@ -4847,6 +4864,34 @@ msgid "battery percentage"
 msgstr ""
 
 #. CoCube Module library block
+msgid "gripper open"
+msgstr ""
+
+#. CoCube Module library block
+msgid "gripper close"
+msgstr ""
+
+#. CoCube Module library block
+msgid "gripper stop"
+msgstr ""
+
+#. CoCube Module library block
+msgid "gripper degrees _ (0 to 70)"
+msgstr ""
+
+#. CoCube Module library block
+msgid "attach NeoPixels"
+msgstr ""
+
+#. CoCube Module library block
+msgid "ToF connected"
+msgstr ""
+
+#. CoCube Module library block
+msgid "ToF distance (mm)"
+msgstr ""
+
+#. CoCube Module library block
 msgid "3D gesture connected"
 msgstr ""
 
@@ -4855,351 +4900,11 @@ msgid "3D gesture read"
 msgstr ""
 
 #. CoCube Module library block
-msgid "gripper close"
-msgstr ""
-
-#. CoCube Module library block
-msgid "ToF distance (mm)"
-msgstr ""
-
-#. CoCube Module library block
-msgid "gripper stop"
-msgstr ""
-
-#. CoCube Module library block
-msgid "ToF connected"
-msgstr ""
-
-#. CoCube Module library block
-msgid "ASR get command"
-msgstr ""
-
-#. CoCube Module library block
-msgid "attach NeoPixels"
-msgstr ""
-
-#. CoCube Module library block
-msgid "gripper open"
-msgstr ""
-
-#. CoCube Module library block
-msgid "gripper degrees _ (0 to 70)"
-msgstr ""
-
-#. CoCube Module library block
-msgid "set all NeoPixels color _"
-msgstr ""
-
-#. CoCube Module library block
-msgid "ASR play command _"
-msgstr ""
-
-#. CoCube Module library block
 msgid "power on module"
 msgstr ""
 
 #. CoCube Module library block
-msgid "DLight level"
-msgstr ""
-
-#. CoCube Module library block
-msgid "clear NeoPixels"
-msgstr ""
-
-#. CoCube Module library block
 msgid "ultrasonic distance (mm)"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Color Recog"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Blob Detect"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Ball Detect"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Line Detect"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Card Recog"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "Face Recog"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "QRcode"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "black"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "white"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "blue"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "x1"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "y1"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "x2"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "y2"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "degree"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "w"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "h"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "R"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "G"
-msgstr ""
-
-#. CoCube Sengo1 library choice
-msgid "B"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 read QRcode"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 change algorithm _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 delete face ID _ (1-10)"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 detect ball (ping pong or tennis)"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get QRcode _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get ball _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get blob _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get card _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get color _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get face _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get face ID"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 get line _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 init"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 read blob"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 read card"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 read color"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 record face ID _ (1-10)"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 reset"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 set blob detect property color _ width _ height _"
-msgstr ""
-
-#. CoCube Sengo1 library block
-msgid "Sengo1 set color recog area x _ y _ width _ height _ (0-100)"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "16H5"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "25H9"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "36H11"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "AprilTag"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "Deep Learning"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "Obj20Class"
-msgstr ""
-
-#. CoCube Sengo2 library choice
-msgid "Motion Detect"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read QRcode"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 change algorithm _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 delete face ID _ (1-10)"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 delete learning ID _ (1-15)"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get AprilTag _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get Obj20Class _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get QRcode _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get blob _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get card _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get color _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get face ID"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get learning ID"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get line _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 get motion _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 init"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read AprilTag"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read Obj20Class"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read blob"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read card"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 read color"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 record face ID _ (1-10)"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 record learning ID _ (1-15)"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 reset"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 set AprilTag type _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 set blob detect property color _ width _ height _"
-msgstr ""
-
-#. CoCube Sengo2 library block
-msgid "Sengo2 set color recog area x _ y _ width _ height _ (0-100)"
 msgstr ""
 
 #. Calliope NeoPixel library block
@@ -6078,8 +5783,8 @@ msgstr ""
 msgid "Save the firmware file when prompted."
 msgstr ""
 
-#. MicroBlocks IDE information
 # %1 holds the drive name
+#. MicroBlocks IDE information
 msgid "Drag the firmware file you just saved to the %1 drive."
 msgstr ""
 
@@ -6465,10 +6170,6 @@ msgstr ""
 
 #. Examples folder
 msgid "folder;CoCube"
-msgstr ""
-
-#. Examples folder
-msgid "folder;MakerPort"
 msgstr ""
 
 #. Examples folder

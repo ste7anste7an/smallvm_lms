@@ -1,15 +1,16 @@
 module 'Real Time Clock'
 author MicroBlocks
-version 1 8 
+version 1 9 
 choices rtc_timeOrDate 'time (H:M:S)' 'date (Y-M-D)' 
-choices rtc_modules '' DS1307 DS3231 PCF8523 PCF8563 PCF85063 RV1805 
+choices rtc_modules '' DS1307 DS3231 PCF8523 PCF8563 PCF85063 RV1805 SD3031 
 choices rtc_component second minute hour day month year 'day of week' 
 description 'Real Time Clock (RTC)
 
 Simple functions to set and read the current time and date of a real-time clock module.
 With a 3V coin cell battery intalled, the clock will maintain the time and date while powered off.
 
-Currently supports the following RTC modules: DS1307, DS3231, PCF8523, PCF8563, PCF85063, RV1805; may be extended to support others in the future.
+Currently supports the following RTC modules: DS1307, DS3231, PCF8523, PCF8563, PCF85063, RV1805, SD3031.
+May be we will extend the list and support others in the future.
 
 https://www.analog.com/media/en/technical-documentation/data-sheets/DS1307.pdf
 https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf
@@ -18,6 +19,7 @@ https://www.nxp.com/docs/en/data-sheet/PCF8563.pdf
 https://www.nxp.com/docs/en/data-sheet/PCF85063A.pdf
 https://www.nxp.com/docs/en/data-sheet/PCF85063TP.pdf
 https://cdn.sparkfun.com/assets/0/8/4/2/f/RV-1805-C3_App-Manual.pdf
+https://datasheet.lcsc.com/lcsc/2205310930_WAVE-SD3031_C2988356.pdf
 
 (Many thanks to Ralf Krause)
 '
@@ -41,6 +43,7 @@ variables rtc_i2cAddr rtc_module rtc_registerMap
   spec 'r' '_rtc_mapRegNum' '_rtc_map_register_number _' 'num' 0
   spec 'r' '_rtc_testReg' '_rtc_test_register _ with _' 'num num' 0 0
   spec 'r' '_rtc_testRegSeconds' '_rtc_test_register _ for seconds?' 'num' 0
+  spec ' ' '_rtc_set_SD3031_writable' '_rtc_set_SD3031_writable _' 'bool' true
 
 to '_rtc_bcd2dec' bcd {
   comment 'Convert an 8-bit "binary-coded decimal" number to a decimal number in range 0-99'
@@ -92,8 +95,13 @@ PCF8523 uses register 0x03 for seconds.'
   } ('[sensors:i2cExists]' (hexToInt '69')) {
     rtc_i2cAddr = (hexToInt '69')
     comment 'RV1805
-No other module uses this i2c address.'
+No other RTC module uses this i2c address.'
     rtc_initModule 'RV1805'
+  } ('[sensors:i2cExists]' (hexToInt '32')) {
+    rtc_i2cAddr = (hexToInt '32')
+    comment 'SD3031
+No other RTC module uses this i2c address.'
+    rtc_initModule 'SD3031'
   } else {
     comment 'No RTC module found.'
     rtc_i2cAddr = 0
@@ -115,6 +123,22 @@ to '_rtc_setReg' reg value {
   '[sensors:i2cSetClockSpeed]' 100000
   i2cSet rtc_i2cAddr ('_rtc_mapRegNum' reg) value
   '[sensors:i2cSetClockSpeed]' 400000
+}
+
+to '_rtc_set_SD3031_writable' on {
+  if on {
+    comment 'SD3031 write enable
+1. set WRTC1 = 1 (register 0x10 bit 7)
+2. set WRTC2 = 1 and WRTC3 = 1 (register 0x0F bit7 and bit2)'
+    i2cSet rtc_i2cAddr (hexToInt '10') ((i2cGet rtc_i2cAddr (hexToInt '10')) | 128)
+    i2cSet rtc_i2cAddr (hexToInt '0F') ((i2cGet rtc_i2cAddr (hexToInt '0F')) | 132)
+  } else {
+    comment 'SD3031 write disable
+1. set WRTC2 = 0 and WRTC3 = 0 (register 0x0F bit7 and bit2)
+2. set WRTC1 = 0 (register 0x10 bit 7)'
+    i2cSet rtc_i2cAddr (hexToInt '0F') ((i2cGet rtc_i2cAddr (hexToInt '0F')) & 123)
+    i2cSet rtc_i2cAddr (hexToInt '10') ((i2cGet rtc_i2cAddr (hexToInt '10')) & 127)
+  }
 }
 
 to '_rtc_testReg' reg num {
@@ -174,7 +198,7 @@ to rtc_getComponent which {
     return (('_rtc_bcd2dec' result) + 2000)
   } ('day of week' == which) {
     result = (result & 7)
-    if (0 < ('[data:find]' rtc_module ('[data:makeList]' 'PCF8523' 'PCF8563' 'PCF85063' 'RV1805'))) {
+    if (0 < ('[data:find]' rtc_module ('[data:makeList]' 'PCF8523' 'PCF8563' 'PCF85063' 'RV1805''SD3031'))) {
       comment 'Clock uses weekday range 0-6.'
       if (result == 0) {
         result = 7
@@ -222,6 +246,11 @@ to rtc_initModule name {
     rtc_i2cAddr = (hexToInt '69')
     rtc_module = 'RV1805'
     rtc_registerMap = 1237456
+  } (name == 'SD3031') {
+    rtc_i2cAddr = (hexToInt '32')
+    rtc_module = 'SD3031'
+    rtc_registerMap = ('[data:join]' '' '0123456')
+    '_rtc_set_SD3031_writable' true
   } else {
     rtc_i2cAddr = 0
     rtc_module = ''
@@ -242,7 +271,7 @@ to rtc_setDate year month day {
 to rtc_setDayOfWeek weekdayNum {
   '_rtc_init'
   weekdayNum = (maximum 1 (minimum weekdayNum 7))
-  if (0 < ('[data:find]' rtc_module ('[data:makeList]' 'PCF8523' 'PCF8563' 'PCF85063' 'RV1805'))) {
+  if (0 < ('[data:find]' rtc_module ('[data:makeList]' 'PCF8523' 'PCF8563' 'PCF85063' 'RV1805' 'SD3031'))) {
     comment 'Clock uses weekday range 0-6.'
     if (weekdayNum == 7) {
       weekdayNum = 0
@@ -252,12 +281,19 @@ to rtc_setDayOfWeek weekdayNum {
 }
 
 to rtc_setTime hours minutes seconds {
-  comment 'Clock is running (bit 7 of seconds = 0) using 24-hour time (bit 6 of hours = 0). '
-  hours = (maximum 0 (minimum hours 23))
-  minutes = (maximum 0 (minimum minutes 59))
+  '_rtc_init'
+  comment 'Clock is running (bit 7 of seconds = 0).
+Clock is using 24-hour time (bit 6 of hours = 0).'
   seconds = (maximum 0 (minimum seconds 59))
+  minutes = (maximum 0 (minimum minutes 59))
+  hours = (maximum 0 (minimum hours 23))
   '_rtc_setReg' 0 ('_rtc_dec2bcd' seconds)
   '_rtc_setReg' 1 ('_rtc_dec2bcd' minutes)
-  '_rtc_setReg' 2 ('_rtc_dec2bcd' hours)
+  if (rtc_module == 'SD3031') {
+    comment 'SD3031 is using 24-hour time (bit 7 of hours = 1).'
+    '_rtc_setReg' 2 (('_rtc_dec2bcd' hours) | 128)
+  } else {
+    '_rtc_setReg' 2 ('_rtc_dec2bcd' hours)
+  }
 }
 

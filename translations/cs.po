@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-30 06:26+0200\n"
-"PO-Revision-Date: 2025-07-13 20:03+0000\n"
+"PO-Revision-Date: 2025-09-19 16:02+0000\n"
 "Last-Translator: Miroslav Klimoš <miraklim@centrum.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/microblocks/ide/cs/"
 ">\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"X-Generator: Weblate 5.13-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #. "Output" blocks category label
 msgid "cat;Output"
@@ -68,7 +68,7 @@ msgstr "počet milisekund od _"
 
 #. Block in Input category
 msgid "end time _"
-msgstr "do _"
+msgstr "čas ukončení _"
 
 #. Block in Input category
 msgid "microseconds since _"
@@ -3300,43 +3300,45 @@ msgstr "stupně"
 #. The #BR# tag must be kept intact. It translates to a new line
 msgid "ms display #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _"
 msgstr ""
+"ms zobraz #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ "
+"_ _ _ _"
 
 #. micro:STEAMakers library block
 #. The #BR# tag must be kept intact. It translates to a new line
 msgid "ms display #BR# _ #BR# with color _"
-msgstr ""
+msgstr "ms zobraz #BR# _ #BR# barva _"
 
 #. micro:STEAMakers library block
 msgid "ms display image _ with color _"
-msgstr ""
+msgstr "ms zobraz ikonu _ barva _"
 
 #. micro:STEAMakers library block
 msgid "ms clear display"
-msgstr ""
+msgstr "ms smaž display"
 
 #. micro:STEAMakers library block
 msgid "ms scale brightness to _ %"
-msgstr ""
+msgstr "ms nastav jas na _ %"
 
 #. micro:STEAMakers library block
 msgid "ms plot x _ y _ with _"
-msgstr ""
+msgstr "ms zobraz bod x _ y _ barva _"
 
 #. micro:STEAMakers library block
 msgid "ms unplot x _ y _"
-msgstr ""
+msgstr "ms smaž bod x _ y _"
 
 #. micro:STEAMakers library block
 msgid "ms display character _ with _"
-msgstr ""
+msgstr "ms zobraz znak _ barva _"
 
 #. micro:STEAMakers library block
 msgid "ms scroll text _ with color _ "
-msgstr ""
+msgstr "ms roluj text _ barva _ "
 
 #. micro:STEAMakers library block
 msgid "ms stop scrolling"
-msgstr ""
+msgstr "ms zastav rolování"
 
 #. micro:STEAMakers library block
 msgid "start micro꞉STEAMakers audio"
@@ -3344,55 +3346,55 @@ msgstr ""
 
 #. micro:STEAMakers library block
 msgid "ms button _ ?"
-msgstr ""
+msgstr "ms tlačíko_ ?"
 
 #. micro:STEAMakers library block
 msgid "ms touching ?"
-msgstr ""
+msgstr "ms dotyk loga ?"
 
 #. micro:STEAMakers library block
 msgid "ms light"
-msgstr ""
+msgstr "ms intenzita světla"
 
 #. micro:STEAMakers library block
 msgid "ms sound"
-msgstr ""
+msgstr "ms zvuk"
 
 #. micro:STEAMakers library block
 msgid "ms temperature ºC"
-msgstr ""
+msgstr "ms teplota ºC"
 
 #. micro:STEAMakers library block
 msgid "ms humidity %"
-msgstr ""
+msgstr "ms vlhkost %"
 
 #. micro:STEAMakers library block
 msgid "ms inclination towards _ º"
-msgstr ""
+msgstr "ms náklon směrem _ º"
 
 #. micro:STEAMakers library block
 msgid "ms energy _"
-msgstr ""
+msgstr "ms spotřeba _"
 
 #. micro:STEAMakers library block
 msgid "ms _ energy meter"
-msgstr ""
+msgstr "ms _ měřič spotřeby"
 
 #. micro:STEAMakers library block
 msgid "ms energy consumption (µWh)"
-msgstr ""
+msgstr "ms spotřeba energie (µWh)"
 
 #. micro:STEAMakers library block
 msgid "ms;start"
-msgstr ""
+msgstr "start"
 
 #. micro:STEAMakers library block
 msgid "ms;reset"
-msgstr ""
+msgstr "reset"
 
 #. micro:STEAMakers library block
 msgid "ms;down"
-msgstr ""
+msgstr "dolů"
 
 #. DrawBot Library block
 msgid "plotter move X _ Y _"
@@ -4741,7 +4743,7 @@ msgstr ""
 
 #. MicroBlocks IDE information
 msgid "Save the firmware file when prompted."
-msgstr "Uloží soubor firmware po vyzvání."
+msgstr "Uloží soubor firmware po zadání adresáře / jména."
 
 # %1 holds the drive name
 #. MicroBlocks IDE information
@@ -4778,7 +4780,7 @@ msgstr "Vyberte mikropočítač:"
 
 #. Firmware upload process information
 msgid "Uploading MicroBlocks to board..."
-msgstr "MicroBlocks bude instalován do mikropočítče..."
+msgstr "MicroBlocks bude instalován do mikropočítače..."
 
 #. Settings menu option
 msgid "dark mode"
@@ -6362,7 +6364,7 @@ msgstr "Připojuji..."
 
 #. MicroBlocks IDE information
 msgid "Reconnect to the board by clicking the \"Connect\" button."
-msgstr "Znovu připojte mikropočítač stiskem tlačítka \"Připojit\"."
+msgstr "Znovu připojte mikropočítač #BR stiskem tlačítka \"Připojit\"."
 
 #. Analog Synthesis library block
 #. as in pin number or i2c address
@@ -6380,3 +6382,101 @@ msgstr "Nezha vzdálenost _ (cm)"
 #. CoCube library block
 msgid "card ID"
 msgstr "kód karty"
+
+#. MicroBlocks IDE block deletion error message.
+msgid "scripts or functions."
+msgstr "sripty nebo funkce."
+
+#. MicroBlocks IDE block deletion error message.
+msgid "This block is still being used in"
+msgstr "Tento blok je stále používán v"
+
+#. Real Time Clock library block
+msgid "set hours _ minutes _ seconds _"
+msgstr "nastav hodiny _ minuty _ vteřiny _"
+
+#. Real Time Clock library block
+msgid "set year _ month _ day _"
+msgstr "nastav rok _ měsíc _ den _"
+
+#. Real Time Clock library block
+msgid "clock _"
+msgstr "hodiny _"
+
+#. Real Time Clock library block
+msgid "init clock _"
+msgstr "inicializuj hodiny _"
+
+#. Real Time Clock library block
+msgid "set day of week _ (1-7)"
+msgstr "nastav den v týdnu _ (1-7)"
+
+#. Real Time Clock library block
+msgid "day of week"
+msgstr "den v týdnu"
+
+#. Real Time Clock library block
+msgid "year"
+msgstr "rok"
+
+#. Real Time Clock library block
+msgid "month"
+msgstr "měsíc"
+
+#. Real Time Clock library block
+msgid "day"
+msgstr "den"
+
+#. Real Time Clock library block
+msgid "hour"
+msgstr "hodina"
+
+#. Real Time Clock library block
+msgid "minute"
+msgstr "minuta"
+
+#. Real Time Clock library block
+msgid "second"
+msgstr "vteřina"
+
+#. Real Time Clock library block
+msgid "date (Y-M-D)"
+msgstr "datum (Y-M-D)"
+
+#. Real Time Clock library block
+msgid "time (H:M:S)"
+msgstr "čas (H:M:S)"
+
+#. NeoPixel library block
+msgid "set NeoPixels #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _"
+msgstr ""
+"Nastav NeoPixely #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ #BR# _ _ _ _ _ "
+"#BR# _ _ _ _ _"
+
+#. NeoPanel library block
+msgid "NeoPanel draw line from x _ y _ to x _ y _ color _"
+msgstr "NeoPanel nakresli čáru z x _ y _ do x _ y _ barva _"
+
+#. NeoPanel library block
+msgid "NeoPanel draw circle at x _ y _ radius _ color _"
+msgstr "NeoPanel nakresli kružnicí střed x _ y _ poloměr _ barva _"
+
+#. NeoPanel library block
+msgid "NeoPanel draw rectangle at x _ y _ width _ height _ color _"
+msgstr "NeoPanel nakresli obdélník z x _ y _ šířka _ výška _ barva _"
+
+#. micro:STEAMakers library block
+msgid "ms pin _ touched?"
+msgstr "ms dotek pinu _ ?"
+
+#. micro:STEAMakers library block
+msgid "ms accel _ m/s2"
+msgstr "ms zrychlení _ m/s2"
+
+#. micro:STEAMakers library block
+msgid "ms gyro _ deg/s"
+msgstr "ms gyro _ deg/s"
+
+#. micro:STEAMakers library block
+msgid "ms;stop"
+msgstr "stop"

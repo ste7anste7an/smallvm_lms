@@ -25,7 +25,7 @@ HardwareSerial Serial2(PC_11, PC_10);
 
 #if defined(NRF51) // not implemented (has only one UART)
 
-static OBJ setNRF52SerialPins(uint8 rxPin, uint8 txPin) { return fail(primitiveNotImplemented); }
+static OBJ setSerialPins(uint8 rxPin, uint8 txPin, int baud) { return fail(primitiveNotImplemented); }
 static void serialOpen(int baudRate) { fail(primitiveNotImplemented); }
 static void serialClose() { fail(primitiveNotImplemented); }
 static int serialAvailable() { return -1; }
@@ -58,12 +58,6 @@ extern "C" void UARTE1_IRQHandler() { MBSerial.IrqHandler(); }
 
 uint8 txBuf[512]; // extra large output buffer on nRF52 boards
 
-static OBJ setNRF52SerialPins(uint8 rxPin, uint8 txPin) {
-	nrf52PinRx = rxPin;
-	nrf52PinTx = txPin;
-	return trueObj;
-}
-
 static void serialOpen(int baudRate) {
 	if (isOpen) MBSerial.end();
 	MBSerial.setPins(nrf52PinRx, nrf52PinTx);
@@ -76,6 +70,13 @@ static void serialOpen(int baudRate) {
 	NRF_UARTE1->TASKS_STARTTX = 1;
 
 	isOpen = true;
+}
+
+static OBJ setSerialPins(uint8 rxPin, uint8 txPin, int baud) {
+	nrf52PinRx = rxPin;
+	nrf52PinTx = txPin;
+	serialOpen(baud);
+	return trueObj;
 }
 
 static void serialClose() {
@@ -117,12 +118,6 @@ uint8 rxBufB[RX_BUF_SIZE];
 #define INACTIVE_RX_BUF() (((void *) NRF_UARTE1->RXD.PTR == rxBufB) ? rxBufA : rxBufB)
 
 uint8 txBuf[TX_BUF_SIZE];
-
-static OBJ setNRF52SerialPins(uint8 rxPin, uint8 txPin) {
-	nrf52PinRx = rxPin;
-	nrf52PinTx = txPin;
-	return trueObj;
-}
 
 static void serialClose() {
 	if (!NRF_UARTE1->ENABLE) return; // already stopped
@@ -167,6 +162,13 @@ static void serialOpen(int baudRate) {
 	isOpen = true;
 }
 
+static OBJ setSerialPins(uint8 rxPin, uint8 txPin, int baud) {
+	nrf52PinRx = rxPin;
+	nrf52PinTx = txPin;
+	serialOpen(baud);
+	return trueObj;
+}
+
 static int serialAvailable() {
 	if (!NRF_UARTE1->EVENTS_RXDRDY) return 0;
 
@@ -209,10 +211,6 @@ static int serialWriteBytes(uint8 *buf, uint32 byteCount) {
 #else
 	#define SERIAL_PORT Serial1
 #endif
-
-static OBJ setNRF52SerialPins(uint8 rxPin, uint8 txPin) {
-	return fail(primitiveNotImplemented);
-}
 
 static void serialClose() {
 	isOpen = false;
@@ -294,6 +292,18 @@ static void serialOpen(int baudRate) {
 	isOpen = true;
 }
 
+static OBJ setSerialPins(uint8 rxPin, uint8 txPin, int baud) {
+	#if defined(ESP32)
+		// ESP32 supports using most pins for serial
+		SERIAL_PORT.end();
+		SERIAL_PORT.begin(baud, SERIAL_8N1, rxPin, txPin);
+		isOpen = true;
+		return falseObj;
+	#else
+		return fail(primitiveNotImplemented);
+	#endif
+}
+
 static int serialAvailable() {
 	return isOpen ? SERIAL_PORT.available() : 0;
 }
@@ -350,7 +360,7 @@ static OBJ primSerialOpen(int argCount, OBJ *args) {
 	// wait a bit, then discard any initial garbage byte(s)
 	delayMicroseconds(250);
 	uint8 trash[16];
-	int garbageByteCount = serialAvailable();
+	uint32 garbageByteCount = serialAvailable();
 	if (garbageByteCount > sizeof(trash)) garbageByteCount = sizeof(trash);
 	serialReadBytes(trash, garbageByteCount);
 
@@ -462,7 +472,13 @@ static OBJ primSetPins(int argCount, OBJ *args) {
 	if (argCount < 2) return fail(notEnoughArguments);
 	if (!isInt(args[0]) || !isInt(args[1])) return fail(needsIntegerIndexError);
 
-	return setNRF52SerialPins(obj2int(args[0]), obj2int(args[1]));
+	int rxPin = mapDigitalPinNum(obj2int(args[0]));
+	int txPin = mapDigitalPinNum(obj2int(args[1]));
+	int baud = ((argCount > 2) && isInt(args[2])) ? obj2int(args[2]) : 9600;
+
+	if ((rxPin < 0) || (txPin < 0)) return falseObj; // out of range or reserved pin number
+
+	return setSerialPins(rxPin, txPin, baud);
 }
 
 static OBJ primSerialWriteBytes(int argCount, OBJ *args) {

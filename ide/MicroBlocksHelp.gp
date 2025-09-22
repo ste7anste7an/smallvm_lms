@@ -304,18 +304,18 @@ method initialize MicroBlocksHelp {
 		(array 'bleScan_hasType' '/network_libraries/ble-scanner#hastype' 'Report (-o) if device name is type 8 or 9.')
 
 		// BLE SERIAL
-		(array '[ble:uartConnected]' '/network_libraries/' 'Report (-o) if BLE serial is connected')
-		(array 'bleSerial_readString' '/network_libraries/' 'Returns a string read from the BLE Serial port.')
-		(array 'bleSerial_readBytes' '/network_libraries/' 'Returns bytes read from the BLE Serial port.')
-		(array 'bleSerial_write' '/network_libraries/' 'Writes any String or ByteArray to the BLE Serial port.')
+		(array '[ble:uartConnected]' '/network_libraries/ble-serial#ble-serial-connected' 'Report (-o) if BLE serial is connected')
+		(array 'bleSerial_readString' '/network_libraries/ble-serial#ble-serial-read-string' 'Returns a string read from the BLE Serial port.')
+		(array 'bleSerial_readBytes' '/network_libraries/ble-serial#ble-serial-read-bytes' 'Returns bytes read from the BLE Serial port.')
+		(array 'bleSerial_write' '/network_libraries/ble-serial#ble-serial-write' 'Writes any String or ByteArray to the BLE Serial port.')
 
 		// UDP
-		(array '[net:udpStart]' '/network_libraries/' '')
-		(array '[net:udpStop]' '/network_libraries/' '')
-		(array '[net:udpSendPacket]' '/network_libraries/' '')
-		(array '[net:udpReceivePacket]' '/network_libraries/' '')
-		(array '[net:udpRemoteIPAddress]' '/network_libraries/' '')
-		(array '[net:udpRemotePort]' '/network_libraries/' '')
+		(array '[net:udpStart]' '/network_libraries/udp#udp-start' 'Starts UDP protocol on selected port.')
+		(array '[net:udpStop]' '/network_libraries/udp#udp-stop' 'Stops UDP protocol.')
+		(array '[net:udpSendPacket]' '/network_libraries/udp#udp-send-packet' 'Sends a packet to designated address and port.')
+		(array '[net:udpReceivePacket]' '/network_libraries/udp#udp-receive-packet' 'Returns the packet received from the UDP remote.')
+		(array '[net:udpRemoteIPAddress]' '/network_libraries/udp#udp-remote-ip-address' 'Returns the IP address of the UDP remote.')
+		(array '[net:udpRemotePort]' '/network_libraries/udp#udp-remote-port' 'Returns the port number of the UDP remote.')
 
 		// WIFI
 		(array 'wifiConnect' '/network_libraries/wifi#wifi-connect-to' 'Connect to the local IP network.')
@@ -381,6 +381,28 @@ method initialize MicroBlocksHelp {
 		(array '_cbpro_clearEncodersAndOrientation' '/extension_libraries/cutebotpro#_cbpro_clearencodersandorientation' 'Clears encoder value and orientation variables.')
 		(array '_cbpro_getOrientation' '/extension_libraries/cutebotpro#_cbpro_getorientation' 'Returns orientation of car.')
 		(array '_cbpro_readEncoders' '/extension_libraries/cutebotpro#_cbpro_readencoders' 'Reads encoder values and sets variables _cbpro_leftCount and _cbpro_rightCount.')
+
+		// CoCube
+		(array 'CoCube move for msecs' '/extension_libraries/cocube#cocube-move-for-msecs' 'Move CoCube at unit/s speed for milliseconds.')
+		(array 'CoCube rotate for msecs' '/extension_libraries/cocube#cocube-rotate-for-msecs' 'Rotate CoCube at unit/s speed for milliseconds.')
+		(array 'CoCube move' '/extension_libraries/cocube#cocube-move' 'Move CoCube at unit/s speed.')
+		(array 'CoCube rotate' '/extension_libraries/cocube#cocube-rotate' 'Rotate CoCube at unit/s speed.')
+		(array 'CoCube set wheel' '/extension_libraries/cocube#cocube-set-wheel' 'Control the speed of the left and right wheels of CoCube separately to achieve a circular trajectory.')
+		(array 'CoCube wheels stop' '/extension_libraries/cocube#cocube-wheels-stop' 'Control CoCube stop.')
+		(array 'CoCube wheels break' '/extension_libraries/cocube#cocube-wheels-break' 'Control CoCube stop immediately.')
+		(array 'CoCube position_X' '/extension_libraries/cocube#cocube-position-x' 'Returns the X coordinate of CoCube.')
+		(array 'CoCube position_Y' '/extension_libraries/cocube#cocube-position-y' 'Returns the Y coordinate of CoCube.')
+		(array 'CoCube direction' '/extension_libraries/cocube#cocube-direction' 'Returns the rotation angle of CoCube (0~359°).')
+		(array 'CoCube move by step' '/extension_libraries/cocube#cocube-move-by-step' 'Move CoCube at unit/s speed for a specific distance.')
+		(array 'CoCube rotate by degree' '/extension_libraries/cocube#cocube-rotate-by-degree' 'Rotate CoCube at unit/s speed for a specific degree.')
+		(array 'CoCube rotate to angle' '/extension_libraries/cocube#cocube-rotate-to-angle' 'Turn to a specific angle.')
+		(array 'CoCube point towards' '/extension_libraries/cocube#cocube-point-towards' 'Point to a specific target.')
+		(array 'CoCube move to' '/extension_libraries/cocube#cocube-move-to' 'Move to a specific target.')
+		(array 'CoCube on the mat' '/extension_libraries/cocube#cocube-on-the-mat' 'Returns (-o) if CoCube on CoMaps or CoTags.')
+		(array 'CoCube card ID' '/extension_libraries/cocube#cocube-card-id' 'Returns the Index value of CoTags.')
+		(array 'CoCube draw ArUco marker on TFT' '/extension_libraries/cocube#cocube-draw-aruco-marker-on-tft' 'Display an ArUco Marker on the TFT screen.')
+		(array 'CoCube draw AprilTag on TFT' '/extension_libraries/cocube#cocube-draw-apriltag-on-tft' 'Display an AprilTag Marker on the TFT screen.')
+		(array 'CoCube battery percentage' '/extension_libraries/cocube#cocube-battery-percentage' 'Returns the battery percentage of CoCube.')
 
 		// PID
 		(array 'pid_computePID' '/extension_libraries/pid#compute-pid' 'Compute the next PID correction for the specified PID loop.')

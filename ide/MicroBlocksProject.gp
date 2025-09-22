@@ -1182,7 +1182,7 @@ method functionsEqual MicroBlocksModule f1 f2 {
 // translation template export
 
 to templateStringForLibrary libName {
-	// setClipboard (templateStringForLibrary 'Calliope NeoPixel')
+	// setClipboard (templateStringForLibrary 'CoCube Sengo1')
 	project = (project (first (allInstances 'MicroBlocksEditor')))
 	lib = (libraryNamed project libName)
 	if (isNil lib) { return '' }
@@ -1192,11 +1192,12 @@ to templateStringForLibrary libName {
 method choiceTemplates MicroBlocksModule {
 	seen = (dictionary) // used to avoid duplicate entries
 	result = (list)
-	for choiceList (values choices) {
+	for pair (sortedPairs choices true) {
+		choiceList = (at pair 2)
 		for c choiceList {
 			if (not (or (representsAnInteger c) (contains seen c))) {
 				add seen c
-				add result (join '#. ' moduleName ' library block')
+				add result (join '#. ' moduleName ' library choice')
 				add result (join 'msgid "' c '"')
 				add result 'msgstr ""'
 				add result ''
@@ -1209,7 +1210,8 @@ method choiceTemplates MicroBlocksModule {
 method blockTemplates MicroBlocksModule {
 	seen = (dictionary) // used to avoid duplicate entries
 	result = (list)
-	for spec (values blockSpecs) {
+	for pair (sortedPairs blockSpecs true) {
+		spec = (at pair 2)
 		blockLabel = (first (specs spec))
 		if (not (or (beginsWith blockLabel '_') (contains seen blockLabel))) {
 			add seen blockLabel

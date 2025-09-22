@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-28 16:43+0200\n"
-"PO-Revision-Date: 2025-08-28 07:02+0000\n"
+"PO-Revision-Date: 2025-09-19 16:02+0000\n"
 "Last-Translator: Ralf Krause <ralf.krause@moodleschule.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/microblocks/ide/"
 "de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "number"
@@ -7216,3 +7216,7 @@ msgstr "PCF85063"
 #. Real Time Clock library block
 msgid "RV1805"
 msgstr "RV1805"
+
+#. Examples folder
+msgid "folder;MakerPort"
+msgstr "MakerPort"
