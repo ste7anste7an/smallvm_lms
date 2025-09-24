@@ -142,6 +142,8 @@ touch.writeto_mem(21, 0xfe, b'\xff') #
 #define TFT_RST -1
 #if defined(CYDROT)
   #define TFT_BL 27
+  #define TOUCH_CS 33 
+  #define TFT_RGB_ORDER TFT_BGR
 #else
   #define TFT_BL 21
 #endif
@@ -151,6 +153,11 @@ touch.writeto_mem(21, 0xfe, b'\xff') #
 #define TP_DOUT 39
 #define TP_IRQ 36
 
+// 14 -> tp_clk
+// 33 > tp_cs
+// 13 -> din
+// 12 -> dout
+// 39 irq
 
 #define LOAD_GLCD
 #define LOAD_FONT2

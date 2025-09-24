@@ -1324,19 +1324,36 @@ return falseObj;
 		#include <XPT2046_Touchscreen.h>
 		TFT_eSPI tft = TFT_eSPI();  // Invoke TFT object
 		
-		
+		#if defined(CYDROT) 
+// 14 -> tp_clk
+// 33 > tp_cs
+// 13 -> din
+// 12 -> dout
+// 39 irq
+		#define XPT2046_IRQ 39
+		#define XPT2046_CS 33
+		XPT2046_Touchscreen ts(TOUCH_CS);
+		SPIClass& spix = SPI;
+#define TFT_HOR_RES   320
+#define TFT_VER_RES   240
+     #else
+
+
 		#define XPT2046_IRQ 36
-#define XPT2046_MOSI 32
-#define XPT2046_MISO 39
-#define XPT2046_CLK 25
-#define XPT2046_CS 33
-SPIClass touchscreenSpi = SPIClass(VSPI);
-XPT2046_Touchscreen ts(XPT2046_CS, XPT2046_IRQ);
+	#define XPT2046_MOSI 32
+	#define XPT2046_MISO 39
+	#define XPT2046_CLK 25
+	#define XPT2046_CS 33
+	SPIClass touchscreenSpi = SPIClass(VSPI);
+	XPT2046_Touchscreen ts(XPT2046_CS, XPT2046_IRQ);
+	#define TFT_HOR_RES   240
+#define TFT_VER_RES   320
+#endif
+
 uint16_t touchScreenMinimumX = 200, touchScreenMaximumX = 3700, touchScreenMinimumY = 240,touchScreenMaximumY = 3800;
 
 /*Set to your screen resolution*/
-#define TFT_HOR_RES   240
-#define TFT_VER_RES   320
+
 
 
 
@@ -1345,14 +1362,21 @@ uint16_t touchScreenMinimumX = 200, touchScreenMaximumX = 3700, touchScreenMinim
 			tft.init();
 			tft.initDMA();
 			//tft.setSwapBytes(true);
-			
+			#if defined(CYDROT)
+				spix = tft.getSPIinstance(); 
+			#endif
+
 			//tft.fillScreen(TFT_BLACK);
 		
 			tft.begin();
 			#if defined(USB2)
 				tft.invertDisplay(false); 
 			#endif
-			tft.setRotation(3);
+			#if defined(CYDROT)
+				tft.setRotation(2);
+			#else
+				tft.setRotation(3);
+			#endif
 	//			tft._freq = 80000000; // this requires moving _freq to public in AdaFruit_SITFT.h
 			tftClear();
 			// Turn on backlight on IoT-Bus
@@ -1363,10 +1387,15 @@ uint16_t touchScreenMinimumX = 200, touchScreenMaximumX = 3700, touchScreenMinim
 	}
   
 	static void touchInit() {
-		touchscreenSpi.begin(XPT2046_CLK, XPT2046_MISO, XPT2046_MOSI, XPT2046_CS); /* Start second SPI bus for touchscreen */
-  		ts.begin(touchscreenSpi); /* Touchscreen init */
-  		ts.setRotation(3); /* Inverted landscape orientation to match screen */
+		#if defined(CYDROT)
+			ts.begin(spix);
+			ts.setRotation(2); /* Inverted landscape orientation to match screen */
+		#else
 
+			touchscreenSpi.begin(XPT2046_CLK, XPT2046_MISO, XPT2046_MOSI, XPT2046_CS); /* Start second SPI bus for touchscreen */
+  			ts.begin(touchscreenSpi); /* Touchscreen init */
+  			ts.setRotation(3); /* Inverted landscape orientation to match screen */
+		#endif
 		
 		touchEnabled = true;
 	}
@@ -2779,6 +2808,9 @@ static OBJ primPixelRow(int argCount, OBJ *args) {
 	#if defined(LMSDISPLAY)
 		#define _TFT_WIDTH TFT_HEIGHT
 		#define _TFT_HEIGHT TFT_WIDTH
+	#elif defined(CYDROT)
+		#define _TFT_WIDTH TFT_HEIGHT
+		#define _TFT_HEIGHT TFT_WIDTH
 	#else
 		#define _TFT_WIDTH TFT_WIDTH
 		#define _TFT_HEIGHT TFT_HEIGHT
@@ -3882,7 +3914,11 @@ xTaskCreatePinnedToCore(
     lv_display_set_buffers(disp, buf1, buf2, TFT_WIDTH * 40, LV_DISPLAY_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(disp, my_disp_flush);
 	#if defined(TFT_ESPI) 
-		lv_display_set_resolution(disp, TFT_HEIGHT, TFT_WIDTH);
+		#if defined(CYDROT)
+			lv_display_set_resolution(disp, TFT_WIDTH, TFT_HEIGHT);
+		#else
+			lv_display_set_resolution(disp, TFT_HEIGHT, TFT_WIDTH);
+		#endif
 	#else
     	lv_display_set_resolution(disp, TFT_WIDTH, TFT_HEIGHT);
 	#endif
@@ -4056,7 +4092,7 @@ void ui_create_button_label(char * obj_name, int scale, const char * label_text,
 			obj = lv_list_add_button(parent, NULL, label_text);
 		} else {
 			obj = lv_btn_create(parent);
-			// sodb: check whether kabek is correctly removes when partent btn object is deleted
+			// sodb: check whether label is correctly removed when parent btn object is deleted
 			lv_obj_t * label = lv_label_create(obj);
 			lv_label_set_text(label, label_text);
 			lv_obj_set_style_text_font(label, get_font_from_scale(scale), LV_PART_MAIN);
@@ -4073,7 +4109,7 @@ void ui_create_button(char * obj_name, const char * parent) {
 	if (!registry.get(obj_name) && registry.get(parent)) {
 		lv_obj_t* obj = lv_btn_create(registry.get(parent));
 		lv_obj_add_event_cb(obj, ui_log_event_cb, LV_EVENT_CLICKED, NULL);
-		// sodb: check whether kabek is correctly removes when partent btn object is deleted
+		// sodb: check whether label is correctly removes when partent btn object is deleted
 		registry.add(obj_name, obj);
 	}
 
@@ -5309,7 +5345,7 @@ static OBJ primLVGLsetText(int argCount, OBJ *args) {
 		obj_text=s;
 	}
 	if (argCount >2) {
-		if (IS_TYPE(value, StringType)) {
+		if (IS_TYPE(args[2], StringType)) {
 			font_name = obj2str(args[2]);
 			ui_set_text_font(obj_name, obj_text, font_name);
 		} else {
