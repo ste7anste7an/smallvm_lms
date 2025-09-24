@@ -4579,8 +4579,10 @@ void ui_set_attribute(char * obj_name, char * attribute_name, int to_val, int un
 		} else 
 		if (lv_obj_get_class(obj) == &lv_textarea_class) {
 			if (strcmp(attribute_name,"focused")==0) lv_obj_add_state(obj, LV_STATE_FOCUSED);
+		} else
+		if ((lv_obj_get_class(obj) == &lv_button_class)  || (lv_obj_get_class(obj) == &lv_label_class)) {
+		   if (strstr(attribute_name,"rotation")) lv_obj_set_style_transform_angle(obj, to_val, 0);
 		}
-		
 	}
 }
 
