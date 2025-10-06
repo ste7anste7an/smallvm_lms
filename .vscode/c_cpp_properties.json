@@ -9,8 +9,8 @@
             "name": "PlatformIO",
             "includePath": [
                 "C:/stefan/esp32/smallvm_333/vm",
-                "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/Wire",
                 "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/SPI",
+                "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/Wire",
                 "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5",
                 "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5/SDK/components/drivers_nrf/delay",
                 "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5/SDK/components/device",
@@ -23,8 +23,8 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "C:/stefan/esp32/smallvm_333/vm",
-                    "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/Wire",
                     "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/SPI",
+                    "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/libraries/Wire",
                     "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5",
                     "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5/SDK/components/drivers_nrf/delay",
                     "C:/Users/kidsp/.platformio/packages/framework-arduinonordicnrf5@1.700.240108/cores/nRF5/SDK/components/device",

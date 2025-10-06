@@ -186,6 +186,14 @@ void hardwareInit() {
 	#if defined(HAS_LED_MATRIX) && !defined(GNUBLOCKS)
 		mbDisplayColor = (150 << 16); // red (not full brightness)
 	#endif
+	// #if defined(C3LVGL) 
+	// #undef C
+	// 	extern "C" {
+	// 		#include "soc/rtc_cntl_reg.h"
+	// 	}
+	// 	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
+		
+	// #endif
 	#if defined(COCUBE)
 		#include "soc/rtc_cntl_reg.h" // for brownout control
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector

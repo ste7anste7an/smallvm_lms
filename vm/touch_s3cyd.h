@@ -17,17 +17,16 @@
 // #define TOUCH_MAP_Y2 320
 
 /* uncomment for GT911 */
-#define TOUCH_GT911
-#define TOUCH_GT911_SCL 32
-#define TOUCH_GT911_SDA 33
-#define TOUCH_GT911_INT -1
-#define TOUCH_GT911_RST 25
-
-#define TOUCH_GT911_ROTATION ROTATION_RIGHT
-#define TOUCH_MAP_X1 320
-#define TOUCH_MAP_X2 0
-#define TOUCH_MAP_Y1 240
-#define TOUCH_MAP_Y2 0
+ #define TOUCH_GT911
+ #define TOUCH_GT911_SCL 20
+ #define TOUCH_GT911_SDA 19
+ #define TOUCH_GT911_INT -1
+ #define TOUCH_GT911_RST 38
+ #define TOUCH_GT911_ROTATION ROTATION_NORMAL
+ #define TOUCH_MAP_X1 480
+ #define TOUCH_MAP_X2 0
+ #define TOUCH_MAP_Y1 272
+ #define TOUCH_MAP_Y2 0
 
 /* uncomment for XPT2046 */
 // #define TOUCH_XPT2046
@@ -52,8 +51,8 @@ bool touch_touched_flag = true, touch_released_flag = true;
 
 #elif defined(TOUCH_GT911)
 #include <Wire.h>
-#include <Touch_GT911.h>
-Touch_GT911 ts = Touch_GT911(TOUCH_GT911_SDA, TOUCH_GT911_SCL, TOUCH_GT911_INT, TOUCH_GT911_RST, max(TOUCH_MAP_X1, TOUCH_MAP_X2), max(TOUCH_MAP_Y1, TOUCH_MAP_Y2));
+#include <TAMC_GT911.h>
+TAMC_GT911 ts = TAMC_GT911(TOUCH_GT911_SDA, TOUCH_GT911_SCL, TOUCH_GT911_INT, TOUCH_GT911_RST, max(TOUCH_MAP_X1, TOUCH_MAP_X2), max(TOUCH_MAP_Y1, TOUCH_MAP_Y2));
 
 #elif defined(TOUCH_XPT2046)
 #include <XPT2046_Touchscreen.h>
@@ -106,16 +105,17 @@ void touch(TPoint p, TEvent e)
 void touch_init()
 {
 #if defined(TOUCH_FT6X36)
-    Wire.begin(TOUCH_FT6X36_SDA, TOUCH_FT6X36_SCL);
+  Wire.begin(TOUCH_FT6X36_SDA, TOUCH_FT6X36_SCL);
   ts.begin();
   ts.registerTouchHandler(touch);
 
 #elif defined(TOUCH_GT911)
-    ts.begin(0x5D);
-    ts.setRotation(TOUCH_GT911_ROTATION);
+  Wire.begin(TOUCH_GT911_SDA, TOUCH_GT911_SCL);
+  ts.begin();
+  ts.setRotation(TOUCH_GT911_ROTATION);
 
 #elif defined(TOUCH_XPT2046)
-    SPI.begin(TOUCH_XPT2046_SCK, TOUCH_XPT2046_MISO, TOUCH_XPT2046_MOSI, TOUCH_XPT2046_CS);
+  SPI.begin(TOUCH_XPT2046_SCK, TOUCH_XPT2046_MISO, TOUCH_XPT2046_MOSI, TOUCH_XPT2046_CS);
   ts.begin();
   ts.setRotation(TOUCH_XPT2046_ROTATION);
 
@@ -125,14 +125,14 @@ void touch_init()
 bool touch_has_signal()
 {
 #if defined(TOUCH_FT6X36)
-    ts.loop();
+  ts.loop();
   return touch_touched_flag || touch_released_flag;
 
 #elif defined(TOUCH_GT911)
-    return true;
+  return true;
 
 #elif defined(TOUCH_XPT2046)
-    return ts.tirqTouched();
+  return ts.tirqTouched();
 
 #else
   return false;
@@ -142,7 +142,7 @@ bool touch_has_signal()
 bool touch_touched()
 {
 #if defined(TOUCH_FT6X36)
-    if (touch_touched_flag)
+  if (touch_touched_flag)
   {
     touch_touched_flag = false;
     return true;
@@ -153,25 +153,25 @@ bool touch_touched()
   }
 
 #elif defined(TOUCH_GT911)
-    ts.read();
-    if (ts.isTouched)
-    {
+  ts.read();
+  if (ts.isTouched)
+  {
 #if defined(TOUCH_SWAP_XY)
-        touch_last_x = map(ts.points[0].y, TOUCH_MAP_X1, TOUCH_MAP_X2, 0, gfx->width() - 1);
-    touch_last_y = map(ts.points[0].x, TOUCH_MAP_Y1, TOUCH_MAP_Y2, 0, gfx->height() - 1);
+    touch_last_x = map(ts.points[0].y, TOUCH_MAP_X1, TOUCH_MAP_X2, 0,TFT_WIDTH - 1);
+    touch_last_y = map(ts.points[0].x, TOUCH_MAP_Y1, TOUCH_MAP_Y2, 0, TFT_HEIGHT - 1);
 #else
-        touch_last_x = map(ts.points[0].x, TOUCH_MAP_X1, TOUCH_MAP_X2, 0, TOUCH_MAP_X1- 1);
-        touch_last_y = map(ts.points[0].y, TOUCH_MAP_Y1, TOUCH_MAP_Y2, 0, TOUCH_MAP_Y1 - 1);
+    touch_last_x = map(ts.points[0].x, TOUCH_MAP_X1, TOUCH_MAP_X2, 0, TFT_WIDTH - 1);
+    touch_last_y = map(ts.points[0].y, TOUCH_MAP_Y1, TOUCH_MAP_Y2, 0, TFT_HEIGHT - 1);
 #endif
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 
 #elif defined(TOUCH_XPT2046)
-    if (ts.touched())
+  if (ts.touched())
   {
     TS_Point p = ts.getPoint();
 #if defined(TOUCH_SWAP_XY)
@@ -196,7 +196,7 @@ bool touch_touched()
 bool touch_released()
 {
 #if defined(TOUCH_FT6X36)
-    if (touch_released_flag)
+  if (touch_released_flag)
   {
     touch_released_flag = false;
     return true;
@@ -207,10 +207,10 @@ bool touch_released()
   }
 
 #elif defined(TOUCH_GT911)
-    return true;
+  return true;
 
 #elif defined(TOUCH_XPT2046)
-    return true;
+  return true;
 
 #else
   return false;

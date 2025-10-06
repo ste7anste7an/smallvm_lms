@@ -16,7 +16,7 @@
 #include "mem.h"
 #include "interp.h"
 
-#if defined(ESP32_ORIGINAL)
+#if defined(ESP32_ORIGINAL) || defined(C3LVGL)
 #include <LittleFS.h>
 #include <FS.h>
 #endif
@@ -36,7 +36,7 @@ static int deferUpdates = false;
 	defined(TTGO_RP2040) || defined(TTGO_DISPLAY) || defined(ARDUINO_M5STACK_Core2) || \
 	defined(GAMEPAD_DISPLAY) || defined(PICO_ED) || defined(OLED_128_64) || defined(COCUBE) || \
 	defined(ARDUINO_M5Atom_S3) || defined(LMSDISPLAY) || defined(LMS7789) || defined(UNIHIKER) ||\
-	defined(M5Atom_S3_TFT) || defined(CYDC) || defined(CYDR) || defined(CYDS343)
+	defined(M5Atom_S3_TFT) || defined(CYDC) || defined(CYDR) || defined(CYDS343) || defined(C3LVGL)
 
 	//sodb
 	//#if !defined(TFT_ESPI)
@@ -1374,6 +1374,8 @@ uint16_t touchScreenMinimumX = 200, touchScreenMaximumX = 3700, touchScreenMinim
 			#endif
 			#if defined(CYDROT)
 				tft.setRotation(2);
+				tft.writecommand(ILI9341_MADCTL);
+    		    tft.writedata(0x48);  // try 0x48, 0x28, 0x88, 0xE8 depending on rotation
 			#else
 				tft.setRotation(3);
 			#endif
@@ -1771,6 +1773,88 @@ void pca9535_BL() {
 		useTFT = true;
 	}
   
+#elif defined(C3LVGL)
+		
+		#include <TFT_eSPI.h>
+
+	
+		TFT_eSPI tft = TFT_eSPI();  // Invoke TFT object
+	#include "touch.h"	
+	
+
+		void tftInit() {
+			
+			tft.init();
+			tft.initDMA();
+		
+			tft.begin();
+			tft.setRotation(1);
+			//tft.setViewport(0, 20, 240, 300);
+	//			tft._freq = 80000000; // this requires moving _freq to public in AdaFruit_SITFT.h
+			tftClear();
+			// Turn on backlight on IoT-Bus
+			pinMode(TFT_BL, OUTPUT);
+			digitalWrite(TFT_BL, HIGH);
+
+			useTFT = true;
+	}
+  
+/*
+		#define HAS_TOUCH_SCREEN 1
+
+		static void touchInit() {
+		 	//touch_init();
+			
+			touchEnabled = true;
+		}
+
+		static uint32 lastTouchUpdate = 0;
+		static int touchScreenX = -1;
+		static int touchScreenY = -1;
+		static int touchSize =0;
+		
+		static int screenTouched() {
+			if (touch_touched()) {
+				
+				return true;
+			}
+			else
+			return (false);
+		}
+
+		static void touchUpdate() {
+
+			if (!touchEnabled) touchInit();
+			touchScreenX = touch_last_x;
+			touchScreenY =  touch_last_y;
+			//uint32 now = millisecs();
+			//if ((now - lastTouchUpdate) < 10) return;
+			// if (screenTouched()) {
+			// 	touchScreenX = ts.points[0].x;;
+			// 	touchScreenY = ts.points[0].y;
+			// 	touchSize = ts.points[0].size;
+			// } 
+			//lastTouchUpdate = now;
+		
+		}
+
+		static int screenTouchX() {
+			touchUpdate();
+			return touchScreenX;
+		}
+
+		static int screenTouchY() {
+			touchUpdate();
+			return touchScreenY;
+		}
+
+		static int screenTouchPressure() {
+			// pressure not supported; return a constant value if screen is touched, -1 if not
+			int pressure=0;
+			if (ts.touches>0) pressure = ts.points[0].size;
+			return pressure;
+		}
+	*/
 
 #elif defined(LMS7789)
 #if !defined(TFT_ESPI)
@@ -3613,6 +3697,40 @@ void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) 
 	yield(); // sodb give wifi some air to breath
 }
 /*Read the touchpad*/
+
+#if defined(COCUBE)
+#define BTN_A 38  // GPIO for NEXT
+#define BTN_B 37   
+	
+
+static void keypad_read(lv_indev_t * indev, lv_indev_data_t * data) {
+    static uint8_t btn_a_last = 1;
+    static uint8_t btn_b_last = 1;
+
+    uint8_t a = digitalRead(BTN_A);
+    uint8_t b = digitalRead(BTN_B);
+
+    if (a == LOW && btn_a_last == HIGH) {
+        data->key = LV_KEY_NEXT;            // move focus
+        data->state = LV_INDEV_STATE_PR;
+    } 
+    else if (b == LOW && btn_b_last == HIGH) {
+        data->key = LV_KEY_ENTER;           // activate
+        data->state = LV_INDEV_STATE_PR;
+    } 
+    else {
+        data->state = LV_INDEV_STATE_REL;   // nothing pressed
+    }
+
+    btn_a_last = a;
+    btn_b_last = b;
+}
+
+
+
+#endif
+
+
 #if defined(HAS_TOUCH_SCREEN)
 void my_touchpad_read(lv_indev_t *indev_driver, lv_indev_data_t *data) {
     /*
@@ -3647,6 +3765,11 @@ static lv_draw_buf_t draw_buf;
 static lv_color_t *buf1;
 static lv_color_t *buf2;
 //static lv_color_t buf[TFT_WIDTH * TFT_BUFFER_LINES];
+
+#if defined(COCUBE)
+lv_group_t * group;
+#endif
+
 
 bool event_seen = false;
 
@@ -3900,10 +4023,13 @@ xTaskCreatePinnedToCore(
 	 outputString(s);
     
 	  
-
-	buf1 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 40 * sizeof(lv_color_t), MALLOC_CAP_DMA);
- 	buf2 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 40 * sizeof(lv_color_t), MALLOC_CAP_DMA);
-
+	#if defined(COCUBE)
+	  buf1 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 20 * sizeof(lv_color_t), MALLOC_CAP_DMA);
+ 	  buf2 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 20 * sizeof(lv_color_t), MALLOC_CAP_DMA);
+	#else
+	  buf1 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 40 * sizeof(lv_color_t), MALLOC_CAP_DMA);
+ 	  buf2 = (lv_color_t *)heap_caps_malloc(TFT_WIDTH * 40 * sizeof(lv_color_t), MALLOC_CAP_DMA);
+	#endif
  	if (buf1)  outputString("malloc succesfull");
 	 else outputString("cannot mallocsuccesfull");
 	
@@ -3929,7 +4055,16 @@ xTaskCreatePinnedToCore(
 		lv_indev_set_read_cb(indev, my_touchpad_read);
 		if (!touchEnabled) touchInit();
 	#endif
-
+   #if defined(COCUBE)
+    lv_indev_t * indev = lv_indev_create();
+	lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD); /*Touchpad should have POINTER type*/
+	lv_indev_set_read_cb(indev,keypad_read);
+	
+    // Optional: create a group so widgets can get focus
+	group = lv_group_create();
+	// Attach the keypad input device to the group
+	lv_indev_set_group(indev, group);
+   #endif
  fs_init() ;
 //lv_fs_littlefs_init();
 	LVGL_initialized = true;
@@ -4362,6 +4497,7 @@ void ui_delete_obj(char * obj_name) {
     lv_obj_t* obj = registry.get(obj_name);
 	lv_font_t* font = font_buffer.get(obj_name);
 	lv_style_t* style = style_registry.get(obj_name);
+	lv_chart_series_t* chart_series = series_registry.get(obj_name);
 	char** btnmap = btnmap_registry.get(obj_name);
 	// lv_chart_series_t* series = series_registry.get(obj_name); 
 	// not needed because lv_obj_del of chart already deletes all the series attached to the chart
@@ -4378,6 +4514,10 @@ void ui_delete_obj(char * obj_name) {
 		delete style;
 		style_registry.remove(obj_name);
 	} 
+	if (chart_series) {
+		// lv_obj_del(obj); // slready deleted iwith parent chart
+        series_registry.remove(obj_name);
+	}
 	if (btnmap) { 
 		outputString("deleting btnmap");
 		free_btnmap(btnmap); // free structure of char** for btnmap
@@ -5240,6 +5380,14 @@ static OBJ primLVGLsetParent(int argCount, OBJ *args) {
 	return falseObj;
 }
 
+#if defined(COCUBE)
+static OBJ primLVGLaddgroup(int argCount, OBJ *args) {
+	char* obj_name = obj2str(args[0]);
+	lv_obj_t* obj = registry.get(obj_name);
+	lv_group_add_obj(group, obj);
+	return falseObj;
+}
+#endif
 
 static OBJ primLVGLdelObj(int argCount, OBJ *args) {
 	char* obj_name = obj2str(args[0]);
@@ -5628,8 +5776,11 @@ static PrimEntry entries[] = {
  	{"LVGLaddfont",primLVGLaddfont},
 	{"LVGLsetscroll",primLVGLsetScroll},
 	{"LVGLpsram",primLVGLpsram},
-	#if defined(LMSDIAPLY) && defined(BREAKOUT)
+	#if (defined(LMSDIAPLY) && defined(BREAKOUT))||defined(CYDROT)
 		{"fliptouch",primfliptouch},
+	#endif
+	#if defined(COCUBE)
+		{"LVGLaddgroup",primLVGLaddgroup},
 	#endif
 
 #endif
