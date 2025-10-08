@@ -845,6 +845,7 @@ OBJ primAsByteArray(int argCount, OBJ *args) {
 	} else if (IS_TYPE(arg, ListType)) {
 		byteCount = obj2int(FIELD(arg, 0));
 		result = newObj(ByteArrayType, (byteCount + 3) / 4, falseObj);
+		OBJ arg = args[0]; // update arg in case allocation caused a GC
 		if (result) {
 			setByteCountAdjust(result, byteCount);
 			uint8 *bytes = (uint8 *) &FIELD(result, 0);

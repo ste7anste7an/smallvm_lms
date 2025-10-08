@@ -1,11 +1,14 @@
 module 'KidsBits Color (VEML6040)' Input
 author MicroBlocks
-version 1 0 
+version 1 1 
 choices veml6040_I2Cports '2' '3' '4' '6' '7' '8' 
 description 'KidsBits STEM I2C color sensor (VEML6040).
 
+Hue return -1 and color return gray when sensing black, white, or gray.
+
 Technical info:
-https://www.vishay.com/en/product/84276/'
+https://www.vishay.com/en/product/84276/
+'
 
   spec ' ' 'veml6040_setExposure' '#SVG#square11#00c612 veml6040 set exposure _' 'menu.range:1-6' 4
   spec ' ' 'veml6040_setLED' '#SVG#square11#00c612 veml6040 set LED _ port _' 'bool menu.veml6040_I2Cports' true 2
@@ -21,7 +24,7 @@ https://www.vishay.com/en/product/84276/'
 to '_veml6040_adjustedRGBW' {
   local 'rgbw' ('_veml6040_rawRGBW')
   local 'r' ((72 * (at 1 rgbw)) / 100)
-  local 'g' ((71 * (at 2 rgbw)) / 100)
+  local 'g' ((66 * (at 2 rgbw)) / 100)
   local 'b' ((100 * (at 3 rgbw)) / 100)
   local 'max' (maximum (maximum (maximum r g) b) 1)
   atPut 1 rgbw ((255 * r) / max)
@@ -58,19 +61,25 @@ to '_veml6040_rawRGBW' {
 }
 
 to veml6040_color {
-  return ('[misc:hsvColor]' (veml6040_hue) 100 100)
-}
-
-to veml6040_hue {
   local 'rgbw' ('_veml6040_adjustedRGBW')
   local 'r' (at 1 rgbw)
   local 'g' (at 2 rgbw)
   local 'b' (at 3 rgbw)
   local 'min' (minimum (minimum r g) b)
-  r = (r - min)
-  g = (g - min)
-  b = (b - min)
-  return ('[misc:hue]' (((r << 16) | (g << 8)) | b))
+  local 'max' (maximum (maximum r g) b)
+  if ((max - min) < 50) {
+    comment 'Black, white, or gray: return gray'
+    return ('[misc:hsvColor]' 0 0 30)
+  } else {
+    r = (r - min)
+    g = (g - min)
+    b = (b - min)
+    return ('[misc:hsvColor]' ('[misc:hue]' (((r << 16) | (g << 8)) | b)) 100 100)
+  }
+}
+
+to veml6040_hue {
+  return ('[misc:hue]' (veml6040_color))
 }
 
 to veml6040_seesColor c optionalThreshold {

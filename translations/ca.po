@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-30 07:10+0200\n"
-"PO-Revision-Date: 2025-09-07 08:02+0000\n"
-"Last-Translator: Bernat Romagosa <bernat@romagosa.work>\n"
+"PO-Revision-Date: 2025-10-06 13:38+0000\n"
+"Last-Translator: Josep Ferràndiz <josep.ferrandiz@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/microblocks/ide/"
 "ca/>\n"
 "Language: ca\n"
@@ -20,7 +20,7 @@ msgstr "Sortida"
 
 #. Block in Output category
 msgid "set user LED _"
-msgstr "encén LED integrat _"
+msgstr "encén led integrat _"
 
 #. Block in Output category
 msgid "say _"
@@ -908,11 +908,11 @@ msgstr "fixa llindar capacitiu a _"
 
 #. BirdBrain Technologies Hummingbird kit library label
 msgid "Hummingbird LED _ _ %"
-msgstr "Hummingbird LED _ _ %"
+msgstr "Hummingbird led _ _ %"
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "Hummingbird Tri-LED _ R _ % G _ % B _ %"
-msgstr "Hummingbird Tri-LED _ Vermell _ % Verd _ % Blau _ %"
+msgstr "Hummingbird Tri-led _ Vermell _ % Verd _ % Blau _ %"
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "Hummingbird Position Servo _ _ °"
@@ -2886,15 +2886,16 @@ msgstr "interruptor de la Circuit Playground"
 
 #. DotStar LED library block
 msgid "attach _ DotStar LEDs to data pin _ clock pin _"
-msgstr "inicialitza tira de _ LEDs DotStar al pin de dades _ i pin de rellotge _"
+msgstr ""
+"inicialitza tira de _ leds DotStar al pin de dades _ i pin de rellotge _"
 
 #. DotStar LED library block
 msgid "set all DotStar LEDs to r _ g _ b _"
-msgstr "posa tots els LEDs DotStar a vermell _ verd _ blau _"
+msgstr "posa tots els leds DotStar a vermell _ verd _ blau _"
 
 #. DotStar LED library block
 msgid "set DotStar LED _ to r _ g _ b _"
-msgstr "posa el LEDs DotStar _ a vermell _ verd _ blau _"
+msgstr "posa el leds DotStar _ a vermell _ verd _ blau _"
 
 #. DotStar LED library block
 msgid "set DotStar brightness _"
@@ -3235,15 +3236,15 @@ msgstr "Mike fixa l'actuador D8 a _"
 
 #. Shield:bit library block
 msgid "sb LEDs off"
-msgstr "sb apaga els LED"
+msgstr "sb apaga els leds"
 
 #. Shield:bit library block
 msgid "sb set all LEDs to _"
-msgstr "sb posa tots els LEDs a _"
+msgstr "sb posa tots els leds a _"
 
 #. Shield:bit library block
 msgid "sb set LED _ (1-4) to _"
-msgstr "sb posa el LED _ (1-4) a _"
+msgstr "sb posa el led _ (1-4) a _"
 
 #. Shield:bit library block
 msgid "sb send audio to shield _"
@@ -3761,7 +3762,7 @@ msgstr "Home posa _ _ _ _ als Neopixels"
 
 #. Keyestudio Smart Home library block
 msgid "Home clear leds"
-msgstr "Home apaga els Neopixels"
+msgstr "Home apaga els Neopíxels"
 
 #. Keyestudio Smart Home library block
 msgid "Home electric consumption _"
@@ -4139,7 +4140,7 @@ msgstr "Posa els NeoPíxels del Wukong a _ _ _ _"
 
 #. Wukong robot library block
 msgid "Wukong set LED brightness to _"
-msgstr "Fixa la brillantor del LED a _"
+msgstr "Fixa la brillantor del led a _"
 
 #. Sphero-RVR robot library block
 msgid "wake"
@@ -4167,11 +4168,11 @@ msgstr "atura't amb direcció _"
 
 #. Sphero-RVR robot library block
 msgid "set RGB LED _ to red _ green _ blue _"
-msgstr "posa el LED RGB _ a vermell _ verd _ blau _"
+msgstr "posa el led RGB _ a vermell _ verd _ blau _"
 
 #. Sphero-RVR robot library block
 msgid "set all LEDs to red _ green _ blue _"
-msgstr "posa tots els LEDs RGB _ a vermell _ verd _ blau _"
+msgstr "posa tots els leds RGB _ a vermell _ verd _ blau _"
 
 #. Joystick:bit library block
 msgid "button _ is pressed"
@@ -4215,15 +4216,15 @@ msgstr "WuKong2040"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 rainbowLED _ color to _"
-msgstr "posa LED multicolor _ a _"
+msgstr "posa el led multicolor _ a _"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 rainbowLED _ R _ G _ B _ (0~255)"
-msgstr "posa LED multicolor _ a vermell _ verd _ blau _ (0~255)"
+msgstr "posa el led multicolor _ a vermell _ verd _ blau _ (0~255)"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 clear all rainbowLED"
-msgstr "apaga LEDs multicolor"
+msgstr "apaga els leds multicolor"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 motor _ speed to _ (-100~100)"
@@ -4247,11 +4248,11 @@ msgstr "Octopus"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus LED pin _ toggle to _"
-msgstr "Octopus pin LED _ canviar a _"
+msgstr "Octopus pin led _ canvia a _"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus LED pin _ brightness _ %"
-msgstr "Octopus pin LED _ brillantor al _ %"
+msgstr "Octopus pin led _ brillantor al _ %"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus motor fan pin _ speed to _ %"
@@ -6071,7 +6072,7 @@ msgstr "toca el brunzidor a _ Hz durant _ mil·lisegons"
 
 #. NeZha2 robot library block
 msgid "Nezha set LED _ to _"
-msgstr "posa el LED _ a _"
+msgstr "posa el led _ a _"
 
 #. NeZha2 robot library block
 msgid "Nezha set motor _ speed to _ (-100-100)"
@@ -6107,7 +6108,7 @@ msgstr "brillantor _ %"
 
 #. NeZha2 robot library block
 msgid "Nezha set all LEDs to _"
-msgstr "posa tots els LEDs a _"
+msgstr "posa tots els leds a _"
 
 #. NeZha2 robot library block
 msgid "Nezha crash sensor _"
@@ -6426,7 +6427,7 @@ msgstr "el meu ID de ràdio"
 
 #. 5x5 LED Display library block
 msgid "led image _"
-msgstr "imatge LED _"
+msgstr "imatge led _"
 
 #. Robo ESP32 library block
 msgid "RoboESP32 set motor _ power _ (-100 to 100)"
@@ -7002,7 +7003,7 @@ msgstr "MotionKit motor _ direcció _ velicitat _ (0~255)"
 
 #. Calliope MotionKit2 library block
 msgid "MotionKit LED _ _"
-msgstr "MotionKit LED _ _"
+msgstr "MotionKit led _ _"
 
 #. Calliope MotionKit2 library block
 msgid "color r _ g _ b _ (0~255)"
@@ -7075,3 +7076,513 @@ msgstr "inicialitza rellotge _"
 #. Real Time Clock library block
 msgid "clock _"
 msgstr "rellotge _"
+
+#. Fractions library block
+msgid "fract _ − _"
+msgstr "fracc _ − _"
+
+#. CoCube Module library block
+msgid "ASR get command"
+msgstr "ASR obtenir comanda"
+
+#. CoCube Module library block
+msgid "ASR play command _"
+msgstr "ASR executa la comanda _"
+
+#. CoCube Module library block
+msgid "DLight level"
+msgstr "nivell DLight"
+
+#. CoCube Sengo1 library choice
+msgid "Color Recog"
+msgstr "reconeixement de color"
+
+#. CoCube Sengo1 library choice
+msgid "Blob Detect"
+msgstr "detecció de zona"
+
+#. CoCube Sengo1 library choice
+msgid "Ball Detect"
+msgstr "detecció de pilota"
+
+#. CoCube Sengo1 library choice
+msgid "Line Detect"
+msgstr "detecció de línia"
+
+#. CoCube Sengo1 library choice
+msgid "Face Recog"
+msgstr "reconeixement de cara"
+
+#. CoCube Sengo1 library choice
+msgid "QRcode"
+msgstr "codi QR"
+
+#. CoCube Sengo1 library choice
+msgid "black"
+msgstr "negre"
+
+#. CoCube Sengo1 library choice
+msgid "white"
+msgstr "blanc"
+
+#. CoCube Sengo1 library choice
+msgid "blue"
+msgstr "blau"
+
+#. CoCube Sengo1 library choice
+msgid "x1"
+msgstr "x1"
+
+#. CoCube Sengo1 library choice
+msgid "y1"
+msgstr "y1"
+
+#. CoCube Sengo1 library choice
+msgid "x2"
+msgstr "x2"
+
+#. CoCube Sengo1 library choice
+msgid "y2"
+msgstr "y2"
+
+#. CoCube Sengo1 library choice
+msgid "degree"
+msgstr "angle"
+
+#. CoCube Sengo1 library choice
+msgid "h"
+msgstr "alçada"
+
+#. CoCube Sengo1 library choice
+msgid "w"
+msgstr "amplada"
+
+#. CoCube Sengo1 library choice
+msgid "Card Recog"
+msgstr "reconeixement del mapa de coord"
+
+#. CoCube Sengo1 library choice
+msgid "R"
+msgstr "R"
+
+#. CoCube Sengo1 library choice
+msgid "G"
+msgstr "G"
+
+#. CoCube Sengo1 library choice
+msgid "B"
+msgstr "B"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 read QRcode"
+msgstr "Sengo1 llegeix el codi QR"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 change algorithm _"
+msgstr "Sengo1 canvia l'algoritme _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 delete face ID _ (1-10)"
+msgstr "Sengo1 esborra la cara ID _ (1-10)"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 detect ball (ping pong or tennis)"
+msgstr "Sengo1 detecta la pilota (de ping-pong o tenis)"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get QRcode _"
+msgstr "Sengo1 obté el codi QR _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get ball _"
+msgstr "Sengo1 obté la pilota _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get blob _"
+msgstr "Sengo1 obté el blob _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get card _"
+msgstr "Sengo1 obté la targeta _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get color _"
+msgstr "Sengo1 obté el color _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get face _"
+msgstr "Sengo1 obté la cara _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get face ID"
+msgstr "Sengo1 obté l'ID de la cara"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 get line _"
+msgstr "Sengo1 obté la línia _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 init"
+msgstr "Sengo1 inicialitza"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 read blob"
+msgstr "Sengo1 llegeix el blob"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 read card"
+msgstr "Sengo1 llegeix la targeta"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 read color"
+msgstr "Sengo1 llegeix el color"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 record face ID _ (1-10)"
+msgstr "Sengo1 enregistra la cara ID _ (1-10)"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 reset"
+msgstr "Sengo1 reinicialitza"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 set blob detect property color _ width _ height _"
+msgstr ""
+"Sengo1 estableix la propietat de detecció de blob color _ amplada _ alçada _"
+
+#. CoCube Sengo1 library block
+msgid "Sengo1 set color recog area x _ y _ width _ height _ (0-100)"
+msgstr ""
+"Sengo1 estableix l'àrea de reconeixement de color x _ y _ amplada _ alçada _ "
+"(0-100)"
+
+#. CoCube Sengo2 library choice
+msgid "16H5"
+msgstr "16H5"
+
+#. CoCube Sengo2 library choice
+msgid "25H9"
+msgstr "25H9"
+
+#. CoCube Sengo2 library choice
+msgid "36H11"
+msgstr "36H11"
+
+#. CoCube Sengo2 library choice
+msgid "AprilTag"
+msgstr "AprilTag"
+
+#. CoCube Sengo2 library choice
+msgid "Deep Learning"
+msgstr "Deep Learning"
+
+#. CoCube Sengo2 library choice
+msgid "Obj20Class"
+msgstr "Obj20Class"
+
+#. CoCube Sengo2 library choice
+msgid "Motion Detect"
+msgstr "detecta moviment"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read QRcode"
+msgstr "Sengo2 llegeix el codi QR"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 change algorithm _"
+msgstr "Sengo2 canvia l'algoritme _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 delete face ID _ (1-10)"
+msgstr "Sengo2 esborra la cara ID _ (1-10)"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 delete learning ID _ (1-15)"
+msgstr "Sengo2 esborra la ID d'aprenentatge _ (1-15)"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get AprilTag _"
+msgstr "Sengo2 obté l'AprilTag _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get Obj20Class _"
+msgstr "Sengo2 obté l'Obj20Class _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get QRcode _"
+msgstr "Sengo2 obté el codi QR _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get blob _"
+msgstr "Sengo2 obté el blob _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get card _"
+msgstr "Sengo2 obté la targeta _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get color _"
+msgstr "Sengo2 obté el color _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get face ID"
+msgstr "Sengo2 obté l'ID de la cara"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get learning ID"
+msgstr "Sengo2 obté la ID d'aprenentatge"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get line _"
+msgstr "Sengo2 obté la línia _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 get motion _"
+msgstr "Sengo2 obté el moviment _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 init"
+msgstr "Sengo2 inicialitza"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read AprilTag"
+msgstr "Sengo2 llegeix l'AprilTag"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read Obj20Class"
+msgstr "Sengo2 llegeix l'Obj20Class"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read blob"
+msgstr "Sengo2 llegeix el blob"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read card"
+msgstr "Sengo2 llegeix la targeta"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 read color"
+msgstr "Sengo2 llegeix el color"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 record face ID _ (1-10)"
+msgstr "Sengo2 enregistra ID de la cara _ (1-10)"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 record learning ID _ (1-15)"
+msgstr "Sengo2 enregistra la ID d'aprenentatge _ (1-15)"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 reset"
+msgstr "Sengo2 reinicialitza"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 set AprilTag type _"
+msgstr "Sengo2 estableix el tipus d'AprilTag _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 set blob detect property color _ width _ height _"
+msgstr ""
+"Sengo2 estableix la propietat de detecció de blob color _ amplada _ alçada _"
+
+#. CoCube Sengo2 library block
+msgid "Sengo2 set color recog area x _ y _ width _ height _ (0-100)"
+msgstr ""
+"Sengo2 estableix l'àrea de reconeixement de color x _ y _ amplada _ alçada _ "
+"(0-100)"
+
+#. Foxbit library block
+msgid "fb scroll text _ _"
+msgstr "fb desplaça el text _ _"
+
+#. KidsIOT library choice
+msgid "kiot;AD key"
+msgstr "tecla AD"
+
+#. KidsIOT library choice
+msgid "kiot;gas (MQ-135)"
+msgstr "gas (MQ-135)"
+
+#. KidsIOT library choice
+msgid "kiot;film pressure"
+msgstr "pressió de la làmina"
+
+#. KidsIOT library choice
+msgid "kiot;flame"
+msgstr "flama"
+
+#. KidsIOT library choice
+msgid "kiot;light"
+msgstr "llum"
+
+#. KidsIOT library choice
+msgid "kiot;microphone"
+msgstr "micròfon"
+
+#. KidsIOT library choice
+msgid "kiot;potentiometer"
+msgstr "potenciòmetre"
+
+#. KidsIOT library choice
+msgid "kiot;steam"
+msgstr "vapor"
+
+#. KidsIOT library choice
+msgid "kiot;UV light"
+msgstr "llum ultraviolada"
+
+#. KidsIOT library choice
+msgid "kiot;active buzzer"
+msgstr "brunzidor actiu"
+
+#. KidsIOT library choice
+msgid "kiot;LED"
+msgstr "led"
+
+#. KidsIOT library choice
+msgid "kiot;laser"
+msgstr "làser"
+
+#. KidsIOT library choice
+msgid "kiot;relay"
+msgstr "relé"
+
+#. KidsIOT library choice
+msgid "kiot;button pressed?"
+msgstr "botó premut?"
+
+#. KidsIOT library choice
+msgid "kiot;humidity"
+msgstr "humitat"
+
+#. KidsIOT library choice
+msgid "kiot;magnet detected?"
+msgstr "imant detectat?"
+
+#. KidsIOT library choice
+msgid "kiot;movement detected?"
+msgstr "moviment detectat?"
+
+#. KidsIOT library choice
+msgid "kiot;obstacle?"
+msgstr "obstacle?"
+
+#. KidsIOT library choice
+msgid "kiot;photo sensor interrupted?"
+msgstr "sensor fotoelèctric interromput?"
+
+#. KidsIOT library choice
+msgid "kiot;receive IR code"
+msgstr "rep el codi IR"
+
+#. KidsIOT library choice
+msgid "kiot;temperature (Celsius)"
+msgstr "temperatura (ºC)"
+
+#. KidsIOT library choice
+msgid "kiot;tilt?"
+msgstr "inclinació?"
+
+#. KidsIOT library choice
+msgid "kiot;touching?"
+msgstr "tocant?"
+
+#. KidsIOT library choice
+msgid "X"
+msgstr "X"
+
+#. KidsIOT library choice
+msgid "Y"
+msgstr "Y"
+
+#. KidsIOT library choice
+msgid "kiot;rotation"
+msgstr "rotació"
+
+#. KidsIOT library choice
+msgid "kiot;clockwise"
+msgstr "sentit horari"
+
+#. KidsIOT library choice
+msgid "kiot;counter-clockwise"
+msgstr "sentit antihorari"
+
+#. KidsIOT library choice
+msgid "kiot;stop"
+msgstr "atura"
+
+#. KidsIOT library choice
+msgid "kiot;left"
+msgstr "esquerra"
+
+#. KidsIOT library choice
+msgid "kiot;right"
+msgstr "dreta"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff RGB color _ port _"
+msgstr "#SVG#square11#ffffff RGB color _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ff0000 analog _ port _"
+msgstr "#SVG#square11#ff0000 analògic _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff digital _ port _"
+msgstr "#SVG#square11#0070ff digital _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 distance (cm) port _"
+msgstr "#SVG#square11#fff000 distància (cm) port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 line sensor _ port _"
+msgstr "#SVG#square11#fff000 sensor de línia _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 get _"
+msgstr "#SVG#square11#00c612 obté _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 joystick _"
+msgstr "#SVG#square11#00c612 joystick _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff play note _ octave _ for _ port _"
+msgstr "#SVG#square11#0070ff toca la nota _ octava _ durant _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff rotary encoder _ port _"
+msgstr "#SVG#square11#ffffff codificador rotatori _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff set NeoPixels _ _ _ _ port _"
+msgstr "#SVG#square11#0070ff posa NeoPíxels _ _ _ _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff set _ _ port _"
+msgstr "#SVG#square11#0070ff posa _ _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 set motor _ port _"
+msgstr "#SVG#square11#fff000 gir del motor _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 set year _ month _ day _"
+msgstr "#SVG#square11#00c612 posa any _ mes _ dia _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 set hours _ minutes _ seconds _"
+msgstr "#SVG#square11#00c612 posa hores _ minuts _ segons _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff temperature (DS18B20) _ port _"
+msgstr "#SVG#square11#0070ff temperatura (DS18B20) _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff traffic light red _ yellow _ green _ port _"
+msgstr "#SVG#square11#ffffff semàfor vermell _ groc _ verd _ port _"
+
+#. Examples folder
+msgid "folder;MakerPort"
+msgstr "MakerPort"

@@ -1,53 +1,88 @@
 module 'Voice Recognition'
-author 'José García Yeste'
-version 1 0 
-description 'Offline Language Learning Voice Recognition Sensor I2C
+author 'José García Yeste, Ralf Krause'
+version 1 1 
+choices vrCommands '1 custom wake-up' '2 hello robot' '  ----------' '5 custom command one' '6 custom command two' '7 custom command three' '8 custom command four' '9 custom command five' '10 custom command six' '11 custom command seven' '12 custom command eight' '13 custom command nine' '14 custom command ten' '15 custom command eleven' '16 custom command twelve' '17 custom command thirteen' '18 custom command fourteen' '19 custom command fifteen' '20 custom command sixteen' '21 custom command seventeen' '22 go forward' '23 retreat' '24 park a car' '25 turn left ninety degrees' '26 turn left forty-five degrees' '27 turn left thirty degrees' '28 turn right ninety degrees' '29 turn right forty-five degrees' '30 turn right thirty degrees' '31 shift down a gear' '32 line tracking mode' '33 light tracking mode' '34 Bluetooth mode' '35 obstacle avoidance mode' '36 face recognition' '37 object tracking' '38 object recognition' '39 line tracking' '40 color recognition' '41 tag recognition' '42 object sorting' '43 QR code recognition' '44 general settings' '45 clear screen' '46 learn once' '47 forget' '48 load model' '49 save model' '50 take photos and save them' '51 save and return' '52 display number zero' '53 display number one' '54 display number two' '55 display number three' '56 display number four' '57 display number five' '58 display number six' '59 display number seven' '60 display number eight' '61 display number nine' '62 display smiley face' '63 display crying face' '64 display heart' '65 turn off dot matrix' '66 read current posture' '67 read ambient light' '68 read compass' '69 read temperature' '70 read acceleration' '71 reading sound intensity' '72 calibrate electronic gyroscope' '73 turn on the camera' '74 turn off the camera' '75 turn on the fan' '76 turn off the fan' '77 turn fan speed to gear one' '78 turn fan speed to gear two' '79 turn fan speed to gear three' '80 start oscillating' '81 stop oscillating' '82 reset' '83 set servo to ten degrees' '84 set servo to thirty degrees' '85 set servo to forty-five degrees' '86 set servo to sixty degrees' '87 set servo to ninety degrees' '88 turn on the buzzer' '89 turn off the buzzer' '90 turn on the speaker' '91 turn off the speaker' '92 play music' '93 stop playing' '94 the last track' '95 the next track' '96 repeat this track' '97 volume up' '98 volume down' '99 change volume to maximum' '100 change volume to minimum' '101 change volume to medium' '102 play poem' '103 turn on the light' '104 turn off the light' '105 brighten the light' '106 dim the light' '107 adjust brightness to maximum' '108 adjust brightness to minimum' '109 increase color temperature' '110 decrease color temperature' '111 adjust color temperature to maximum' '112 adjust color temperature to minimum' '113 daylight mode' '114 moonlight mode' '115 color mode' '116 set to red' '117 set to orange' '118 set to yellow' '119 set to green' '120 set to cyan' '121 set to blue' '122 set to purple' '123 set to white' '124 turn on ac' '125 turn off ac' '126 increase temperature' '127 decrease temperature' '128 cool mode' '129 heat mode' '130 auto mode' '131 dry mode' '132 fan mode' '133 enable blowing up and down' '134 disable blowing up and down' '135 enable blowing right and left' '136 disable blowing right and left' '137 open the window' '138 close the window' '139 open curtain' '140 close curtain' '141 open the door' '142 close the door' '  ----------' '200 learning wake word' '201 learning command word' '202 re-learn' '203 exit learning' '204 I want to delete' '205 delete wake word' '206 delete command word' '207 exit deleting' '208 delete all' 
+description 'Offline Language Learning Voice Recognition Sensor
 
 https://www.dfrobot.com/product-2665.html
 '
+variables _vr_i2cAddr 
 
-  spec 'r' 'vrGetCmd' 'voice command'
-  spec ' ' 'vrPlayCmd' 'voice play command _' 'auto' 142
+  spec 'r' 'vr_GetCmd' 'voice command'
+  spec 'r' 'vr_Cmd' 'voice id _' 'menu.vrCommands' '62 display smiley face'
+  spec ' ' 'vr_PlayCmd' 'voice play command _' 'num' 45
   space
-  spec ' ' 'vrSetVolume' 'voice volume _' 'auto' 10
-  spec ' ' 'vrSetMuteMode' 'voice mute mode _' 'bool' true
+  spec ' ' 'vr_SetMuteMode' 'voice mute mode _' 'bool' true
+  spec ' ' 'vr_SetVolume' 'voice volume _' 'num' 10
+  spec 'r' 'vr_GetVolume' 'voice volume'
   space
-  spec ' ' 'vrSetWakeTime' 'voice wake time _' 'auto' 15
-  spec 'r' 'vrGetWakeUpTime' 'voice wake time'
-  spec 'r' '_vrReadReg' '_voice read reg _' 'auto' 2
+  spec ' ' 'vr_SetWakeTime' 'voice wake time _' 'num' 15
+  spec 'r' 'vr_GetWakeUpTime' 'voice wake time'
+  space
+  spec ' ' '_vr_Init' 'voice init'
 
-to '_vrReadReg' reg {
-  '[sensors:i2cWrite]' (hexToInt '64') ('[data:makeList]' reg) false
-  local 'data' ('[data:makeList]' 0)
-  '[sensors:i2cRead]' (hexToInt '64') data
-  return (at 1 data)
+to '_vr_Init' {
+  if ('[sensors:i2cExists]' (hexToInt '64')) {
+    if (_vr_i2cAddr == (hexToInt '64')) {
+      return (booleanConstant true)
+    } else {
+      comment 'init all parameters and wake up 
+the voice recognition sensor'
+      _vr_i2cAddr = (hexToInt '64')
+      vr_SetVolume 10
+      vr_SetMuteMode false
+      vr_SetWakeTime 15
+      vr_PlayCmd 1
+      waitMillis 1000
+    }
+  } else {
+    sayIt 'No voice recognition sensor found!'
+  }
 }
 
-to vrGetCmd {
-  return ('_vrReadReg' 2)
-  waitMillis 50
+to vr_Cmd id {
+  return ('[data:convertType]' (at 1 ('[data:split]' id ' ')) 'number')
 }
 
-to vrGetWakeUpTime {
-  return ('_vrReadReg' 6)
+to vr_GetCmd {
+  '_vr_Init'
+  return (i2cGet _vr_i2cAddr 2)
 }
 
-to vrPlayCmd cmd {
-  i2cSet (hexToInt '64') 3 cmd
+to vr_GetVolume {
+  '_vr_Init'
+  return (i2cGet _vr_i2cAddr 5)
+}
+
+to vr_GetWakeUpTime {
+  '_vr_Init'
+  return (i2cGet _vr_i2cAddr 6)
+}
+
+to vr_PlayCmd cmd {
+  '_vr_Init'
+  cmd = (maximum cmd 1)
+  cmd = (minimum cmd 255)
+  i2cSet _vr_i2cAddr 3 cmd
   waitMillis 1000
 }
 
-to vrSetMuteMode mute {
-  i2cSet (hexToInt '64') 4 ('[data:convertType]' mute 'number')
+to vr_SetMuteMode mute {
+  '_vr_Init'
+  i2cSet _vr_i2cAddr 4 ('[data:convertType]' mute 'number')
 }
 
-to vrSetVolume volume {
+to vr_SetVolume volume {
+  '_vr_Init'
   volume = (maximum volume 1)
   volume = (minimum volume 20)
-  i2cSet (hexToInt '64') 5 volume
+  i2cSet _vr_i2cAddr 5 volume
 }
 
-to vrSetWakeTime wakeTime {
-  i2cSet (hexToInt '64') 6 wakeTime
+to vr_SetWakeTime wakeTime {
+  '_vr_Init'
+  wakeTime = (maximum wakeTime 1)
+  wakeTime = (minimum wakeTime 255)
+  i2cSet _vr_i2cAddr 6 wakeTime
 }
 

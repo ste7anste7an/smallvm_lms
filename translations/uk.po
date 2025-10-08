@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2025-02-03 16:24+0200\n"
-"PO-Revision-Date: 2025-09-02 09:02+0000\n"
+"PO-Revision-Date: 2025-09-25 14:30+0000\n"
 "Last-Translator: Andriy Utkin <andriy_utkin@fastmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/microblocks/"
 "ide/uk/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.13.1-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #. "Output" blocks category label
 msgid "cat;Output"
@@ -6372,3 +6372,18 @@ msgstr "Ініціалізувати i2c(auto) скинути пін №_ пом
 #. Real Time Clock library block
 msgid "set hours _ minutes _ seconds _"
 msgstr "встановити годин _ хвилин _ секунд _"
+
+#. CoCube Sengo2 library block
+#, fuzzy
+msgid "Sengo2 set color recog area x _ y _ width _ height _ (0-100)"
+msgstr "Sengo2: задати зону розпізнавання кольору: x _ y _ ширина _ висота _"
+
+#. Calliope NeoPixel library block
+#, fuzzy
+msgid "Calliope set all NeoPixels to _"
+msgstr "Calliope: встановити всі НеоПікселі в _"
+
+#. Calliope NeoPixel library block
+#, fuzzy
+msgid "Calliope set NeoPixels _ _ _"
+msgstr "Calliope: встановити НеоПікселі _ _ _"

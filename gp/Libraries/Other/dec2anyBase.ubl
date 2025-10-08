@@ -1,14 +1,16 @@
 module dec2anyBase
 author 'Turgut Guneysu'
-version 1 2 
+version 1 3 
 choices BaseMenu '2' '8' '16' '32' 
 description 'Converts DEC numbers into any Base system.
 eg: BIN (base=2) or OCT (base=8) or HEX (base=16)
 
-Changes: fix padding
+Changes: 
+- fix padding
+- expand padding to 32 bits
 '
 
-  spec 'r' 'dec2any Base' 'dec2any Base _ Dec# _ PadLen _ Rev _' 'str.BaseMenu num num bool' '16' 255 4 false
+  spec 'r' 'dec2any Base' 'dec2any Base _ Dec# _ PadLen _ Rev _' 'str.BaseMenu auto auto bool' '16' '255' '4' false
 
 to 'dec2any Base' base decNo padLength reversed {
   local '_answer' ('[data:makeList]')
@@ -27,7 +29,7 @@ to 'dec2any Base' base decNo padLength reversed {
     '[data:delete]' 'last' _answer
   }
   if (and (padLength > 0) ((size _output) < padLength)) {
-    _output = ('[data:join]' ('[data:copyFromTo]' '0000000000000000' 1 (padLength - (size _output))) _output)
+    _output = ('[data:join]' ('[data:copyFromTo]' '00000000000000000000000000000000' 1 (padLength - (size _output))) _output)
   }
   if reversed {
     _answer = ('[data:split]' _output '')

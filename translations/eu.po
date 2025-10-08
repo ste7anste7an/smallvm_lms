@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2025-01-10 12:14+0200\n"
-"PO-Revision-Date: 2025-01-14 17:00+0000\n"
-"Last-Translator: Bernat Romagosa <bernat@romagosa.work>\n"
+"PO-Revision-Date: 2025-09-25 22:01+0000\n"
+"Last-Translator: Alexander Gabilondo <alexgabi@openmailbox.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/microblocks/ide/"
 "eu/>\n"
 "Language: eu\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #. "Output" blocks category label
 msgid "cat;Output"
@@ -84,19 +84,19 @@ msgstr ""
 
 #. Block in Input category
 msgid "BLE id"
-msgstr ""
+msgstr "BLE identifikadorea"
 
 #. Block in Input category
 msgid "BLE connected"
-msgstr ""
+msgstr "BLE konektatuta"
 
 #. Block in Input category
 msgid "connected to IDE"
-msgstr ""
+msgstr "IDEra konektatuta"
 
 #. "Pins" blocks category label
 msgid "cat;Pins"
-msgstr ""
+msgstr "Pinak"
 
 #. Block in Pins category
 msgid "read digital pin _"
@@ -120,27 +120,27 @@ msgstr ""
 
 #. Block in Pins category
 msgid "analog pins"
-msgstr ""
+msgstr "pin analogikoak"
 
 #. Block in Pins category
 msgid "digital pins"
-msgstr ""
+msgstr "pin digitalak"
 
 #. "Control" blocks category label
 msgid "cat;Control"
-msgstr ""
+msgstr "Kontrola"
 
 #. Block in Control category
 msgid "when started"
-msgstr ""
+msgstr "abiatzean"
 
 #. Block in Control category
 msgid "when button _ pressed"
-msgstr ""
+msgstr "_ botoia sakatzean"
 
 #. Block in Control category
 msgid "forever _"
-msgstr ""
+msgstr "betirako _"
 
 #. Block in Control category
 msgid "repeat _ _"
@@ -148,23 +148,23 @@ msgstr ""
 
 #. Block in Control category
 msgid "wait _ millisecs"
-msgstr ""
+msgstr "itxaron _ milisegundo"
 
 #. Block in Control category
 msgid "if _ _"
-msgstr ""
+msgstr "baldin __"
 
 #. Block in Control category
 msgid "if _ _ else _"
-msgstr ""
+msgstr "baldin__ bestela _"
 
 #. Block in Control category
 msgid "else if _ _"
-msgstr ""
+msgstr "bestela baldin __"
 
 #. Block in Control category
 msgid "else"
-msgstr ""
+msgstr "bestela"
 
 #. Block in Control category
 msgid "when _"
@@ -176,19 +176,19 @@ msgstr ""
 
 #. Block in Control category
 msgid "wait _ microsecs"
-msgstr ""
+msgstr "itxaron _ mikrosegundo"
 
 #. Block in Control category
 msgid "return _"
-msgstr ""
+msgstr "itzuli _"
 
 #. Block in Control category
 msgid "when _ received"
-msgstr ""
+msgstr "_ jasotzean"
 
 #. Example message for [ when _ received ] and [ broadcast _ ] blocks
 msgid "go!"
-msgstr ""
+msgstr "aurrera!"
 
 #. Block in Control category
 msgid "broadcast _"
@@ -200,11 +200,11 @@ msgstr ""
 
 #. Example content for the comment block
 msgid "How this works..."
-msgstr ""
+msgstr "Horrela funtzionatzen du..."
 
 #. Block in Control category
 msgid "range _ to _"
-msgstr ""
+msgstr "_tik _rako tartea"
 
 #. Block in Control category
 msgid "by _"
@@ -216,55 +216,55 @@ msgstr ""
 
 #. Block in Control category
 msgid "repeat until _ _"
-msgstr ""
+msgstr "errepikatu __ arte"
 
 #. Block in Control category
 msgid "stop this task"
-msgstr ""
+msgstr "gelditu zeregin hau"
 
 #. Block in Control category
 msgid "stop other tasks"
-msgstr ""
+msgstr "gelditu beste zereginak"
 
 #. Block in Control category
 msgid "stop all"
-msgstr ""
+msgstr "gelditu denak"
 
 #. Block in Control category
 msgid "last message"
-msgstr ""
+msgstr "azken mezua"
 
 #. Block in Control category
 msgid "arg _ default _"
-msgstr ""
+msgstr "parametro _ lehenetsia _"
 
 #. Block in Control category
 msgid "exit loop"
-msgstr ""
+msgstr "irten begiztatik"
 
 #. Example default value for the ( arg _ default _ ) block
 msgid "default"
-msgstr ""
+msgstr "lehenetsia"
 
 #. Block in Control category
 msgid "call _"
-msgstr ""
+msgstr "deitu _"
 
 #. Example value for ( call _ ) block
 msgid "function name"
-msgstr ""
+msgstr "funtzioaren izena"
 
 #. Example string. Tells the user this input accepts a list of parameters.
 msgid "parameter list"
-msgstr ""
+msgstr "parametroen zerrenda"
 
 #. Block in Control category
 msgid "with _"
-msgstr ""
+msgstr "honekin _"
 
 #. "Operators" blocks category label
 msgid "cat;Operators"
-msgstr ""
+msgstr "Eragileak"
 
 #. Block in Operators category
 msgid "_ mod _"
@@ -272,7 +272,7 @@ msgstr ""
 
 #. Block in Operators category
 msgid "abs _"
-msgstr ""
+msgstr "_ren balio absolutua"
 
 #. Block in Operators category
 msgid "min _ _"
@@ -284,56 +284,56 @@ msgstr ""
 
 #. Block in Operators category
 msgid "random _ to _"
-msgstr ""
+msgstr "ausazkoa _tik _ra"
 
 #. Block in Operators category
 msgid "not _"
-msgstr ""
+msgstr "ez _"
 
 #. Block in Operators category
 msgid "_ and _"
-msgstr ""
+msgstr "_ eta _"
 
 #. Block in Operators category
 msgid "and _"
-msgstr ""
+msgstr "eta _"
 
 #. Block in Operators category
 msgid "_ or _"
-msgstr ""
+msgstr "_ edo _"
 
 #. Block in Operators category
 msgid "or _"
-msgstr ""
+msgstr "edo _"
 
 #. Block in Operators category
 msgid "_ is a _"
-msgstr ""
+msgstr "_ _ da"
 
 #. Block in Operators category
 msgid "convert _ to _"
-msgstr ""
+msgstr "bihurtu _ _"
 
 #. Block in Operators category
 msgid "if _ then _ else _"
-msgstr ""
+msgstr "baldin _ orduan _ bestela _"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "boolean"
-msgstr ""
+msgstr "boolearra"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "number"
-msgstr ""
+msgstr "zenbakia"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "string"
-msgstr ""
+msgstr "testua"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 #. Also label of ( list < > ) block in Data category
 msgid "list"
-msgstr ""
+msgstr "zerrenda"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "byte array"
@@ -341,7 +341,7 @@ msgstr ""
 
 #. "Advanced" label for advanced blocks in the palette
 msgid "cat;Advanced:"
-msgstr ""
+msgstr "Aurreratua:"
 
 #. Block in Operators category
 msgid "rescale _ from ( _ , _ ) to ( _ , _ )"
@@ -349,27 +349,27 @@ msgstr ""
 
 #. Block in Operators category
 msgid "hex _"
-msgstr ""
+msgstr "hex _"
 
 #. Block in Operators category
 msgid "sqrt _"
-msgstr ""
+msgstr "_ren erro karratua"
 
 #. "Variables" blocks category label
 msgid "cat;Variables"
-msgstr ""
+msgstr "Aldagaiak"
 
 #. Button on top of "Variables" category
 msgid "Add a variable"
-msgstr ""
+msgstr "Gehitu aldagai bat"
 
 #. Button on top of "Variables" category
 msgid "Delete a variable"
-msgstr ""
+msgstr "Ezabatu aldagai bat"
 
 #. New variable dialog
 msgid "New variable name?"
-msgstr ""
+msgstr "Aldagai berriaren izena?"
 
 #. Block in Variables category
 msgid "set _ to _"
@@ -385,27 +385,27 @@ msgstr ""
 
 #. "Data" blocks category label
 msgid "cat;Data"
-msgstr ""
+msgstr "Datuak"
 
 #. Example value for the ( list < > ) block
 msgid "cat"
-msgstr ""
+msgstr "katu"
 
 #. Example value for the ( list < > ) block
 msgid "dog"
-msgstr ""
+msgstr "txakur"
 
 #. Example value for the ( list < > ) block
 msgid "bird"
-msgstr ""
+msgstr "txori"
 
 #. Example value for the ( list < > ) block
 msgid "fish"
-msgstr ""
+msgstr "arrain"
 
 #. Block in Data category
 msgid "length of _"
-msgstr ""
+msgstr "_ren luzera"
 
 #. Block in Data category
 msgid "item _ of _"
@@ -421,7 +421,7 @@ msgstr ""
 
 #. Block in Data category
 msgid "add _ to list _"
-msgstr ""
+msgstr "gehitu _ _ zerrendara"
 
 #. Block in Data category
 msgid "join _ _"

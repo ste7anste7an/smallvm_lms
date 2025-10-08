@@ -949,7 +949,7 @@ async function webSerialConnect() {
 	webSerialDisconnect();
 	GP_webSerialPort = await navigator.serial.requestPort({filters: vendorIDs}).catch((e) => { console.log(e); });
 	if (!GP_webSerialPort) return; // no serial port selected
-	await GP_webSerialPort.open({ baudRate: 115200 });
+	await GP_webSerialPort.open({ baudRate: 115200 }).catch((e) => { window.alert(e); return; });
 	GP_webSerialReader = await GP_webSerialPort.readable.getReader();
 	webSerialReadLoop();
 }

@@ -32,3 +32,4 @@ JohnWorkInProgress
 *.exe
 *.deb
 *.pem
+electron/node_modules/*

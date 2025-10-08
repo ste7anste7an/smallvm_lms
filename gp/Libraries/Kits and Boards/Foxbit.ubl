@@ -1,17 +1,21 @@
 module Foxbit
 author MicroBlocks
-version 1 1 
-depends '_Temperature Humidity (AHT20)' NeoPixel Tone 
+version 1 3 
+depends '_Temperature Humidity (AHT20)' NeoPixel Tone _dec2anyBase 
 choices foxbit_touchPin '0' '1' '2' '4' '6' '12' logo 
 description 'Library for the KidsBits Foxbit.
+Changes:
+- add full LED panel scroll.
 '
-variables _fb_avg_current _fb_avg_loudness 
+variables _fb_avg_current _fb_avg_loudness _np_pixels 
 
   spec ' ' 'foxbit_beep' 'fb beep for _ millisecs' 'num' 100
   space
   spec ' ' 'foxbit_setNeoPixelColors' 'fb set NeoPixels #BR# _ _ _ _ _ _ _ #BR# _ _ _ _ _ _ _ #BR# _ _ _ _ _ _ _ #BR# _ _ _ _ _ _ _ #BR# _ _ _ _ _ _ _' 'color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color color'
   spec ' ' 'foxbit_setAllNeoPixels' 'fb set all NeoPixels _' 'color'
   spec ' ' 'foxbit_clearNeoPixels' 'fb clear NeoPixels'
+  space
+  spec ' ' 'foxbit_scroll text _' 'fb scroll text _ _' 'str color' 'hello'
   space
   spec 'r' 'foxbit_isTouched' 'fb pin _ touched?' 'menu.foxbit_touchPin' 'logo'
   space
@@ -21,6 +25,23 @@ variables _fb_avg_current _fb_avg_loudness
   spec 'r' 'foxbit_light' 'fb light level'
   spec 'r' 'foxbit_loudness' 'fb loudness'
   spec 'r' 'foxbit_current' 'fb current'
+  space
+  spec ' ' '_foxbit_clearLastCol' '_fb clearLastCol'
+  spec ' ' '_foxbit_shiftLeft' '_fb shiftLeft'
+
+to '_foxbit_clearLastCol' {
+  for i ('[data:range]' 7 35 7) {
+    atPut i _np_pixels 0
+  }
+}
+
+to '_foxbit_shiftLeft' {
+  for row ('[data:range]' 1 29 7) {
+    for col ('[data:range]' 0 5) {
+      atPut (row + col) _np_pixels (at (row + (col + 1)) _np_pixels)
+    }
+  }
+}
 
 to foxbit_beep msecs {
   'attach buzzer to pin' 32
@@ -43,6 +64,7 @@ to foxbit_humidity {
 }
 
 to foxbit_isTouched edgePinOrLogo {
+  if ('Foxbit' != (boardType)) {return (booleanConstant false)}
   if ('logo' == edgePinOrLogo) {edgePinOrLogo = 27}
   return (('[sensors:touchRead]' (0 + edgePinOrLogo)) < 35)
 }
@@ -57,12 +79,37 @@ to foxbit_loudness {
   return _fb_avg_loudness
 }
 
+to 'foxbit_scroll text _' text color {
+  neoPixelAttach 35 ''
+  local 'delay' 100
+  for i (size text) {
+    local 'letterBmp' ('dec2any Base' '2' ('[display:mbShapeForLetter]' ('[data:unicodeAt]' i text)) 25 true)
+    for letCol 5 {
+      local 'bitIdx' letCol
+      for i ('[data:range]' 7 35 7) {
+        atPut i _np_pixels (ifExpression ((at bitIdx letterBmp) == ('[data:toString]' '1')) color 0)
+        bitIdx += 5
+      }
+      '_foxbit_shiftLeft'
+      '_NeoPixel_update'
+      waitMillis delay
+    }
+    '_foxbit_clearLastCol'
+    '_NeoPixel_update'
+  }
+  repeat 6 {
+    '_foxbit_shiftLeft'
+    '_NeoPixel_update'
+    waitMillis delay
+  }
+}
+
 to foxbit_setAllNeoPixels color {
   neoPixelAttach 35 ''
   neoPixelSetAllToColor color
 }
 
-to foxbit_setNeoPixelColors c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c21 c22 c23 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 {
+to foxbit_setNeoPixelColors c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 {
   neoPixelAttach 35 ''
   for i 35 {
     atPut i _np_pixels (argOrDefault i (neoPixel_colorSwatch (colorSwatch 35 190 30 255)))

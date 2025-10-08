@@ -5470,6 +5470,10 @@ msgstr "fb current"
 msgid "fb clear NeoPixels"
 msgstr "fb clear NeoPixels"
 
+#. Foxbit library block
+msgid "fb scroll text _ _"
+msgstr "fb scroll text _ _"
+
 #. Coding Box library block
 msgid "cb stop fan"
 msgstr "cb stop fan"
@@ -5557,6 +5561,194 @@ msgstr "cb oled write _ at x _ y _ big _"
 #. Coding Box library block
 msgid "cb light"
 msgstr "cb light"
+
+#. KidsIOT library choice
+msgid "kiot;AD key"
+msgstr "AD key"
+
+#. KidsIOT library choice
+msgid "kiot;gas (MQ-135)"
+msgstr "gas (MQ-135)"
+
+#. KidsIOT library choice
+msgid "kiot;film pressure"
+msgstr "film pressure"
+
+#. KidsIOT library choice
+msgid "kiot;flame"
+msgstr "flame"
+
+#. KidsIOT library choice
+msgid "kiot;light"
+msgstr "light"
+
+#. KidsIOT library choice
+msgid "kiot;microphone"
+msgstr "microphone"
+
+#. KidsIOT library choice
+msgid "kiot;potentiometer"
+msgstr "potentiometer"
+
+#. KidsIOT library choice
+msgid "kiot;steam"
+msgstr "steam"
+
+#. KidsIOT library choice
+msgid "kiot;UV light"
+msgstr "UV light"
+
+#. KidsIOT library choice
+msgid "kiot;active buzzer"
+msgstr "active buzzer"
+
+#. KidsIOT library choice
+msgid "kiot;LED"
+msgstr "LED"
+
+#. KidsIOT library choice
+msgid "kiot;laser"
+msgstr "laser"
+
+#. KidsIOT library choice
+msgid "kiot;relay"
+msgstr "relay"
+
+#. KidsIOT library choice
+msgid "kiot;button pressed?"
+msgstr "button pressed?"
+
+#. KidsIOT library choice
+msgid "kiot;humidity"
+msgstr "humidity"
+
+#. KidsIOT library choice
+msgid "kiot;magnet detected?"
+msgstr "magnet detected?"
+
+#. KidsIOT library choice
+msgid "kiot;movement detected?"
+msgstr "movement detected?"
+
+#. KidsIOT library choice
+msgid "kiot;obstacle?"
+msgstr "obstacle?"
+
+#. KidsIOT library choice
+msgid "kiot;photo sensor interrupted?"
+msgstr "photo sensor interrupted?"
+
+#. KidsIOT library choice
+msgid "kiot;receive IR code"
+msgstr "receive IR code"
+
+#. KidsIOT library choice
+msgid "kiot;temperature (Celsius)"
+msgstr "temperature (Celsius)"
+
+#. KidsIOT library choice
+msgid "kiot;tilt?"
+msgstr "tilt?"
+
+#. KidsIOT library choice
+msgid "kiot;touching?"
+msgstr "touching?"
+
+#. KidsIOT library choice
+msgid "X"
+msgstr "X"
+
+#. KidsIOT library choice
+msgid "Y"
+msgstr "Y"
+
+#. KidsIOT library choice
+msgid "kiot;rotation"
+msgstr "rotation"
+
+#. KidsIOT library choice
+msgid "kiot;clockwise"
+msgstr "clockwise"
+
+#. KidsIOT library choice
+msgid "kiot;counter-clockwise"
+msgstr "counter-clockwise"
+
+#. KidsIOT library choice
+msgid "kiot;stop"
+msgstr "stop"
+
+#. KidsIOT library choice
+msgid "kiot;left"
+msgstr "left"
+
+#. KidsIOT library choice
+msgid "kiot;right"
+msgstr "right"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff RGB color _ port _"
+msgstr "#SVG#square11#ffffff RGB color _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ff0000 analog _ port _"
+msgstr "#SVG#square11#ff0000 analog _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff digital _ port _"
+msgstr "#SVG#square11#0070ff digital _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 distance (cm) port _"
+msgstr "#SVG#square11#fff000 distance (cm) port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 line sensor _ port _"
+msgstr "#SVG#square11#fff000 line sensor _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 get _"
+msgstr "#SVG#square11#00c612 get _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 joystick _"
+msgstr "#SVG#square11#00c612 joystick _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff play note _ octave _ for _ port _"
+msgstr "#SVG#square11#0070ff play note _ octave _ for _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff rotary encoder _ port _"
+msgstr "#SVG#square11#ffffff rotary encoder _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff set NeoPixels _ _ _ _ port _"
+msgstr "#SVG#square11#0070ff set NeoPixels _ _ _ _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff set _ _ port _"
+msgstr "#SVG#square11#0070ff set _ _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#fff000 set motor _ port _"
+msgstr "#SVG#square11#fff000 set motor _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 set year _ month _ day _"
+msgstr "#SVG#square11#00c612 set year _ month _ day _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#00c612 set hours _ minutes _ seconds _"
+msgstr "#SVG#square11#00c612 set hours _ minutes _ seconds _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#0070ff temperature (DS18B20) _ port _"
+msgstr "#SVG#square11#0070ff temperature (DS18B20) _ port _"
+
+#. KidsIOT library block
+msgid "#SVG#square11#ffffff traffic light red _ yellow _ green _ port _"
+msgstr "#SVG#square11#ffffff traffic light red _ yellow _ green _ port _"
 
 #. LogicLinks library block
 msgid "LogicLinks receive IR code"

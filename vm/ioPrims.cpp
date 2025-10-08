@@ -605,11 +605,12 @@ void hardwareInit() {
 	#ifdef KEY_BUILTIN
 		#define PIN_BUTTON_A KEY_BUILTIN
 	#endif
+	// Pins 14, 27, and 33 reserved for use by the M5Stack Core TFT display.
 	static const char reservedPin[TOTAL_PINS] = {
 		0, 1, 0, 1, 0, 0, 1, 1, 1, 1,
-		1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
-		1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+		1, 1, 0, 0, 1, 0, 0, 0, 0, 0,
+		1, 0, 0, 0, 1, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 0, 0, 0, 0};
 
 #elif defined(ARDUINO_M5Stick_Plus)
 	#define BOARD_TYPE "M5StickC+"
@@ -722,9 +723,10 @@ void hardwareInit() {
 	#define TOTAL_PINS 40
 	static const int analogPin[] = {};
 	#define DEFAULT_TONE_PIN 2
+	// Pins 5 and 15 are reserved for use by the M5Stack Core2 TFT display
 	static const char reservedPin[TOTAL_PINS] = {
-		0, 1, 0, 1, 0, 0, 1, 1, 1, 1,
-		1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 1, 0, 1, 0, 1, 1, 1, 1, 1,
+		1, 1, 0, 0, 0, 1, 0, 0, 0, 0,
 		1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
 		1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -978,10 +980,11 @@ void hardwareInit() {
 	#define ANALOG_PINS 6 // pins 0-5, but pin 5 uses ADC2 may be less reliable
 	#define TOTAL_PINS 22
 	static const int analogPin[] = {};
-	#ifdef LED_BUILTIN
-		#define PIN_LED LED_BUILTIN
-	#elif !defined(PIN_LED)
+	#if defined(FAB_SPARKLE)
+		// Note: The Super C3 mini has user LED on the I2C SDA line; do not use it!
 		#define PIN_LED -1
+	#elif defined(LED_BUILTIN)
+		#define PIN_LED LED_BUILTIN
 	#endif
 	#if !defined(PIN_BUTTON_A)
 		#if defined(KEY_BUILTIN)
@@ -1283,9 +1286,9 @@ void hardwareInit() {
 		return result;
 	}
 
-	// PWM pins for CincoBit and PixoBit edge pins 0 to 16
+	// PWM pins for CincoBit and PixoBit edge pins 0 to 21
 	// Note: TIM14 is used by Tone library. TIM16 is used by Servo library
-	#define DUE_PWM_PIN_COUNT 17
+	#define DUE_PWM_PIN_COUNT 22
 	static const int16 dueEdgePWM[DUE_PWM_PIN_COUNT] = {
 		PA_0_ALT1,		// TIM1_CH1, *TIM2_CH1, TIM16_CH1
 		PA_1_ALT1,		// TIM1_CH2, TIM2_CH2, TIM17_CH1
@@ -1304,6 +1307,11 @@ void hardwareInit() {
 		PB_4,			// *TIM3_CH1
 		PB_5_ALT1,		// TIM3_CH2, *TIM3_CH3
 		-1, // PC_15,	// TIM3_CH3
+		-1,
+		-1,
+		-1,
+		-1,
+		PA_5_ALT1,		// TIM1_CH1, *TIM1_CH3N, TIM2_CH1
 	};
 
 	// PWM pins for standard DUEBoards 0 to 16 (pin 17 does not have a timer)
@@ -1632,7 +1640,7 @@ OBJ primAnalogRead(int argCount, OBJ *args) {
 	#elif defined(DUELink)
 		int duePin = dueAnalogPin(pinNum);
 		if (duePin < 0) return zeroObj;
-		SET_MODE(pinNum, mode);
+		SET_MODE(mapDigitalPinNum(pinNum), mode);
 		return int2obj(adc_read_value((PinName) duePin, 10));
 	#endif
 	#if defined(ARDUINO_SEEED_XIAO_RP2040) || defined(ARDUINO_SEEED_XIAO_RP2350)
@@ -1761,9 +1769,11 @@ void primAnalogWrite(OBJ *args) {
 	#elif defined(DUELink)
 		int pwmPin = duePWMPin(pinNum);
 		if (pwmPin < 0) return;
+		if (OUTPUT != currentMode[mapDigitalPinNum(pinNum)]) {
+			pwm_stop((PinName) pwmPin); // force restart if PWM was stopped by reading the pin
+		}
 		SET_MODE(mapDigitalPinNum(pinNum), OUTPUT);
-		pwm_stop((PinName) pwmPin); // force restart in case PWM was stopped by reading the pin
-		pwm_start((PinName) pwmPin, 1000, value, (TimerCompareFormat_t) 10); // 1000 Hz, 10-bit resolution
+		pwm_start((PinName) pwmPin, 46830, value, (TimerCompareFormat_t) 10); // 46830 Hz, 10-bit resolution
 		pwmRunning[pinNum] = true;
 		return;
 	#else
