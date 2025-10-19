@@ -7,6 +7,8 @@
 // tftPrims.cpp - Microblocks TFT screen primitives and touch screen input
 // Bernat Romagosa, November 2018
 
+
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -3701,29 +3703,81 @@ void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) 
 #if defined(COCUBE)
 #define BTN_A 38  // GPIO for NEXT
 #define BTN_B 37   
-	
+//#define BTN_C 36
 
 static void keypad_read(lv_indev_t * indev, lv_indev_data_t * data) {
-    static uint8_t btn_a_last = 1;
-    static uint8_t btn_b_last = 1;
+   static uint8_t btn_a_last = HIGH;
+    static uint8_t btn_b_last = HIGH;
 
     uint8_t a = digitalRead(BTN_A);
     uint8_t b = digitalRead(BTN_B);
 
+    data->state = LV_INDEV_STATE_REL; // default released
+    data->key = 0;
+
+    // Modifier logic
+    // if (a == LOW ) { // A is pressed
+    //     if (b == LOW && btn_a_last == HIGH) {
+    //         // A pressed while B held
+	// 		outputString("A pressed while B held");
+    //         data->key = LV_KEY_LEFT;
+    //         data->state = LV_INDEV_STATE_PR;
+    //     } else if (btn_a_last == HIGH) {
+    //         // A pressed alone (just pressed)
+	// 		outputString("A pressed alone");
+    //         data->key = LV_KEY_NEXT;
+    //         data->state = LV_INDEV_STATE_PR;
+    //     }
+    // } else if (b == LOW) { // B pressed
+    //     if (a == LOW &&   btn_b_last == HIGH) {
+    //         // B pressed while A held
+	// 		outputString("B pressed while A held");
+    //         data->key = LV_KEY_RIGHT;
+    //         data->state = LV_INDEV_STATE_PR;
+    //     } else if (btn_b_last == HIGH) {
+    //         // B pressed alone (just pressed)
+	// 		outputString("B pressed alone");
+    //         data->key = LV_KEY_ENTER;
+    //         data->state = LV_INDEV_STATE_PR;
+    //     }
+    // }
+
+// --- Check A press ---
     if (a == LOW && btn_a_last == HIGH) {
-        data->key = LV_KEY_NEXT;            // move focus
+        if (b == LOW) {
+            // A pressed while B held
+            outputString("A pressed while B held");
+            data->key = LV_KEY_LEFT;
+        } else {
+            // A pressed alone
+            outputString("A pressed alone");
+            data->key = LV_KEY_NEXT;
+        }
         data->state = LV_INDEV_STATE_PR;
-    } 
-    else if (b == LOW && btn_b_last == HIGH) {
-        data->key = LV_KEY_ENTER;           // activate
+    }
+
+    // --- Check B press ---
+    if (b == LOW && btn_b_last == HIGH) {
+        if (a == LOW) {
+            // B pressed while A held
+            outputString("B pressed while A held");
+            data->key = LV_KEY_RIGHT;
+        } else {
+            // B pressed alone
+            outputString("B pressed alone");
+            data->key = LV_KEY_ENTER;
+        }
         data->state = LV_INDEV_STATE_PR;
-    } 
-    else {
-        data->state = LV_INDEV_STATE_REL;   // nothing pressed
+    }
+
+
+  	if (a == HIGH && b == HIGH) {
+        data->state = LV_INDEV_STATE_REL;
     }
 
     btn_a_last = a;
     btn_b_last = b;
+	// btn_c_last = c;
 }
 
 
@@ -3860,11 +3914,18 @@ ObjectRegistry<char*> btnmap_registry;
 
  
 void fs_init() {
-  if (!LittleFS.begin()) {
-    outputString("LittleFS mount failed");
-    while (true) delay(1000);
-  }
-  outputString("LittleFS mounted.");
+
+    if (!LittleFS.begin()) {
+        outputString("⚠️ LittleFS mount failed, formatting...");
+        if (!LittleFS.format()) {
+            outputString("❌ LittleFS format failed!");
+        }
+        if (!LittleFS.begin()) {
+            outputString("❌ LittleFS mount failed again after format!");
+        }
+    }
+    outputString("✅ LittleFS mounted successfully.");
+
 }
 
 /*
@@ -4060,6 +4121,9 @@ xTaskCreatePinnedToCore(
 	lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD); /*Touchpad should have POINTER type*/
 	lv_indev_set_read_cb(indev,keypad_read);
 	
+	lv_indev_set_long_press_time(indev, 400);        // ms until LV_EVENT_LONG_PRESSED
+	lv_indev_set_long_press_repeat_time(indev, 100); // repeat interval in ms
+
     // Optional: create a group so widgets can get focus
 	group = lv_group_create();
 	// Attach the keypad input device to the group
@@ -4264,6 +4328,7 @@ void ui_create_slider(char * obj_name, const char * parent) {
     if (!registry.get(obj_name) && registry.get(parent)) {
 		lv_obj_t* obj = lv_slider_create(registry.get(parent));
 		lv_obj_add_event_cb(obj, ui_log_event_cb,LV_EVENT_VALUE_CHANGED, NULL);
+		lv_obj_add_event_cb(obj, ui_log_event_cb,LV_EVENT_LONG_PRESSED, NULL);
 		lv_slider_set_range(obj, 0, 100);
 		registry.add(obj_name, obj);
 	}
@@ -4273,6 +4338,7 @@ void ui_create_arc(char * obj_name, const char * parent) {
     if (!registry.get(obj_name) && registry.get(parent)) {
 		lv_obj_t* obj = lv_arc_create(registry.get(parent));
 		lv_obj_add_event_cb(obj, ui_log_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+		lv_obj_add_event_cb(obj, ui_log_event_cb,LV_EVENT_LONG_PRESSED, NULL);
 		// sodb solve unmovable arc on capacitive touch displays.
 		lv_obj_add_flag(obj, (lv_obj_flag_t)(LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_CHECKABLE ));
 		registry.add(obj_name, obj);
@@ -4342,6 +4408,7 @@ void ui_create_roller(char * obj_name, const char * parent) {
     if (!registry.get(obj_name) && registry.get(parent)) {
 		lv_obj_t* obj = lv_roller_create(registry.get(parent));
 		lv_obj_add_event_cb(obj, ui_log_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+		lv_obj_add_event_cb(obj, ui_log_event_cb,LV_EVENT_LONG_PRESSED, NULL);
 		registry.add(obj_name, obj);
 	}
 }
@@ -5657,13 +5724,80 @@ static OBJ primLVGLpsram(int argCount, OBJ *args) {
 	sprintf(s,"free heap after: %d psram: %d ",  ESP.getFreeHeap(),ESP.getFreePsram());
 	outputString(s);
 	return int2obj(val);
-     
+}
+
+#if defined(LVGL_SNAPSHOT)
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+
+#define STRING_OBJ_CONST(s) \
+	struct { uint32 header = HEADER(StringType, ((sizeof(s) + 4) / 4)); char body[sizeof(s)] = s; }
+
+
+STRING_OBJ_CONST("Snapshot failed") statusSnapshotFailed;
+STRING_OBJ_CONST("PSRAM alloc failed") statusPsramAllocFailed;
+
+
+
+static OBJ primLVGLsnapshot(int argCount, OBJ *args) {
+	char *upload_url = obj2str(args[0]);
+ 	lv_obj_t *scr = lv_screen_active();
+    lv_coord_t w = lv_obj_get_width(scr);
+    lv_coord_t h = lv_obj_get_height(scr);
+    size_t buf_size = w * h * 2; // RGB565 = 2 bytes per pixel
+
+    // Allocate snapshot buffer in PSRAM
+    uint8_t *psram_buf = (uint8_t *) heap_caps_malloc(buf_size, MALLOC_CAP_SPIRAM);
+    if (!psram_buf) {
+		return (OBJ)  &statusPsramAllocFailed;
+    }
+
+    // Create LVGL image descriptor
+    lv_image_dsc_t snapshot;
+    lv_result_t res = lv_snapshot_take_to_buf(scr,
+                                              LV_COLOR_FORMAT_NATIVE,
+                                              &snapshot,
+                                              psram_buf,
+                                              buf_size);
+    if (res != LV_RESULT_OK) {
+        lv_free(psram_buf);
+        return (OBJ) &statusSnapshotFailed;
+    }
+	char s[100];
+	sprintf(s,"📸 Snapshot OK: %d x %d (%d bytes)\n", w, h, buf_size);
+	outputString(s);	
+    
+    // --- Upload to Web Server ---
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.begin(upload_url);
+        http.addHeader("Content-Type", "application/octet-stream");
+
+        int httpResponseCode = http.POST(psram_buf, buf_size);
+        if (httpResponseCode > 0) {
+            sprintf(s,"✅ Upload OK, code: %d\n", httpResponseCode);
+			outputString(s);	
+        } else {
+			sprintf(s,"❌ Upload failed, error: %s\n", http.errorToString(httpResponseCode).c_str());
+			outputString(s);			
+        }
+        http.end();
+    } else {
+         fail(noWiFi);
+    }
+
+    // Cleanup
+    free(psram_buf);
+  	return falseObj;
 
 }
 
-#endif
 
 
+#endif   // LVGL_SNAPSHOT
+
+#endif 
 // Touchscreen Primitives
 
 static OBJ primTftTouched(int argCount, OBJ *args) {
@@ -5741,6 +5875,9 @@ static PrimEntry entries[] = {
 //	{"LVGLbutton",primLVGLbutton},
 	{"LVGLtick",primLVGLtick},
 	{"LVGLstate",primLVGLstate},
+	#if defined(LVGL_SNAPSHOT)
+		{"LVGLsnapshot",primLVGLsnapshot},
+	#endif
 	{"LVGLaddbtn",primLVGLaddBtn},
 	{"LVGLaddlabel",primLVGLaddLabel},
 	{"LVGLaddslider",primLVGLaddSlider},

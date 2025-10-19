@@ -31,7 +31,13 @@
 void setup() {
 	
 #if defined(ESP32_ORIGINAL)
-	 LittleFS.format(); 
+if (!LittleFS.begin()) {
+         if (!LittleFS.format()) {
+        } else
+        !LittleFS.begin();
+        }
+	
+
 #endif
 #ifdef ARDUINO_NRF52_PRIMO
 	sd_softdevice_disable();

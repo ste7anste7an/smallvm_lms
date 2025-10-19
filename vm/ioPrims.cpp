@@ -3078,6 +3078,17 @@ static OBJ primSquareWave(int argCount, OBJ *args) {
 }
 
 //sodb
+/*
+static OBJ primGetCpuFreq(int argCount, OBJ *args) {
+		char s[100];
+		sprintf(s,"cpu freq %d",ESP.getCpuFreqMHz());
+		outputString(s);
+		return trueObj;
+	
+}
+*/
+
+
 static OBJ primOutputString(int argCount, OBJ *args) {
 	OBJ arg = args[0];
 	if (IS_TYPE(arg, StringType)) { // string
@@ -3111,6 +3122,7 @@ static PrimEntry entries[] = {
 	{"digitalWrite", primDigitalWrite2},
 //sodb
 	{"outputstring",primOutputString},
+	//{"cpufreq",primGetCpuFreq},
 };
 
 void addIOPrims() {
