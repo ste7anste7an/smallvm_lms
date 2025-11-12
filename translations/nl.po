@@ -220,7 +220,7 @@ msgstr "laatste bericht"
 
 #. Block in Control category
 msgid "arg _ default _"
-msgstr "arg_standaard _"
+msgstr "arg _ standaard _"
 
 #. Example default value for the ( arg _ default _ ) block
 msgid "default"
@@ -1607,7 +1607,7 @@ msgstr "teken lijn van x _ y _ tot x _ y _ wissen _"
 
 #. OLED Graphics library block
 msgid "draw rectangle x _ y _ w _ h _ erase _ rounding(3-15) _"
-msgstr "teken rechthoek x _ y _ b_ h _ wissen _ ronding(3-15) _"
+msgstr "teken rechthoek x _ y _ b _ h _ wissen _ ronding(3-15) _"
 
 #. OLED Graphics library block
 msgid "fill rectangle x _ y _ w _ h _ erase _"
@@ -6278,7 +6278,7 @@ msgstr "cb licht"
 
 #. Coding Box library block
 msgid "cb oled write _ at x _ y _ big _"
-msgstr "cd oled schrijf _ op x _ y_ groot _"
+msgstr "cd oled schrijf _ op x _ y _ groot _"
 
 #. Coding Box library block
 msgid "cb humidity"

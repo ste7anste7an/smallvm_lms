@@ -152,15 +152,15 @@ msgstr "itxaron _ milisegundo"
 
 #. Block in Control category
 msgid "if _ _"
-msgstr "baldin __"
+msgstr "baldin _ _"
 
 #. Block in Control category
 msgid "if _ _ else _"
-msgstr "baldin__ bestela _"
+msgstr "baldin _ _ bestela _"
 
 #. Block in Control category
 msgid "else if _ _"
-msgstr "bestela baldin __"
+msgstr "bestela baldin _ _"
 
 #. Block in Control category
 msgid "else"
@@ -204,7 +204,7 @@ msgstr "Horrela funtzionatzen du..."
 
 #. Block in Control category
 msgid "range _ to _"
-msgstr "_tik _rako tartea"
+msgstr "_ tik _ rako tartea"
 
 #. Block in Control category
 msgid "by _"
@@ -216,7 +216,7 @@ msgstr ""
 
 #. Block in Control category
 msgid "repeat until _ _"
-msgstr "errepikatu __ arte"
+msgstr "errepikatu _ _ arte"
 
 #. Block in Control category
 msgid "stop this task"
@@ -272,7 +272,7 @@ msgstr ""
 
 #. Block in Operators category
 msgid "abs _"
-msgstr "_ren balio absolutua"
+msgstr "_ ren balio absolutua"
 
 #. Block in Operators category
 msgid "min _ _"
@@ -284,7 +284,7 @@ msgstr ""
 
 #. Block in Operators category
 msgid "random _ to _"
-msgstr "ausazkoa _tik _ra"
+msgstr "ausazkoa _ tik _ ra"
 
 #. Block in Operators category
 msgid "not _"
@@ -353,7 +353,7 @@ msgstr "hex _"
 
 #. Block in Operators category
 msgid "sqrt _"
-msgstr "_ren erro karratua"
+msgstr "_ ren erro karratua"
 
 #. "Variables" blocks category label
 msgid "cat;Variables"
@@ -405,7 +405,7 @@ msgstr "arrain"
 
 #. Block in Data category
 msgid "length of _"
-msgstr "_ren luzera"
+msgstr "_ ren luzera"
 
 #. Block in Data category
 msgid "item _ of _"

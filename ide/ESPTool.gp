@@ -435,6 +435,7 @@ method installFirmware ESPTool boardName eraseFlag downloadFlag vmData {
 
 	if (or (isOneOf boardName 'ESP8266' 'D1-Mini')
 		(notNil (findSubstring 'nodemcu' boardName))
+		(notNil (findSubstring 'd1mini' boardName))
 		(notNil (findSubstring '8266' boardName))
 	) {
 		ok = (uploadESP8266VM this vmData eraseFlag)

@@ -404,7 +404,7 @@ msgstr "соединить _ _"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "start WiFi _ password _"
-msgstr "запустить WiFi _ пароль_"
+msgstr "запустить WiFi _ пароль _"
 
 #. Block in Operators category
 msgid "hex _"
@@ -1319,7 +1319,7 @@ msgstr "начинается с _"
 
 #. Block in Comm category
 msgid "i2c get device _ register _"
-msgstr "i2c получить устройство _ зарегистрировать_"
+msgstr "i2c получить устройство _ зарегистрировать _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Left"
@@ -2400,7 +2400,7 @@ msgstr "Insert"
 
 #. Block in Input category
 msgid "end time _"
-msgstr "Время окончания_"
+msgstr "Время окончания _"
 
 #. Block in Comm category
 msgid "serial open _ baud"
@@ -2432,7 +2432,7 @@ msgstr "Прочитать сериал"
 
 #. Block in Comm category
 msgid "spi exchange bytes _"
-msgstr "обмен битами по протоколу spi_"
+msgstr "обмен битами по протоколу spi _"
 
 #. Key name (as in computer keyboard key)
 msgid "kbd;return"
@@ -2469,11 +2469,11 @@ msgstr "PgUp"
 
 #. Block in Control category
 msgid "by _"
-msgstr "от_"
+msgstr "от _"
 
 #. Block in Control category
 msgid "arg _ default _"
-msgstr "стандартный_аргумент_"
+msgstr "стандартный _ аргумент _"
 
 #. Example string. Tells the user this input accepts a list or a string
 msgid "aListOrString"

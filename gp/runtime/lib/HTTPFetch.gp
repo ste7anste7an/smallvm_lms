@@ -70,6 +70,10 @@ to httpGetInBrowser url timeout {
 }
 
 to httpBody response {
+	if ('Browser' == (platform)) {
+		// headers already removed in browser
+		return response
+	}
 	if (isClass response 'BinaryData') {
 		return (httpBinaryBody response)
 	}

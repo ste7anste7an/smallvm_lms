@@ -719,11 +719,11 @@ msgstr "مؤقت"
 
 #. Block in Operators category
 msgid "rescale _ from ( _ , _ ) to ( _ , _ )"
-msgstr "إعادة تحديد النطاق_من(_,_)الى(_,_)"
+msgstr "إعادة تحديد النطاق _ من( _ , _ )الى ( _ , _ )"
 
 #. Block in Data category
 msgid "copy _ from _"
-msgstr "انسخ_من_"
+msgstr "انسخ _ من _"
 
 #. Example value for the ( list < > ) block
 msgid "fish"
@@ -739,11 +739,11 @@ msgstr "كلب"
 
 #. Block in Operators category
 msgid "sqrt _"
-msgstr "الجذر التربيعي_"
+msgstr "الجذر التربيعي _"
 
 #. Block in Output category
 msgid "graph _"
-msgstr "مخطط_"
+msgstr "مخطط _"
 
 #. Block in Input category
 msgid "connected to IDE"
@@ -755,15 +755,15 @@ msgstr "أوقف المهام الأخرى"
 
 #. Block in Operators category
 msgid "min _ _"
-msgstr "الحد الأدنى__"
+msgstr "الحد الأدنىo _ _"
 
 #. Block in Operators category
 msgid "max _ _"
-msgstr "الحد الأقصى__"
+msgstr "الحد الأقصى _ _"
 
 #. Block in Operators category
 msgid "convert _ to _"
-msgstr "تحويل_ إلى_"
+msgstr "تحويل _ إلى _"
 
 #. Example message for [ when _ received ] and [ broadcast _ ] blocks
 msgid "go!"
@@ -779,7 +779,7 @@ msgstr "مكتبة"
 
 #. Block in Operators category
 msgid "_ is a _"
-msgstr "_هو_"
+msgstr "_ هو _"
 
 #. Block in Basic Sensors library
 msgid "acceleration"
@@ -791,7 +791,7 @@ msgstr "قط"
 
 #. Block in Data category
 msgid "to _"
-msgstr "إلى_"
+msgstr "إلى _"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "byte array"
@@ -799,7 +799,7 @@ msgstr "مصفوفة بايتات"
 
 #. Block in Data category
 msgid "add _ to list _"
-msgstr "أضف_إلى القائمة_"
+msgstr "أضف _ إلى القائمة _"
 
 #. Option in dropdown menu of blocks:
 #. [ replace item ( all v ) of list ( aList ) with ( 10 ) ]
@@ -813,7 +813,7 @@ msgstr "متقدم:"
 
 #. Block in Comm category
 msgid "mode _"
-msgstr "جميع_"
+msgstr "جميع _"
 
 #. Block in Basic Sensors library
 msgid "magnetic field"
@@ -821,7 +821,7 @@ msgstr "مجال مغناطيسي"
 
 #. Block in Data category
 msgid "join _ _"
-msgstr "انضم__"
+msgstr "انضم _ _"
 
 #. Example value for the ( copy (smiles) from 2 > ) block, which will become "miles" when run.
 #. You could think of a word that still has meaning when you remove its first character in your language.
@@ -850,11 +850,11 @@ msgstr "إعادة ضبط المؤقت"
 
 #. Block in Control category
 msgid "by _"
-msgstr "بواسطة_"
+msgstr "بواسطة _"
 
 #. Block in Operators category
 msgid "if _ then _ else _"
-msgstr "إذا_فإن_وإلا_"
+msgstr "إذا _ فإن _ وإلا _"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "string"
@@ -874,7 +874,7 @@ msgstr "كيف يعمل هذا..."
 
 #. Block in Control category
 msgid "with _"
-msgstr "مع_"
+msgstr "مع _"
 
 #. "Data" blocks category label
 msgid "cat;Data"
@@ -891,19 +891,19 @@ msgstr "قائمة"
 
 #. Block in Data category
 msgid "delete item _ of list _"
-msgstr "حذف العنصر _ من القائمة_"
+msgstr "حذف العنصر _ من القائمة _"
 
 #. Block in Input category
 msgid "milliseconds since _"
-msgstr "ميلي_ثانية_منذ"
+msgstr "ميليثانية _ منذ"
 
 #. Block in Input category
 msgid "end time _"
-msgstr "وقت_النهاية"
+msgstr "وقت _ النهاية"
 
 #. Block in Input category
 msgid "microseconds since _"
-msgstr "ميلي_ثانية_منذ"
+msgstr "ميليثانية _ منذ"
 
 #. Block in Input category
 msgid "BLE connected"
@@ -911,11 +911,11 @@ msgstr "تم_شبكBLE"
 
 #. Block in Pins category
 msgid "pullup _"
-msgstr "سحب_لأعلى"
+msgstr "سحب _ لأعلى"
 
 #. Block in Control category
 msgid "range _ to _"
-msgstr "مدى_إلى"
+msgstr "_ مدى _ إلى"
 
 #. Block in Control category
 msgid "exit loop"
@@ -927,7 +927,7 @@ msgstr "تلقائي"
 
 #. Block in Control category
 msgid "call _"
-msgstr "اتصال_"
+msgstr "اتصال _"
 
 #. Example value for ( call _ ) block
 msgid "function name"

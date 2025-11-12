@@ -472,6 +472,10 @@ msgstr ""
 msgid "free memory"
 msgstr ""
 
+#. Option in dropdown menu of editable input slots on mobile devices:
+msgid "edit"
+msgstr ""
+
 #. Option in dropdown menu of blocks:
 #. [ replace item ( all v ) of list ( aList ) with ( 10 ) ]
 #. [ delete item ( all v ) of list ( aList ) ]

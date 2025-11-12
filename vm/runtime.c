@@ -51,6 +51,40 @@ static void debugBeep(int count) {
 
 #endif
 
+// DUELink support
+
+#if defined(DUELink)
+
+#include <stm32c0xx.h>
+#include <stm32c071xx.h>
+
+__attribute__ ((section (".ramfunc"))) static void dueLinkEraseFlashAndReset() {
+	// Danger! This function erases all of Flash memory then reboots the board in DFU mode.
+
+	// disable interrupts
+	__disable_irq();
+
+	// mass erase all of Flash
+	FLASH->CR |= (FLASH_CR_STRT | FLASH_CR_MER1);
+
+	// set the Flash empty flag
+	SET_BIT(FLASH->ACR, 1 << 16);
+
+	// reset
+	SCB->AIRCR = (
+		(0x5FA << SCB_AIRCR_VECTKEY_Pos) | // unlock key
+		(1 << SCB_AIRCR_SYSRESETREQ_Pos)); // reset request
+
+	// wait for reset
+	while (1);
+}
+
+#else
+
+static void dueLinkEraseFlashAndReset() { } // noop on non-DUELink boards
+
+#endif
+
 // Named Primitive Support
 
 typedef struct {
@@ -812,8 +846,15 @@ static void setVariableValue(int varID, int byteCount, uint8 *data) {
 	}
 }
 
-static void sendVersionString() {
+static void sendVersionString(int chunkIndex) {
 	char s[100];
+	#if defined(DUELink)
+		if (1 == chunkIndex) { // return the PID as a hex string
+			snprintf(s, sizeof(s), "0x%06X", DUE_PID);
+			sendMessage(versionMsg, 1, strlen(s), s);
+			return;
+		}
+	#endif
 	snprintf(s, sizeof(s), " %s %s", VM_VERSION, boardType());
 	s[0] = 2; // data type (2 is string)
 	sendMessage(versionMsg, 0, strlen(s), s);
@@ -1149,7 +1190,7 @@ static void processShortMessage() {
 		sendAllCRCs();
 		break;
 	case getVersionMsg:
-		sendVersionString();
+		sendVersionString(chunkIndex);
 		break;
 	case getAllCodeMsg:
 		if (1 != chunkIndex) break; // ignore msg from 32-bit IDE
@@ -1169,6 +1210,10 @@ static void processShortMessage() {
 		if (1 == chunkIndex) { outputRecordHeaders(); break; }
 		if (2 == chunkIndex) { compactCodeStore(); break; }
 		if (3 == chunkIndex) { primMBDisplayOff(0, NULL); } // used by Boardie reset
+		if (199 == chunkIndex) {
+			clearAllVariables(); // do a Flash write operation to enable DFU after reset
+			dueLinkEraseFlashAndReset();
+		}
 		softReset(true);
 		break;
 	case pingMsg:

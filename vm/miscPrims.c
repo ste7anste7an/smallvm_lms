@@ -532,6 +532,10 @@ static OBJ primShapeforChar(int argCount, OBJ *args) {
 	return result;
 }
 
+static OBJ primDUELinkPID(int argCount, OBJ *args) {
+	return int2obj(*((uint32 *) 0x1FFF7004) & 0xFFFFFF);
+}
+
 // Primitives
 
 static PrimEntry entries[] = {
@@ -545,6 +549,7 @@ static PrimEntry entries[] = {
 	{"broadcastToIDE", primBroadcastToIDEOnly},
 	{"bme680GasResistance", primBMP680GasResistance},
 	{"shapeforChar", primShapeforChar},
+	{"dueLinkPID", primDUELinkPID},
 #if !defined(DUELink)
 	{"hsvColor", primHSVColor},
 	{"hue", primColorHue},

@@ -1,0 +1,156 @@
+module 'Due Edu'
+author DUELink
+version 1 3
+choices dueSTEM_buttonName left right up down
+choices dueSTEM_axis x y z
+choices dueSTEM_touchPin P0 P1 P2 P3 A B left right up down
+description 'Library for DUELink Educational boards: CincoBit, PixoBit, ClipIt, and DueSTEM.
+
+The "due PIED" works on all DUELink boards.
+Blocks labeled "dueSTEM" work only on the DUEStem board.
+
+Touch sensing works only on pins with capacitive touch circuits including pins 0, 1, 2 of the CincoBit and PixoBit and all but the SCL/SDA pins of the ClipIt.
+'
+variables dueSTEM_accelAddr
+
+  spec 'r' 'dueSTEM_light' 'due light level'
+  spec 'r' 'dueSTEM_touched' 'due pin _  touched : threshold _' 'menu.dueSTEM_touchPin num' 'P1' 100
+  space
+  spec ' ' 'dueSTEM_setLED' 'DueSTEM red _ green _ blue _ (0-1023)' 'auto auto auto' 100 0 200
+  spec 'r' 'dueSTEM_button' 'DueSTEM _ button?' 'menu.dueSTEM_buttonName' 'left'
+  spec 'r' 'dueSTEM_temperature' 'DueSTEM temperature'
+  spec 'r' 'dueSTEM_tilt' 'DueSTEM tilt _' 'menu.dueSTEM_axis' 'x'
+  space
+  spec 'r' 'dueSTEM_buzzerPin' 'due buzzer pin'
+  spec 'r' '[misc:dueLinkPID]' 'due PID'
+  space
+  spec 'r' '_dueSTEM_pulseTime' '_dueSTEM_pulseTime _' 'num' 0
+  spec ' ' '_dueSTEM_accelInit' '_dueSTEM_accelInit'
+  spec 'r' '_dueSTEM_accelRead16BitReg' '_dueSTEM_accelRead16BitReg _' 'auto' 13
+
+to '_dueSTEM_accelInit' {
+  if (dueSTEM_accelAddr != 0) {return}
+  dueSTEM_accelAddr = (hexToInt '4C')
+  comment 'Turn off accelerometer before changing settings'
+  i2cSet dueSTEM_accelAddr 7 0
+  comment 'Sampling rate: 128 Hz'
+  i2cSet dueSTEM_accelAddr 8 9
+  comment '+/-2G range, 10-bit resolution'
+  i2cSet dueSTEM_accelAddr (hexToInt '20') 3
+  comment 'Start accelerometer'
+  i2cSet dueSTEM_accelAddr 7 1
+}
+
+to '_dueSTEM_accelRead16BitReg' reg {
+  '_dueSTEM_accelInit'
+  local 'buf' (newList 2)
+  '[sensors:i2cWrite]' (hexToInt '4C') ('[data:makeList]' reg) false
+  '[sensors:i2cRead]' (hexToInt '4C') buf
+  local '16bit' (((at 2 buf) << 8) | (at 1 buf))
+  '16bit' = (((v '16bit') << 15) >> 15)
+  return ((100 * (v '16bit')) / 1023)
+}
+
+to '_dueSTEM_pulseTime' pin {
+  comment 'Charge up pin'
+  digitalWriteOp pin true
+  waitMicros 200
+  callCustomCommand '[sensors:captureStart]' ('[data:makeList]' pin)
+  waitUntil ((callCustomReporter '[sensors:captureCount]') > 0)
+  local 'pulses' (callCustomReporter '[sensors:captureEnd]')
+  comment 'Start charging pin'
+  digitalWriteOp pin true
+  return (at 1 pulses)
+}
+
+to dueSTEM_button which {
+  if ((boardType) != 'DueSTEM') {return (booleanConstant false)}
+  if ('left' == which) {
+    return (digitalReadOp 20 'down')
+  } ('right' == which) {
+    return (digitalReadOp 1 'down')
+  } ('up' == which) {
+    return (digitalReadOp 18 'down')
+  } ('down' == which) {
+    return (digitalReadOp 10 'down')
+  }
+  return (booleanConstant false)
+}
+
+to dueSTEM_buzzerPin {
+  if (or ((boardType) == 'CincoBit') ((boardType) == 'PixoBit')) {
+    return 21
+  } ((boardType) == 'DueSTEM') {
+    return 3
+  } ((boardType) == 'Clipit') {
+    return 7
+  } (('[misc:dueLinkPID]') == (hexToInt '0C0001')) {
+    comment 'Ghizzy'
+    return 3
+  } (('[misc:dueLinkPID]') == (hexToInt '0C0003')) {
+    comment 'Holiday Tree'
+    return 1
+  }
+  return -1
+}
+
+to dueSTEM_light {
+  return ('[display:lightLevel]')
+}
+
+to dueSTEM_setLED r g b {
+  if ((boardType) != 'DueSTEM') {return 0}
+  analogWriteOp 11 r
+  analogWriteOp 4 g
+  analogWriteOp 2 b
+}
+
+to dueSTEM_temperature {
+  if ((boardType) != 'DueSTEM') {return 0}
+  local 'mVx10' ((33000 * (analogReadOp 9)) / 1023)
+  return ((mVx10 - 4000) / 195)
+}
+
+to dueSTEM_tilt axis {
+  if ((boardType) != 'DueSTEM') {return 0}
+  if ('x' == axis) {
+    return ('_dueSTEM_accelRead16BitReg' 13)
+  } ('y' == axis) {
+    return (0 - ('_dueSTEM_accelRead16BitReg' 15))
+  } ('z' == axis) {
+    return ('_dueSTEM_accelRead16BitReg' 17)
+  }
+  return 0
+}
+
+to dueSTEM_touched pin optionalThreshold {
+  if ('P0' == pin) {
+    pin = 0
+  } ('P1' == pin) {
+    pin = 1
+  } ('P2' == pin) {
+    pin = 2
+  } ('P3' == pin) {
+    pin = 3
+  } ('A' == pin) {
+    pin = 10
+  } ('B' == pin) {
+    pin = 24
+  } ('left' == pin) {
+    pin = 14
+  } ('right' == pin) {
+    pin = 12
+  } ('up' == pin) {
+    pin = 13
+  } ('down' == pin) {
+    pin = 18
+  }
+  local 'pTime' ('_dueSTEM_pulseTime' pin)
+  if (pTime < 0) {
+    comment 'Negative pulse time glitch; try again'
+    pTime = ('_dueSTEM_pulseTime' pin)
+  }
+  waitMillis 5
+  return (pTime > (argOrDefault 2 100))
+}
+

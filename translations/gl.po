@@ -1030,7 +1030,7 @@ msgstr "conectado por BLE"
 
 #. Block in Control category
 msgid "call _"
-msgstr "chama_"
+msgstr "chama _"
 
 #. Block in Input category
 msgid "timer"
@@ -1288,11 +1288,11 @@ msgstr "milisegundos desde _"
 
 #. Block in Input category
 msgid "end time _"
-msgstr "ata_"
+msgstr "ata _"
 
 #. Block in Control category
 msgid "with _"
-msgstr "co(s) parámetro(s)_"
+msgstr "co(s) parámetro(s) _"
 
 #. "Operators" blocks category label
 msgid "cat;Operators"

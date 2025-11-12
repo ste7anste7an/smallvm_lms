@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-28 16:43+0200\n"
-"PO-Revision-Date: 2025-10-06 07:02+0000\n"
+"PO-Revision-Date: 2025-11-09 19:51+0000\n"
 "Last-Translator: Ralf Krause <ralf.krause@moodleschule.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/microblocks/ide/"
 "de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14-dev\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "number"
@@ -841,7 +841,7 @@ msgstr "Ziel"
 
 #. Settings menu option
 msgid "about..."
-msgstr "über..."
+msgstr "über ..."
 
 #. Block right-click context menu
 msgid "help"
@@ -4866,17 +4866,15 @@ msgstr "Wukong2040"
 
 #. Sphero-RVR robot library block
 msgid "set raw motors with left mode _ left speed _ right mode _ right speed _"
-msgstr ""
-"setze Motoren links auf Modus _ Geschwindigkeit _ und rechts auf Modus _ "
-"Geschwindigkeit _"
+msgstr "setze Motoren links auf Modus _ Tempo _ und rechts auf Modus _ Tempo _"
 
 #. Wukong robot library block
 msgid "Wukong set servo _ to speed _ (-100 to 100)"
-msgstr "Wukong drehe Servo _ mit Geschwindigkeit _ (-100~100)"
+msgstr "Wukong drehe Servo _ mit Tempo _ (-100~100)"
 
 #. NeZha robot library block
 msgid "NeZha set motor _ speed to _ %"
-msgstr "Nezha drehe Motor_ mit Geschwindigkeit _ (-100~100)"
+msgstr "Nezha drehe Motor _ mit Tempo _ (-100~100)"
 
 #. Wukong robot library block
 msgid "Wukong stop motor _"
@@ -4916,7 +4914,7 @@ msgstr "Wukong setze blaue LEDs auf Helligkeit _"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 motor _ speed to _ (-100~100)"
-msgstr "Wukong2040 drehe Motor _ mit Geschwindigkeit _ (-100~100)"
+msgstr "Wukong2040 drehe Motor _ mit Tempo _ (-100~100)"
 
 #. Wukong robot library block
 msgid "Wukong set servo _ to _ degrees (-90 to 90)"
@@ -4940,7 +4938,7 @@ msgstr "Nezha setze _ Servo _ auf Winkel _"
 
 #. NeZha robot library block
 msgid "NeZha set continuous rotation servo _ speed to _ %"
-msgstr "Nezha drehe Servo _ mit Geschwindigkeit _ (-100~100)"
+msgstr "Nezha drehe Servo _ mit Tempo _ (-100~100)"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus sonar trig _ echo _ distance (cm)"
@@ -4988,7 +4986,7 @@ msgstr "Octopus DHT11 Feuchtigkeit (0~100) an Pin _"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus LED pin _ brightness _ %"
-msgstr "Octopus LED Pin _ Helligkeit _ %"
+msgstr "Octopus LED Pin _ Helligkeit _"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus value of water level (0~40mm) at pin _"
@@ -5008,7 +5006,7 @@ msgstr "Octopus lösche OLED"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus OLED draw rectangle x _ y _ w _ h _ rounding _ (3~15)"
-msgstr "Octopus OLED zeichne Rechteck x _ y _ w _ h _ abrunden_ (3~15)"
+msgstr "Octopus OLED zeichne Rechteck x _ y _ w _ h _ abrunden _ (3~15)"
 
 #. Octostudio communication library block
 msgid "Octo last beam"
@@ -5244,7 +5242,7 @@ msgstr "ionisch"
 
 #. MiKe Robot library block
 msgid "MiKe Robot speed _ %"
-msgstr "MiKe Robot Geschwindigkeit_ %"
+msgstr "MiKe Robot Geschwindigkeit _ %"
 
 #. micro:STEAMakers library block
 msgid "ms;reset"
@@ -5324,7 +5322,7 @@ msgstr "Farm Luftfeuchtigkeit"
 
 #. Keyestudio Smart Home library block
 msgid "Home fan _"
-msgstr "Home Lüfter_"
+msgstr "Home Lüfter _"
 
 #. General MIDI drum set
 msgid "electronic"
@@ -5504,7 +5502,7 @@ msgstr "ms lösche Anzeige"
 
 #. micro:STEAMakers library block
 msgid "ms scale brightness to _ %"
-msgstr "ms setze Helligkeit auf _ %"
+msgstr "ms setze Helligkeit auf _"
 
 #. micro:STEAMakers library block
 msgid "ms plot x _ y _ with _"
@@ -5516,7 +5514,7 @@ msgstr "ms lösche x _ y _"
 
 #. Keyestudio Smart Farm library block
 msgid "Farm fan _"
-msgstr "Farm Lüfter_"
+msgstr "Farm Lüfter _"
 
 #. Keyestudio Smart Farm library block
 msgid "Farm display _ in line _"
@@ -5721,7 +5719,7 @@ msgstr "lege Pluck Pin _ fest"
 
 #. Pluck library block
 msgid "pluck note _ octave _ for _ ms"
-msgstr "Pluck Note _ Oktave _ für _ms"
+msgstr "Pluck Note _ Oktave _ für _ ms"
 
 #. Pluck library block
 msgid "pluck MIDI key _ for _ msecs"
@@ -5794,7 +5792,7 @@ msgstr "Nezha spiele Ton _ Hz für _ ms"
 
 #. NeZha2 robot library block
 msgid "Nezha set motor _ speed to _ (-100-100)"
-msgstr "Nezha drehe Motor _ mit Geschwindigkeit _ (-100~100)"
+msgstr "Nezha drehe Motor _ mit Tempo _ (-100~100)"
 
 #. NeZha2 robot library block
 msgid "Nezha stop motor _"
@@ -5806,7 +5804,7 @@ msgstr "Nezha stoppe alle Motoren"
 
 #. NeZha2 robot library block
 msgid "Nezha set continuous servo _ speed to _ (-100 to 100)"
-msgstr "Nezha drehe Servo _ mit Geschwindigkeit _ (-100~100)"
+msgstr "Nezha drehe Servo _ mit Tempo _ (-100~100)"
 
 #. NeZha2 robot library block
 msgid "Nezha set LED _ to _"
@@ -5814,7 +5812,7 @@ msgstr "Nezha setze LED _ auf _"
 
 #. NeZha2 robot library block
 msgid "brightness _ %"
-msgstr "Helligkeit _ %"
+msgstr "Helligkeit _"
 
 #. NeZha2 robot library block
 msgid "Nezha soil moisture _"
@@ -5850,7 +5848,7 @@ msgstr "Nezha setze _ Servo _ auf Winkel _"
 
 #. NeZha2 robot library label
 msgid "Nezha2"
-msgstr "Nezha2"
+msgstr "Nezha"
 
 #. General MIDI drum instrument name
 msgid "Cowbell"
@@ -6270,11 +6268,11 @@ msgstr "überspringe _ Bytes der Datei _"
 
 #. Wukong robot library menu option, as in "both motors"
 msgid "wukong;both"
-msgstr "1+2"
+msgstr "beide"
 
 #. Wukong robot library block
 msgid "Wukong set _ servo _ to _ degrees"
-msgstr "Wukong setze _ Servo _ auf Winkel _"
+msgstr "Wukong setze _ Servo _ auf Winkel _ °"
 
 #. CoCube library block
 msgid "move _ at _ speed (0-50) for _ msecs"
@@ -6484,7 +6482,7 @@ msgstr "Calliope setze NeoPixel _ auf _"
 
 #. Calliope NeoPixel library block
 msgid "Calliope set brightness to _ %"
-msgstr "Calliope setze NeoPixel auf Helligkeit _ %"
+msgstr "Calliope setze NeoPixel auf Helligkeit _"
 
 #. Calliope Servoboard library block
 msgid "Calliope set motor _ to speed _ (-100~100)"
@@ -7079,7 +7077,7 @@ msgstr "MotionKit stoppe Motor _"
 
 #. Calliope MotionKit2 library block
 msgid "MotionKit motor _ dir _ speed _ (0~255)"
-msgstr "MotionKit Motor _ Richtung _ Tempo _ (0~255)"
+msgstr "MotionKit Motor _ _ Tempo _ (0~255)"
 
 #. Calliope MotionKit2 library block
 msgid "MotionKit LED _ _"

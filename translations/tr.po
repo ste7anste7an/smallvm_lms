@@ -3248,7 +3248,7 @@ msgstr "_ tuşuna basın"
 
 #. NeoPanel library block
 msgid "NeoPanel fill rectangle x _ y _ width _ height _ color _"
-msgstr "NeoPanel  dikdörtgen x _ y _ genislik _ yükseklik _renkle _  doldur"
+msgstr "NeoPanel dikdörtgen x _ y _ genislik _ yükseklik _ renkle _  doldur"
 
 #. Key name (as in computer keyboard key)
 msgid "kbd;PgDown"
@@ -3256,7 +3256,7 @@ msgstr "PgDown (aşağı sayfa) tuşu"
 
 #. Lists library block
 msgid "pick _ from _"
-msgstr "_listeden _ seç"
+msgstr "_ listeden _ seç"
 
 #. Lists library block
 msgid "shuffle _"
@@ -3292,7 +3292,7 @@ msgstr "özgün _"
 
 #. NeoPanel library block
 msgid "NeoPanel set x _ y _ color _"
-msgstr "NeoPanel renk ayarla x _ y_ renk _"
+msgstr "NeoPanel renk ayarla x _ y _ renk _"
 
 #. Keyboard and Mouse library block
 msgid "release all keys"

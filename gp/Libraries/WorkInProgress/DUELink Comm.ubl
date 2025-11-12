@@ -1,0 +1,343 @@
+module 'DUELink Comm'
+author 'GHI Electronics'
+version 0 8 
+description 'DUELink base library used by all other DUELink libraries.
+
+Handles daisylink communications via I2C or serial (UART).
+
+
+By default, this library uses serial over the Downlink port on DUELink boards and I2C on other boards but that can be changed by using the advanced "DUELink useI2C" block.
+
+
+
+See https://www.duelink.com/docs/engine/stdlib
+
+'
+variables _dueUseI2C _dueReadTimeout 
+
+  spec 'r' 'due_connected' 'DUELink connected?'
+  space
+  space
+  spec 'r' 'due_runWithResult' 'Write command _ returns string' 'str' 'version()'
+  spec ' ' 'due_run' 'Write command _' 'str' 'statled(100,100,10)'
+  spec 'r' 'Write command' 'Write command _ returns number' 'auto' 'dread(1,2)'
+  spec ' ' 'Set Stat LED to high' 'Set Stat LED to high _ (ms), low _ (ms), count _' 'auto auto auto' 100 100 10
+  spec ' ' 'due_setReadTimeout' 'Set response timeout _ milliseconds' 'auto' 1000
+  spec ' ' 'Select device' 'Select device _' 'auto' 1
+  advanced
+  spec ' ' 'due_useI2C' 'DUELink useI2C _' 'bool' true
+  spec ' ' '_due_init' '_due_init'
+  spec 'r' '_due_templateWith' '_due_template _ : with _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _' 'str auto auto auto auto auto auto auto auto auto auto auto auto' 'test(%)' 123
+  spec ' ' '_due_send' '_due send _' 'str'
+  spec ' ' '_due send raw' '_due send raw _' 'auto' '10'
+  spec 'r' '_due_awaitResult' '_due await result'
+  spec 'r' '_due_awaitResultI2C' '_due await result (I2C)'
+  spec 'r' '_due_endsWithPrompt' '_due byte array ends with prompt _' 'str'
+  spec 'r' 'due_readResponse' 'Read response'
+  space
+  space
+  spec ' ' 'due_stop' 'Stop'
+  spec ' ' 'due_exec' 'Run'
+  space
+  space
+  spec ' ' 'due_otpw' 'OTP write address _ data _' 'auto auto' 0 '1,2,3,4,5,6,7,8'
+  spec 'r' 'due_otpr' 'OTP read address _' 'auto' 0
+  space
+  space
+  spec ' ' '_due_stream_write_bytes' 'Stream write to _ data _' 'auto auto' 'b1' '1,2,3'
+  spec 'r' 'due_stream_read_bytes' 'Stream read from _ count _' 'auto auto' 'b1' 3
+
+to 'Select device' dev {
+  due_run ('_due_templateWith' 'sel(%)' dev)
+}
+
+to 'Set Stat LED to high' high low count {
+  due_run ('_due_templateWith' 'statled(%,%,%)' high low count)
+}
+
+to 'Write command' cmd {
+  '_due_send' cmd
+  waitMillis 5
+  return ('[data:convertType]' ('_due_awaitResult') 'number')
+}
+
+to '_due send raw' s {
+  '_due_init'
+  comment 'Clear receive buffer.'
+  if _dueUseI2C {
+    '[sensors:i2cRead]' 82 ('[data:newByteArray]' 64)
+  } else {
+    local 'trash' ('[serial:dueRecv]')
+  }
+  if _dueUseI2C {
+    comment 'Assume command is < 64 bytes for now.'
+    '[sensors:i2cWrite]' 82 ('[data:asByteArray]' s)
+  } else {
+    s = ('[data:convertType]' s 'string')
+    local 'i' 1
+    repeatUntil (i > (size s)) {
+      local 'sent' ('[serial:dueSend]' s i)
+      i += sent
+      waitMillis ((sent / 10) + 1)
+    }
+    waitMillis 2
+  }
+}
+
+to '_due_awaitResult' {
+  '_due_init'
+  if _dueUseI2C {
+    return ('_due_awaitResultI2C')
+  }
+  local 'result' ('[data:makeList]')
+  local 'startT' (millisOp)
+  comment 'Receive data until either the next prompt character or a timeout and return the result'
+  repeatUntil ((millisSince startT) > _dueReadTimeout) {
+    local 'buf' ('[serial:dueRecv]')
+    if ((size buf) != 0) {
+      for byte buf {
+        '[data:addLast]' byte result
+      }
+      if ('_due_endsWithPrompt' result) {
+        comment 'Result ends DUE prompt sequence: 10, 13, 62'
+        repeat 3 {
+          '[data:delete]' 'last' result
+        }
+        exitLoop
+      }
+    }
+    waitMicros 5
+  }
+  return ('[data:convertType]' result 'string')
+}
+
+to '_due_awaitResultI2C' {
+  local 'result' (newList 20)
+  '[data:delete]' 'all' result
+  local 'buf' ('[data:newByteArray]' 32)
+  local 'startT' (millisOp)
+  repeatUntil ((millisSince startT) > _dueReadTimeout) {
+    '[sensors:i2cRead]' 82 buf
+    for byte buf {
+      if (byte != 255) {'[data:addLast]' byte result}
+    }
+    if ('_due_endsWithPrompt' result) {
+      comment 'Result ends DUE prompt sequence: 13, 10, 62'
+      repeat 3 {
+        '[data:delete]' 'last' result
+      }
+      exitLoop
+    }
+    waitMillis 1
+  }
+  return ('[data:convertType]' result 'string')
+}
+
+to '_due_endsWithPrompt' buffer {
+  local 'end' (size buffer)
+  if (end < 3) {
+    return (booleanConstant false)
+  }
+  return (and (or ((at end buffer) == 62) ((at end buffer) == 36)) (and ((at (end - 1) buffer) == 10) ((at (end - 2) buffer) == 13)))
+}
+
+to '_due_init' {
+  if (_dueReadTimeout == 0) {_dueReadTimeout = 1000}
+  if (not (isType _dueUseI2C 'boolean')) {
+    comment 'Not yet initialized, set _dueUseI2C.'
+    for s ('[data:makeList]' 'CincoBit' 'PixoBit' 'DueSTEM' 'Clipit' 'DUELink') {
+      if (('[data:find]' s (boardType)) > 0) {
+        comment 'This is a DUELink board; use serial.'
+        _dueUseI2C = (booleanConstant false)
+        return 0
+      }
+    }
+    comment 'Not a DUELink board; use I2C.'
+    _dueUseI2C = (booleanConstant true)
+  }
+}
+
+to '_due_send' s {
+  '_due_init'
+  comment 'Clear receive buffer.'
+  if _dueUseI2C {
+    '[sensors:i2cRead]' 82 ('[data:newByteArray]' 64)
+  } else {
+    local 'trash' ('[serial:dueRecv]')
+  }
+  if _dueUseI2C {
+    comment 'Assume command is < 64 bytes for now.'
+    '[sensors:i2cWrite]' 82 ('[data:join]' ('[data:asByteArray]' s) ('[data:unicodeString]' 10))
+  } else {
+    s = ('[data:convertType]' s 'string')
+    local 'i' 1
+    repeatUntil (i > (size s)) {
+      local 'sent' ('[serial:dueSend]' s i)
+      i += sent
+      waitMillis ((sent / 10) + 1)
+    }
+    i += ('[serial:dueSend]' ('[data:unicodeString]' 10) 1)
+    waitMillis 2
+  }
+}
+
+to '_due_stream_write_bytes' 'array name' data {
+  local 'buf' ('[data:split]' data ',' true)
+  local 'buf_read' (newList 1)
+  local 'found prompt' 0
+  '_due_send' ('_due_templateWith' 'strmwr(%,%)' (v 'array name') (size buf))
+  repeatUntil ((v 'found prompt') == 1) {
+    if _dueUseI2C {
+      '[sensors:i2cRead]' 82 buf_read
+      for byte buf_read {
+        if (byte == 38) {'found prompt' = 1}
+      }
+    } else {
+      local 'buf_read' ('[serial:dueRecv]')
+      if ((size buf_read) != 0) {
+        for byte buf_read {
+          if (byte == 38) {'found prompt' = 1}
+        }
+      }
+    }
+  }
+  if _dueUseI2C {
+    '[sensors:i2cWrite]' 82 buf
+  } else {
+    local 'ignore' ('[serial:dueSend]' buf 1)
+  }
+  if ('[data:convertType]' (due_readResponse) 'number') {
+  }
+}
+
+to '_due_templateWith' s optionalArgs {
+  local 'parts' ('[data:split]' s '%')
+  local 'result' ('[data:makeList]')
+  for i ((size parts) - 1) {
+    '[data:addLast]' (at i parts) result
+    '[data:addLast]' (argOrDefault (i + 1) '') result
+  }
+  '[data:addLast]' (at 'last' parts) result
+  return ('[data:joinStrings]' result)
+}
+
+to due_connected {
+  '_due_send' ('[data:unicodeString]' 27)
+  local 'n' ('[data:convertType]' (random 1 9) 'string')
+  return ((due_runWithResult n) == n)
+}
+
+to due_exec {
+  due_run 'run'
+}
+
+to due_otpr address {
+  return ('[data:convertType]' (due_runWithResult ('_due_templateWith' 'OtpR(%)' address)) 'number')
+}
+
+to due_otpw address data {
+  due_run ('_due_templateWith' 'OtpW(%,[%])' address data)
+}
+
+to due_readResponse {
+  return ('_due_awaitResult')
+}
+
+to due_run cmd {
+  '_due_send' cmd
+  local 'ignore' ('_due_awaitResult')
+}
+
+to due_runWithResult cmd {
+  '_due_send' cmd
+  waitMillis 5
+  return ('_due_awaitResult')
+}
+
+to due_setReadTimeout millisecond {
+  _dueReadTimeout = millisecond
+}
+
+to due_stop {
+  comment 'Send escape to stop any running scripts'
+  '_due_send' ('[data:unicodeString]' 27)
+  waitMillis 100
+  due_run '>'
+}
+
+to due_stream_read_bytes 'array name' count {
+  local 'buf' (newList count)
+  local 'buf_read' (newList 1)
+  local 'found prompt' 0
+  local 'idx' 0
+  local 'buf2' ('[data:makeList]')
+  '_due_send' ('_due_templateWith' 'strmrd(%,%)' (v 'array name') count)
+  repeatUntil ((v 'found prompt') == 1) {
+    if _dueUseI2C {
+      '[sensors:i2cRead]' 82 buf_read
+      for byte buf_read {
+        if (byte == 38) {'found prompt' = 1}
+      }
+    } else {
+      local 'buf3' ('[serial:dueRecv]')
+      if ((size buf3) != 0) {
+        for byte buf3 {
+          if ((v 'found prompt') == 1) {
+            '[data:addLast]' byte buf2
+            idx = (idx + 1)
+          }
+          if (byte == 38) {
+            'found prompt' = 1
+          }
+        }
+      }
+    }
+  }
+  repeatUntil (idx >= count) {
+    if _dueUseI2C {
+      '[sensors:i2cRead]' 82 buf_read
+      for byte buf_read {
+        if (byte != 255) {
+          idx = (idx + 1)
+          atPut idx buf byte
+        }
+      }
+    } else {
+      local 'buf4' ('[serial:dueRecv]')
+      if ((size buf4) != 0) {
+        for byte buf4 {
+          '[data:addLast]' byte buf2
+          idx = (idx + 1)
+        }
+      }
+    }
+  }
+  if _dueUseI2C {
+    return ('[data:convertType]' buf 'byte array')
+  } else {
+    comment 'buf3 and buf4 may have data, we copied them to buf2 and have all response, we need buf5 to take actual data only, remove xx\r\n>'
+    local 'buf5' ('[data:makeList]')
+    local 'ret' 0
+    for byte buf2 {
+      if (ret < count) {'[data:addLast]' byte buf5}
+    }
+    return ('[data:convertType]' buf5 'byte array')
+  }
+}
+
+to due_useI2C useI2C {
+  comment 'DUELink defaults to using the serial Downlink port on DUELink boards
+
+and I2C on non-DUELink board. This advanced block is only needed
+
+when one wants to force different behavior from the default
+
+(e.g. to use I2C edge connector pins on a DUE CincoBit or PixoBit).'
+  _dueUseI2C = useI2C
+  if _dueUseI2C {
+  } else {
+    comment 'If Uart we need to send 10 or 13 or 27 or ''s'' or ''S'''
+    'Select device' 1
+  }
+}
+

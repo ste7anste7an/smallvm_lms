@@ -70,8 +70,12 @@ method extraCategories MicroBlocksProject { return (array) } // called by Author
 
 method hasUserCode MicroBlocksProject {
 	if (isNil main) { return false }
-	if (and (isEmpty (scripts main)) (isEmpty (functions main)) (isEmpty (variableNames main))) {
-		return false
+	if (and
+		(isEmpty (scripts main))
+		(isEmpty (functions main))
+		(isEmpty (variableNames main))
+		(isEmpty libraries)) {
+			return false
 	}
 	return true
 }

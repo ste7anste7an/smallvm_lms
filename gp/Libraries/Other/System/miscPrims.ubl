@@ -1,6 +1,6 @@
 module 'Misc Primitives'
 author MicroBlocks
-version 1 9 
+version 1 10
 description 'Miscellaneous system primitives.
 '
 
@@ -9,6 +9,9 @@ description 'Miscellaneous system primitives.
   space
   spec 'r' 'pushArgCount' 'arg count'
   spec 'r' 'getArg' 'arg _' 'num' 0
+  space
+  spec ' ' 'callCustomCommand'	'call _ : with _' 'str.functionNameMenu str' '' 'parameter list'
+  spec 'r' 'callCustomReporter'	'call _ : with _' 'str.functionNameMenu str' '' 'parameter list'
   space
   spec 'r' 'longMult' '( _ * _ ) >> _' 'num num num' 1024 2048 10
   spec 'r' '[misc:sin]' 'fixed sine _' 'num' 9000

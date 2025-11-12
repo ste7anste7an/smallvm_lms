@@ -6830,7 +6830,7 @@ msgstr "cb distancia"
 
 #. Foxbit library block
 msgid "fb pin _ touched?"
-msgstr "fb ¿pin_ tocado?"
+msgstr "fb ¿pin _ tocado?"
 
 #. Coding Box library block
 msgid "cb humidity"

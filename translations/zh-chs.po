@@ -1439,7 +1439,7 @@ msgstr "湿度 DHT22 引脚 _"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "move motor _ _ complete turns"
-msgstr "转动马达_ _ 整圈"
+msgstr "转动马达 _ _ 整圈"
 
 #. Key name (as in computer keyboard key)
 msgid "kbd;Control"

@@ -308,7 +308,7 @@ msgstr "또는 _"
 
 #. Block in Operators category
 msgid "_ is a _"
-msgstr "_은(는)_이(가)"
+msgstr "_ 은(는) _ 이(가)"
 
 #. Block in Operators category
 msgid "convert _ to _"
@@ -345,7 +345,7 @@ msgstr "고급 기능:"
 
 #. Block in Operators category
 msgid "rescale _ from ( _ , _ ) to ( _ , _ )"
-msgstr "_를 (_,_)에서 (_,_)로 리스케일"
+msgstr "_ 를 ( _ , _ )에서 ( _ , _ )로 리스케일"
 
 #. Block in Operators category
 msgid "hex _"
@@ -438,7 +438,7 @@ msgstr "미소"
 
 #. Block in Data category
 msgid "to _"
-msgstr "_로(으로)"
+msgstr "_ 로(으로)"
 
 #. Block in Data category
 msgid "find _ in _"
@@ -474,7 +474,7 @@ msgstr "_ 새로운 바이트어레이"
 
 #. Block in Data category
 msgid "as byte array _"
-msgstr "_을(를) 바이트 배열로 변환"
+msgstr "_ 을(를) 바이트 배열로 변환"
 
 #. Example string. Tells the user this input accepts a byte list or a string.
 msgid "aByteListOrString"
@@ -508,7 +508,7 @@ msgstr "랜덤"
 
 #. Block in Data category
 msgid "split _ by _"
-msgstr "_을(를) _ 기준으로 나누기"
+msgstr "_ 을(를) _ 기준으로 나누기"
 
 #. "My Blocks" blocks category label
 msgid "cat;My Blocks"
@@ -536,23 +536,23 @@ msgstr "통신"
 
 #. Block in Comm category
 msgid "i2c get device _ register _"
-msgstr "I2C 장치 _의 레지스터 _ 읽기"
+msgstr "I2C 장치 _ 의 레지스터 _ 읽기"
 
 #. Block in Comm category
 msgid "i2c set device _ register _ to _"
-msgstr "I2C 장치 _의 레지스터 _을(를) _으로 설정하기"
+msgstr "I2C 장치 _ 의 레지스터 _ 을(를) _ 으로 설정하기"
 
 #. Block in Comm category
 msgid "i2c device _ read list _"
-msgstr "I2C 장치 _에서 목록 _ 읽기"
+msgstr "I2C 장치 _ 에서 목록 _ 읽기"
 
 #. Block in Comm category
 msgid "i2c device _ write list _"
-msgstr "I2C 장치 _에 목록 _ 쓰기"
+msgstr "I2C 장치 _ 에 목록 _ 쓰기"
 
 #. Block in Comm category
 msgid "i2c device _ exists?"
-msgstr "I2C 장치 _이(가) 존재하나요?"
+msgstr "I2C 장치 _ 이(가) 존재하나요?"
 
 #. Block in Comm category
 msgid "spi send _"
@@ -564,7 +564,7 @@ msgstr "SPI로 받기"
 
 #. Block in Comm category
 msgid "spi setup speed _"
-msgstr "SPI 속도 _으로 설정하기"
+msgstr "SPI 속도 _ 으로 설정하기"
 
 #. Block in Comm category
 msgid "mode _"

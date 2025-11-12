@@ -1,12 +1,12 @@
 module MIDI Output
-author 'per MicroBlocks'
-version 1 19 
+author MicroBlocks
+version 1 20 
 choices druminst 'Acoustic Bass Drum' 'Bass Drum 1' 'Side Stick' 'Acoustic Snare' 'Hand Clap' 'Electric Snare' 'Low Floor Tom' 'Closed Hi-Hat' 'High Floor Tom' 'Pedal Hi-Hat' 'Low Tom' 'Open Hi-Hat' 'Low-Mid Tom' 'Hi-Mid Tom' 'Crash Cymbal 1' 'High Tom' 'Ride Cymbal 1' 'Chinese Cymbal' 'Ride Bell' Tambourine 'Splash Cymbal' Cowbell 'Crash Cymbal 2' Vibraslap 'Ride Cymbal 2' 'Hi Bongo' 'Low Bongo' 'Mute Hi Conga' 'Open Hi Conga' 'Low Conga' 'High Timbale' 'Low Timbale' 'High Agogo' 'Low Agogo' Cabasa Maracas 'Short Whistle' 'Long Whistle' 'Short Guiro' 'Long Guiro' Claves 'Hi Wood Block' 'Low Wood Block' 'Mute Cuica' 'Open Cuica' 'Mute Triangle' 'Open Triangle' 
 choices _midiPin USB 
 choices instrument piano 'chromatic percussion' organ guitar bass strings ensemble brass reed pipe 'synth lead' 'synth pad' 'synth SFX' ethnic percussive 'gm;SFX' 
 choices sfx 'guitar fret noise' 'guitar cut noise' 'string slap' 'flute key click' seashore rain thunder wind stream bubble bird dog horse 'telephone 1' 'telephone 2' 'door creaking' door scratch windchime helicopter 'car engine' 'car stop' 'car pass' 'car crash' siren train 'jet plane' starship 'burst noise' applause laughing screaming punch 'heart beat' footstep 'gun shot' 'machine gun' 'laser gun' explosion 
-choices drumkits 'Standard 1' 'Standard 2' 'Standard L/R' 'Room' 'Hip Hop' 'Jungle' 'Techno' 'Room L/R' 'House' 'Power' 'Electronic' 'TR-808' 'Dance' 'CR-78' 'TR-606' 'TR-707' 'TR-909' 'Jazz' 'Jazz L/R' 'Brush' 'Brush 2' 'Brush 2 L/R' 'Orchestra' 'Ethnic' 'Kick & Snare' 'Kick & Snare 2' 'Asia' 'Cymbal&claps' 'Gamelan 1' 'Gamelan 2' 'SFX' 'Rhythm FX' 'Rhythm FX 2' 'Rhythm FX 3' 'SFX 2' 'Voice' 'Cym&Claps 2' 
-choices controls 'bank select 1' 'bank select 2' modulation 'portamento time' volume pan expression hold portamento sostenuto soft resonance 'release time' 'attack time' cutoff 'decay time' 'vibrato rate' 'vibrato depth' 'vibrato delay' 'portamento control' 'effect 1' 'effect 2'
+choices drumkits 'Standard 1' 'Standard 2' 'Standard L/R' Room 'Hip Hop' Jungle Techno 'Room L/R' House Power Electronic 'TR-808' Dance 'CR-78' 'TR-606' 'TR-707' 'TR-909' Jazz 'Jazz L/R' Brush 'Brush 2' 'Brush 2 L/R' Orchestra Ethnic 'Kick & Snare' 'Kick & Snare 2' Asia 'Cymbal&claps' 'Gamelan 1' 'Gamelan 2' SFX 'Rhythm FX' 'Rhythm FX 2' 'Rhythm FX 3' 'SFX 2' Voice 'Cym&Claps 2' 
+choices controls 'bank select 1' 'bank select 2' modulation 'portamento time' volume pan expression hold portamento sostenuto soft resonance 'release time' 'attack time' cutoff 'decay time' 'vibrato rate' 'vibrato depth' 'vibrato delay' 'portamento control' 'effect 1' 'effect 2' 
 description 'Control MIDI devices. By default, it interfaces the hardware serial port, but it also supports software serial and USB MIDI.
 
 
@@ -120,7 +120,7 @@ to 'MIDI_select MIDI drum kit' drumkit {
 
 to 'MIDI_select MIDI instrument' 'instrument type' 'instrument number' channel variation {
   local 'programChangeCmd' 12
-  'MIDI_change MIDI control' 'bank select 1' channel variation
+  'MIDI_change MIDI control' 'bank select 1' channel (argOrDefault 4 0)
   '_MIDI command' programChangeCmd channel ((MIDI_instrument (v 'instrument type') (v 'instrument number')) - 1)
 }
 
@@ -242,7 +242,7 @@ to '_MIDI command' cmd channel arg1 arg2 {
 to '_MIDI init' {
   if (not _MIDI_initialized) {
     if (and ((boardType) == 'micro:bit v2') (_MIDI_pin == 0)) {
-        'MIDI_set MIDI pin' 0
+      'MIDI_set MIDI pin' 0
     } ((boardType) != 'Boardie') {
       if (_MIDI_pin == 0) {
         '[serial:open]' 31250

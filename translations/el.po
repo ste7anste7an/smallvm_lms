@@ -40,7 +40,7 @@ msgstr "σταμάτα τα βηματικά μοτέρ"
 
 #. Citilab ED1 Buttons library block
 msgid "set capacitive threshold to _"
-msgstr "ορίσε όριο του χωρητικού σε_"
+msgstr "ορίσε όριο του χωρητικού σε _"
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "humm;Light"

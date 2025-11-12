@@ -358,7 +358,7 @@ msgstr "radio kanali kanal (0-83) _"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "draw shape _ at x _ y _"
-msgstr "_shaklini _ x _ y _ ga chizish"
+msgstr "_ shaklini _ x _ y _ ga chizish"
 
 #. "My Blocks" blocks category label
 msgid "cat;My Blocks"
@@ -1362,7 +1362,7 @@ msgstr "o'tishni to'xtatish"
 
 #. TFT Display library block
 msgid "draw line on TFT from x _ y _ to x _ y _ color _"
-msgstr "TFT ga x _ y _ dan x _ y _ color _gacha  chiziq chizish"
+msgstr "TFT ga x _ y _ dan x _ y _ color _ gacha chiziq chizish"
 
 #. TFT Display library block
 msgid "draw rectangle on TFT at x _ y _ width _ height _ color _"

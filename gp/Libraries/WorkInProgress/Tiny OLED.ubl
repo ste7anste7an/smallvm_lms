@@ -1,6 +1,6 @@
 module 'Tiny OLED' Output
 author MicroBlocks
-version 1 2 
+version 1 5 
 description 'Tiny graphics library for a 128x64 pixel monochrome OLED display with a SSD1306 controller.
 Useful on boards with very limited code store space such as the DUELink PixoBit.
 '
@@ -8,10 +8,19 @@ variables _tinyOLED_buffer _tinyOLED_hideUpdates
 
   spec ' ' 'tinyOLED_clear' 'clear tiny OLED display'
   spec ' ' 'tinyOLED_drawString' 'draw string _ x _ y _ white _' 'str num num bool' 'Hello!' 48 52 true
+  spec ' ' 'tinyOLED_drawStringBig' 'draw big string _ x _ y _ white _' 'str num num bool' 'Hello!' 36 0 true
+  space
   spec ' ' 'tinyOLED_drawRect' 'draw rect x _ y _ w _ h _ fill _ white _' 'num num num num bool bool' 44 17 40 30 false true
   spec ' ' 'tinyOLED_drawCircle' 'draw circle center _ _ radius _ fill _ white _' 'num num num bool bool' 64 32 10 false true
   spec ' ' 'tinyOLED_drawLine' 'draw line from _ _ to _ _ white _' 'num num num num bool' 0 0 127 63 true
   spec ' ' 'tinyOLED_drawPixel' 'draw pixel x _ y _ white _' 'num num bool' 20 30 true
+  space
+  spec ' ' 'tinyOLED_drawImage' 'draw image _ x _ y _ : scale _' 'str num num num' '' 0 0 1
+  spec 'r' 'tinyOLED_image' 'image _' 'str' '00000
+01010
+00000
+10001
+01110'
   space
   spec ' ' 'tinyOLED_setBrightness' 'set tiny OLED brightness _' 'menu.range:1-5' 4
   space
@@ -25,6 +34,7 @@ variables _tinyOLED_buffer _tinyOLED_hideUpdates
   spec ' ' '_tinyOLED_updateDisplay' '_tinyOLED_updateDisplay'
   spec ' ' '_tinyOLED_drawChar' '_tinyOLED_drawChar _ x _ y _' 'auto num num' 65 0 0
   spec ' ' '_tinyOLED_setPixel' '_tinyOLED_setPixel x _ y _ white _' 'num num bool' 0 0 true
+  spec ' ' '_tinyOLED_drawBigPixel' '_tinyOLED_drawBigPixel x _ y _ scale _' 'num num num' 0 0 2
   spec ' ' '_tinyOLED_hline' '_hline startX _ endX _ y _ white _' 'num num num bool' 10 110 10 true
 
 to '_tinyOLED_cmd' cmdString {
@@ -32,6 +42,15 @@ to '_tinyOLED_cmd' cmdString {
   local 'i2cAddr' 60
   for cmd ('[data:split]' ('[data:convertType]' cmdString 'string') ',') {
     '[sensors:i2cWrite]' i2cAddr ('[data:makeList]' (hexToInt '80') (hexToInt cmd))
+  }
+}
+
+to '_tinyOLED_drawBigPixel' x y scale {
+  comment 'Fill a square of size scale at the given position.'
+  local 'right' ((x + scale) - 1)
+  repeat scale {
+    '_tinyOLED_hline' x right y true
+    y += 1
   }
 }
 
@@ -70,6 +89,9 @@ to '_tinyOLED_drawChar' ch x y {
 to '_tinyOLED_hline' startX endX y white {
   '_tinyOLED_init'
   if (or (y < 0) (y > 63)) {
+    return 0
+  }
+  if (or (endX < 0) (startX > 127)) {
     return 0
   }
   startX = (maximum 0 (minimum startX 127))
@@ -175,6 +197,24 @@ to tinyOLED_drawCircle cx cy r fill white {
   '_tinyOLED_updateDisplay'
 }
 
+to tinyOLED_drawImage imageString x y optionalScale {
+  comment 'Draw an image at the given position. An image is represented by a multi-line string
+of 0 and 1 characters where each line is one row of the image. 1 means that pixel on (lit).'
+  '_tinyOLED_init'
+  local 'scale' (argOrDefault 4 1)
+  local 'left' x
+  for ch ('[data:convertType]' imageString 'byte array') {
+    if (ch == 10) {
+      y += scale
+      x = left
+    } else {
+      if (ch == 49) {'_tinyOLED_drawBigPixel' x y scale}
+      x += scale
+    }
+  }
+  '_tinyOLED_updateDisplay'
+}
+
 to tinyOLED_drawLine x0 y0 x1 y1 white {
   comment 'Draws a line from x0,y0 to x1,y1 using the Bresenham line algorithm.'
   '_tinyOLED_init'
@@ -252,8 +292,33 @@ to tinyOLED_drawString s x y white {
   '_tinyOLED_updateDisplay'
 }
 
+to tinyOLED_drawStringBig s x y white {
+  comment 'Draw double-size string.'
+  '_tinyOLED_init'
+  if (not white) {
+    comment 'Clear string rectangle'
+    tinyOLED_drawRect x y (12 * (size s)) 14 true false
+    return
+  }
+  for ch s {
+    local 'charShape' ('[misc:shapeforChar]' ch)
+    for col charShape {
+      for i 8 {
+        if ((col & 1) == 1) {'_tinyOLED_drawBigPixel' x (y + (2 * (i - 1))) 2}
+        col = (col >> 1)
+      }
+      x += 2
+    }
+  }
+  '_tinyOLED_updateDisplay'
+}
+
 to tinyOLED_hideUpdates {
   _tinyOLED_hideUpdates = (booleanConstant true)
+}
+
+to tinyOLED_image s {
+  return ('[data:convertType]' s 'string')
 }
 
 to tinyOLED_setBrightness level {

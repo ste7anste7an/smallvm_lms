@@ -780,7 +780,7 @@ msgstr "zjasni všechny NeoPixely o _"
 
 #. NeoPixel library block
 msgid "shift NeoPixel _ color by _"
-msgstr "posuň NeoPixel_ barva o _ pozic"
+msgstr "posuň NeoPixel _ barva o _ pozic"
 
 #. NeoPixel library block
 msgid "shift all NeoPixel colors by _"
@@ -3346,7 +3346,7 @@ msgstr ""
 
 #. micro:STEAMakers library block
 msgid "ms button _ ?"
-msgstr "ms tlačíko_ ?"
+msgstr "ms tlačíko _ ?"
 
 #. micro:STEAMakers library block
 msgid "ms touching ?"

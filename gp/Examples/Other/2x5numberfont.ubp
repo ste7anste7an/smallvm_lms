@@ -1,3 +1,47 @@
+module main
+author unknown
+version 1 0 
+description ''
+variables font temp number 
+
+  spec ' ' '2x5 number font' '2x5 number font _' 'num' 10
+
+to '2x5 number font' number {
+  local 'font' ('[data:makeList]' 3247203 2164802 3181635 3214403 2165793 3214371 3247139 2164803 3244131 3214435)
+  local 'temp' ('[data:split]' ('[data:convertType]' number 'string') '')
+  if ((size temp) == 1) {
+    temp = ('[data:join]' ('[data:makeList]' 0) temp)
+  }
+  led_displayImage (at ((at 1 temp) + 1) font)
+  led_displayImage (at ((at 2 temp) + 1) font) 4 1
+}
+
+script 66 66 {
+whenStarted
+for i ('[data:range]' 0 99) {
+  '2x5 number font' i
+  waitMillis 500
+}
+}
+
+script 358 72 {
+comment 'The 2x5 number font block makes it possible to display numbers from 00 to 99 on a 5 x 5 led display.
+
+The font was originally made by David Whale in 2017 and he called it WhaleySans.'
+}
+
+script 509 163 {
+comment 'The numbers in the font list are the integer representations of the images 
+that you can see below. So you could replace the list with numbers, with 
+the list block below and get the same result. '
+comment ('[data:makeList]' (led_image 3247203) (led_image 2164802) (led_image 3181635) (led_image 3214403) (led_image 2165793) (led_image 3214371) (led_image 3247139) (led_image 2164803) (led_image 3244131) (led_image 3214435))
+}
+
+script 68 250 {
+to '2x5 number font' {}
+}
+
+
 module 'LED Display' Output
 author MicroBlocks
 version 1 13 

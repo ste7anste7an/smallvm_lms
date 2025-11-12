@@ -1,17 +1,19 @@
-module 'Calliope MotionKit2'
-author 'Michael Klein kleinswelt'
-version 1 7 
+module 'Calliope MotionKit'
+author 'Michael Klein kleinswelt, Ralf Krause'
+version 1 8 
 choices mk2_line 'mk2;bright' 'mk2;dark' 
 choices mk2_position left right 
 choices mk2_motor left right both 
 choices mk2_IR '1' '2' '3' '4' '5' '6' '7' '8' '9' '0' '*' '#' 'mk2;ok' 'mk2;up' 'mk2;down' left right 
 choices mk2_direction forward backward 
+choices mk2_servoType '180°' '270°' '360°' 
 choices mk2_servo 'mk2;S1' 'mk2;S2' both 
-description 'Calliope MotionKit2
-These are blocks for driving the fully I2C controlled Calliope MotionKit2.
+description 'Calliope MotionKit 2
+
+The Calliope MotionKit 2 from TinySuperLab is a fully i2c controlled driving kit for the Calliope mini.
 - 2 motors
 - 2 servos (optional)
-- 2 linesensors
+- 2 line sensors
 - 4 NeoPixels on bottom
 - ultrasonic distance sensor
 - infrared receiver
@@ -20,20 +22,22 @@ https://webshop.calliope.cc/MotionKit-20-fuer-Calliope-mini
 '
 variables _mk2_i2cAddr _mk2_lastIRcode 
 
-  spec ' ' 'mk2_setMotor' 'MotionKit motor _ dir _ speed _ (0~255)' 'menu.mk2_motor menu.mk2_direction num' 'both' 'forward' 255
+  spec ' ' 'mk2_setMotor' 'MotionKit motor _ _ speed _ (0~100)' 'menu.mk2_motor menu.mk2_direction num' 'both' 'forward' 100
   spec ' ' 'mk2_stopMotor' 'MotionKit stop motor _' 'menu.mk2_motor' 'both'
-  spec ' ' 'mk2_setServo' 'MotionKit set servo _ to _ ° (0~180)' 'menu.mk2_servo auto' 'mk2;S1' '90'
-  space
-  spec 'r' 'mk2_distance' 'MotionKit distance (cm)'
-  spec 'r' 'mk2_lineSensor' 'MotionKit line sensor _ _' 'menu.mk2_position menu.mk2_line' 'left' 'mk2;dark'
+  spec ' ' 'mk2_setServo' 'MotionKit set _ servo _ to _ degrees' 'menu.mk2_servoType menu.mk2_servo num' '180°' 'mk2;S1' 90
+  spec ' ' 'mk2_rotateServo' 'MotionKit rotate servo _ _ speed _ (0~100)' 'menu.mk2_servo menu.mk2_direction num' 'mk2;S1' 'forward' 100
+  spec ' ' 'mk2_stopAll' 'MotionKit stop all'
   space
   spec ' ' 'mk2_setLED' 'MotionKit LED _ _' 'menu.mk2_motor bool' 'both' true
-  spec ' ' 'mk2_setNeoPixels' 'MotionKit set NeoPixels _' 'color' 255
+  spec ' ' 'mk2_setNeoPixels' 'MotionKit set NeoPixels _ : brightness _' 'color num' nil 100
   spec ' ' 'mk2_clearNeoPixels' 'MotionKit clear NeoPixels'
   spec 'r' 'mk2_colorRGB' 'color r _ g _ b _ (0~255)' 'num num num' 0 100 100
   spec 'r' 'mk2_colorRed' '_' 'color' 16711680
   spec 'r' 'mk2_colorYellow' '_' 'color' 16776960
   spec 'r' 'mk2_colorGreen' '_' 'color' 1171215
+  space
+  spec 'r' 'mk2_distance' 'MotionKit distance (cm)'
+  spec 'r' 'mk2_lineSensor' 'MotionKit line sensor _ _' 'menu.mk2_position menu.mk2_line' 'left' 'mk2;dark'
   space
   spec 'r' 'mk2_IRreceived' 'IR code received?'
   spec 'r' 'mk2_IRkey' 'IR key _ pressed?' 'menu.mk2_IR' 'mk2;up'
@@ -95,7 +99,7 @@ to mk2_IRreceived {
 }
 
 to mk2_clearNeoPixels {
-  mk2_setNeoPixels 0
+  mk2_setNeoPixels (colorSwatch 0 0 0 255)
 }
 
 to mk2_colorGreen color {
@@ -144,6 +148,22 @@ to mk2_lineSensor which brightdark {
   return sensorvalue
 }
 
+to mk2_rotateServo servo dir speed {
+  speed = (maximum 0 (minimum speed 100))
+  if (dir == 'forward') {
+    speed = ('[misc:rescale]' speed 100 0 0 90)
+  } else {
+    speed = ('[misc:rescale]' speed 0 100 90 180)
+  }
+  if (servo == 'mk2;S1') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed)
+  } (servo == 'mk2;S2') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '15') speed)
+  } else {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed speed)
+  }
+}
+
 to mk2_setLED which on {
   on = ('[data:convertType]' on 'number')
   if (which == 'left') {
@@ -156,7 +176,8 @@ to mk2_setLED which on {
 }
 
 to mk2_setMotor motor dir speed {
-  speed = (maximum 0 (minimum speed 255))
+  speed = (maximum 0 (minimum speed 100))
+  speed = ('[misc:rescale]' speed 0 100 0 255)
   dir = ('[data:convertType]' (dir != 'forward') 'number')
   if (motor == 'left') {
     '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '00') dir speed)
@@ -167,15 +188,30 @@ to mk2_setMotor motor dir speed {
   }
 }
 
-to mk2_setNeoPixels pixelcolor {
+to mk2_setNeoPixels pixelcolor optionalBrightness {
+  local 'brightness' 100
+  if ((pushArgCount) > 1) {
+    brightness = optionalBrightness
+  }
+  if (brightness < 100) {
+    local 'c' pixelcolor
+    pixelcolor = ('[misc:hsvColor]' ('[misc:hue]' c) ('[misc:saturation]' c) ((('[misc:brightness]' c) * brightness) / 100))
+  }
   local 'r' ((pixelcolor >> 16) & 255)
   local 'g' ((pixelcolor >> 8) & 255)
   local 'b' (pixelcolor & 255)
   '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '18') r g b)
 }
 
-to mk2_setServo servo degrees {
-  degrees = (maximum 0 (minimum degrees 180))
+to mk2_setServo servoType servo degrees {
+  local 'range' 180
+  if ('270°' == servoType) {
+    range = 270
+  } ('360°' == servoType) {
+    range = 360
+  }
+  degrees = (maximum 0 (minimum degrees range))
+  degrees = ('[misc:rescale]' degrees range 0 0 180)
   if (servo == 'mk2;S1') {
     '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') degrees)
   } (servo == 'mk2;S2') {
@@ -183,6 +219,13 @@ to mk2_setServo servo degrees {
   } else {
     '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') degrees degrees)
   }
+}
+
+to mk2_stopAll {
+  mk2_stopMotor 'both'
+  mk2_rotateServo 'both' 'forward' 0
+  mk2_setLED 'both' off
+  mk2_clearNeoPixels
 }
 
 to mk2_stopMotor motor {

@@ -219,7 +219,11 @@ method buildMorph Menu page yPos {
 			if (isClass (at tuple 1) 'String') {ilbl = (menuStringImage (at tuple 1) fontName fontSize itemTextColorPressed itemBackgroundColorPressed)}
 			pbm = (itemLabel this ilbl itemThm itemBackgroundColorPressed menuWidth paddingH itemPaddingV)
 			if reverseCall {
-				itemAction = (action target (at tuple 2))
+				if (isClass (at tuple 2) 'Action') {
+					itemAction = (at tuple 2)
+				} else {
+					itemAction = (action target (at tuple 2))
+				}
 			} else {
 				itemAction = (action (at tuple 2) target)
 			}

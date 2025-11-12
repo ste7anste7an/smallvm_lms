@@ -1228,7 +1228,6 @@ void hardwareInit() {
 	#define ANALOG_PINS 5
 	#define TOTAL_PINS 60
 	#define PIN_LED 15 // PB_8
-	#define DEFAULT_TONE_PIN 21
 	static const int8_t analogPin[ANALOG_PINS] = {16, 17, 18, 19, 37}; // used to initialize random generater
 
 	// Reserved C071R pins:
@@ -1253,6 +1252,8 @@ void hardwareInit() {
 		 2, 27,  7,  9,  5,  4, 33, 255, 255,  0,
 		 1, 13, 29, 12, 15, 14, 32}; // unused pins: 12, 15, 14, 32
 
+	// PA_9, D8, edge pin 21 is UART1_TX
+	// PA_10, D2, edge pin 22 is UART1_RX
 	static const char dueStandardPin[DIGITAL_PINS] = {
 		15, 16, 17, 18, 13, 12, 11,  7, 54, 19,
 		33, 29,  9,  5,  4,  1,  0, 37, 14, 10,
@@ -1322,7 +1323,7 @@ void hardwareInit() {
 		PA_1_ALT1,	// TIM1_CH2, *TIM2_CH2*, TIM17_CH1
 		PA_4_ALT2,	// TIM1_CH2N, TIM14_CH1, *TIM17_CH1N* (buzzer on Ghizzy)
 		PA_5_ALT2,	// TIM1_CH1, TIM1_CH3N, *TIM2_CH1
-		PA_6_ALT1,	// TIM3_CH1, *TIM16_CH1*
+		PA_6,		// *TIM3_CH1*, TIM16_CH1
 		PA_7_ALT1,	// TIM1_CH1N, *TIM3_CH2*, TIM14_CH1, TIM17_CH1
 		PA_8_ALT2,	// TIM1_CH1, TIM1_CH2N, *TIM1_CH3N, TIM3_CH3, TIM3_CH4, TIM14_CH1
 		PB_1_ALT2,	// TIM1_CH2N, TIM1_CH3N, *TIM3_CH4*, TIM14_CH1
@@ -1333,7 +1334,12 @@ void hardwareInit() {
 		-1, 		// xxx TIM3_CH1
 		-1, 		// xxx TIM3_CH2, TIM3_CH3
 		-1,			// xxx TIM16_CH1N
-		PB_7,		// TIM1_CH4, TIM3_CH1, TIM3_CH4, TIM16_CH1, TIM17_CH1N
+		PB_7,		// *TIM1_CH4*, TIM3_CH1, TIM3_CH4, TIM16_CH1, TIM17_CH1N
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
 	};
 
 	static int duePWMPin(int pinNum) {
@@ -1397,6 +1403,8 @@ const char * boardType() {
 		}
 		if (IS_DUE_STEM) return "DueSTEM";
 		if (IS_DUE_CLIPIT) return "Clipit";
+		if (DUE_PID == 0x0C0001) return "Ghizzy";
+		if (DUE_PID == 0x0C0003) return "Holiday Tree";
 	#endif
 	return BOARD_TYPE;
 }
@@ -1534,6 +1542,22 @@ int mapDigitalPinNum(int pinNum) {
 				duePin = (IS_DUE_CINCO) ? cincoEdgePin[pinNum] : pixoEdgePin[pinNum];
 			} else {
 				duePin = dueStandardPin[pinNum];
+				if ((21 == pinNum) || (22 == pinNum)) {
+					// DUELink pins 21 and 22 (PA_9 and PA_10) are not available as GPIOs
+					// on most boards and are connected to the USB pins (PA_11, PA_12) on
+					// many boards, which causes a hard crash if those pins are used.
+					// This is a white list of boards that use pins 21 and 22 and thus do
+					// not connect them to the USB pins. Pins 21 and 22 are blocked on all
+					// other DUELink standard boards.
+					if (!(
+						(0x000010 == DUE_PID) || // DueSTEM
+						(0x000011 == DUE_PID) || // Clipit
+						(0x000012 == DUE_PID) || // DueDuino
+						(0x000013 == DUE_PID) // Stamp
+					)) {
+						duePin = -1; // block pin
+					}
+				}
 			}
 		}
 		if (255 == duePin) duePin = -1;
@@ -2387,7 +2411,52 @@ static void setServo(int pin, int usecs) {
 	}
 }
 
-#elif defined(__ZEPHYR__) || defined(DUELink)
+#elif defined(DUELink)
+
+#include <Servo.h>
+Servo servo[MAX_SERVOS];
+
+// Map MicroBlocks ("edge connector") pin number to the index of a servo. -1 mean unused.
+int8_t servoIndexForPin[DIGITAL_PINS] = {
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1};
+
+static void setServo(int pin, int usecs) {
+	// find the servo for this pin
+	int servoIndex = servoIndexForPin[pin];
+
+	if (usecs <= 0) { // turn off the servo; do nothing if not running
+		if (servoIndex >= 0) {
+			servo[servoIndex].detach();
+			servoIndexForPin[pin] = -1;
+		}
+		return;
+	}
+
+	if (servoIndex >= 0) { // update servo
+		servo[servoIndex].writeMicroseconds(usecs);
+	} else { // no servo is assigned to this pin; try to find and start one
+		int mappedPin = mapDigitalPinNum(pin);
+		if (mappedPin < 0) return;
+		for (int i = 0; i < MAX_SERVOS; i++) {
+			if (!servo[i].attached()) { // found an unused servo entry
+				servoIndex = i;
+				servoIndexForPin[pin] = i;
+				servo[i].attach(mappedPin, usecs);
+				return;
+			}
+		}
+	}
+}
+
+void stopServos() {
+	for (int pin = 0; pin < DIGITAL_PINS; pin++) {
+		setServo(pin, 0);
+	}
+}
+
+#elif defined(__ZEPHYR__)
 
 static void setServo(int pin, int usecs) {}
 void stopServos() {}
@@ -2687,7 +2756,7 @@ static int writeDAC(int sample) { return 0; }
 
 OBJ primHasTone(int argCount, OBJ *args) {
 	#if defined(ARDUINO_SAM_DUE)
-		// Arduino Tone library does not work on DUELink
+		// Arduino Tone library does not work on Arduino Due
 		return falseObj;
 	#else
 		return trueObj;
@@ -2714,9 +2783,10 @@ OBJ primPlayTone(int argCount, OBJ *args) {
 		}
 	#elif defined(DUELink)
 		if ((pin < 0) || (pin >= DIGITAL_PINS)) {
-			if (IS_DUE_STEM) pin = 3;
+			if (DUE_HAS_EDGE_CONNECTOR) pin = 21; // DUE Cinco and PixoBit
+			else if (IS_DUE_STEM) pin = 3;
 			else if (IS_DUE_CLIPIT) pin = 7;
-			else pin = DEFAULT_TONE_PIN; // DUE Cinco and PixoBit
+			else return trueObj; // no default tone pin on other DUELink boards
 		}
 	#else
 		if ((pin < 0) || (pin >= DIGITAL_PINS)) pin = DEFAULT_TONE_PIN;
@@ -2750,7 +2820,7 @@ OBJ primPlayTone(int argCount, OBJ *args) {
 }
 
 OBJ primHasServo(int argCount, OBJ *args) {
-	#if defined(__ZEPHYR__) || defined(DUELink)
+	#if defined(__ZEPHYR__)
 		return falseObj;
 	#else
 		return trueObj;
@@ -2770,9 +2840,6 @@ OBJ primSetServo(int argCount, OBJ *args) {
 	if ((pin < 0) || (pin >= DIGITAL_PINS)) return falseObj;
 	#if defined(USE_DIGITAL_PIN_MAP)
 		pin = digitalPin[pin];
-	#elif defined(DUELink)
-		pin = mapDigitalPinNum(pin);
-		if (pin < 0) return falseObj;
 	#elif defined(ARDUINO_CITILAB_ED1)
 		if ((100 <= pin) && (pin <= 139)) {
 			pin = pin - 100; // allows access to unmapped IO pins 0-39 as 100-139

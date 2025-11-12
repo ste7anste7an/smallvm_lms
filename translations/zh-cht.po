@@ -1693,7 +1693,7 @@ msgstr "前進"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "move motor _ _ complete turns"
-msgstr "轉動馬達_ _ 整圈"
+msgstr "轉動馬達 _ _ 整圈"
 
 #. OLED Graphics library block
 msgid "draw circle at x _ y _ radius _ erase _"
@@ -4275,7 +4275,7 @@ msgstr "已連接 BLE"
 
 #. Block in Operators category
 msgid "if _ then _ else _"
-msgstr "如果_那麼_否則_"
+msgstr "如果 _ 那麼 _ 否則 _"
 
 #. Example value for the ( list < > ) block
 msgid "cat"

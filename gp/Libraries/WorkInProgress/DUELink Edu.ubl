@@ -1,0 +1,167 @@
+module 'DUELink Edu'
+author DUELink
+version 1 7 
+choices dueSTEM_clipItPad A B left right up down P1 P2 P3 
+choices dueSTEM_buttonName left right up down 
+choices dueSTEM_axis x y z 
+description 'Library for DUELink Educational boards: CincoBit, PixoBit, ClipIt, and DueSTEM.
+
+The "due PIED" works on all DUELink boards.
+Blocks labeled "dueSTEM" work only on the DUEStem board.
+
+Touch sensing works only on pins with capacitive touch circuits including pins 0, 1, 2 of the CincoBit and PixoBit and all but the SCL/SDA pins of the ClipIt.
+'
+variables dueSTEM_accelAddr 
+
+  spec 'r' 'dueSTEM_light' 'due light level'
+  spec 'r' 'dueSTEM_touched' 'due pin _ touched' 'num' 1
+  spec 'r' 'dueSTEM_buzzerPin' 'due buzzer pin'
+  spec 'r' '[misc:dueLinkPID]' 'due PID'
+  space
+  spec ' ' 'dueSTEM_setLED' 'DueSTEM bulb red _ green _ blue _ (0-1000)' 'auto auto auto' 100 0 200
+  spec 'r' 'dueSTEM_button' 'DueSTEM _ button' 'menu.dueSTEM_buttonName' 'left'
+  spec 'r' 'dueSTEM_tilt' 'DueSTEM tilt _' 'menu.dueSTEM_axis' 'x'
+  spec 'r' 'dueSTEM_temperature' 'DueSTEM temperature (x10)'
+  space
+  spec 'r' 'dueSTEM_clipitTouched' 'Clipit pad _ touched : threshold _' 'menu.dueSTEM_clipItPad num' 'A' 100
+  space
+  spec ' ' '_dueSTEM_accelInit' '_dueSTEM_accelInit'
+  spec 'r' '_dueSTEM_accelRead16BitReg' '_dueSTEM_accelRead16BitReg _' 'auto' 13
+
+to '_dueSTEM_accelInit' {
+  comment 'MC3216
+https://www.mouser.com/datasheet/2/821/MEMSIC_MC3216_Datasheet-1879973.pdf'
+  if (dueSTEM_accelAddr != 0) {
+    return
+  }
+  dueSTEM_accelAddr = (hexToInt '4C')
+  comment 'Turn off accelerometer before changing settings'
+  i2cSet dueSTEM_accelAddr 7 0
+  comment 'Sampling rate: 256 Hz'
+  i2cSet dueSTEM_accelAddr 8 10
+  comment '+/-2G range, 10-bit resolution'
+  i2cSet dueSTEM_accelAddr (hexToInt '20') 3
+  comment 'Start accelerometer'
+  i2cSet dueSTEM_accelAddr 7 1
+}
+
+to '_dueSTEM_accelRead16BitReg' reg {
+  '_dueSTEM_accelInit'
+  local 'buf' (newList 2)
+  '[sensors:i2cWrite]' (hexToInt '4C') ('[data:makeList]' reg) false
+  '[sensors:i2cRead]' (hexToInt '4C') buf
+  local '16bit' (((at 2 buf) << 8) | (at 1 buf))
+  '16bit' = (((v '16bit') << 15) >> 15)
+  return ((100 * (v '16bit')) / 255)
+}
+
+to dueSTEM_button which {
+  if ((boardType) != 'DueSTEM') {return (booleanConstant false)}
+  if ('left' == which) {
+    return (digitalReadOp 20 'down')
+  } ('right' == which) {
+    return (digitalReadOp 1 'down')
+  } ('up' == which) {
+    return (digitalReadOp 18 'down')
+  } ('down' == which) {
+    return (digitalReadOp 10 'down')
+  }
+  return (booleanConstant false)
+}
+
+to dueSTEM_buzzerPin {
+  if (or ((boardType) == 'CincoBit') ((boardType) == 'PixoBit')) {
+    return 21
+  } ((boardType) == 'DueSTEM') {
+    return 3
+  } ((boardType) == 'Clipit') {
+    return 7
+  } (('[misc:dueLinkPID]') == (hexToInt '0C0001')) {
+    comment 'Ghizzy'
+    return 3
+  } (('[misc:dueLinkPID]') == (hexToInt '0C0003')) {
+    comment 'Holiday Tree'
+    return 1
+  } (('[misc:dueLinkPID]') == (hexToInt '0C0005')) {
+    comment 'Piano'
+    return 3
+  } (('[misc:dueLinkPID]') == (hexToInt '070001')) {
+    comment 'Buzzer'
+    return 7
+  }
+  return -1
+}
+
+to dueSTEM_clipitTouched padName optionalThreshold {
+  local 'pin' 0
+  if ('A' == padName) {
+    pin = 10
+  } ('B' == padName) {
+    pin = 24
+  } ('left' == padName) {
+    pin = 14
+  } ('right' == padName) {
+    pin = 12
+  } ('up' == padName) {
+    pin = 13
+  } ('down' == padName) {
+    pin = 18
+  } ('P1' == padName) {
+    pin = 1
+  } ('P2' == padName) {
+    pin = 2
+  } ('P3' == padName) {
+    pin = 3
+  }
+  return (dueSTEM_touched pin (argOrDefault 2 100))
+}
+
+to dueSTEM_light {
+  return ('[display:lightLevel]')
+}
+
+to dueSTEM_setLED r g b {
+  if ((boardType) != 'DueSTEM') {return 0}
+  analogWriteOp 11 r
+  analogWriteOp 4 g
+  analogWriteOp 2 b
+}
+
+to dueSTEM_temperature {
+  if ((boardType) != 'DueSTEM') {return 0}
+  local 'mVx10' ((330000 * (analogReadOp 9)) / 1023)
+  return ((mVx10 - 40000) / 195)
+}
+
+to dueSTEM_tilt axis {
+  if ((boardType) != 'DueSTEM') {return 0}
+  if ('x' == axis) {
+    return ('_dueSTEM_accelRead16BitReg' 13)
+  } ('y' == axis) {
+    return (0 - ('_dueSTEM_accelRead16BitReg' 15))
+  } ('z' == axis) {
+    return ('_dueSTEM_accelRead16BitReg' 17)
+  }
+  return 0
+}
+
+to dueSTEM_touched pin {
+  comment 'Charge up pin'
+  local 'startT' (millisOp)
+  digitalWriteOp pin true
+  waitMicros 200
+  local 'on' (digitalReadOp pin)
+  comment 'Tricky code: MicroBlocks does not switch tasks for waits of 30 microdseconds
+or less so the following three blocks are essentially a busy wait. Because
+of overhead, this takes 100-120 usecs on DUELink boards.
+If the pin is still high after that time, it is because it is touched, thus increasing
+the discharge time of the effective capacitance on the pin.'
+  waitMicros 30
+  waitMicros 30
+  waitMicros 30
+  local 'touched' (digitalReadOp pin)
+  comment 'Start charging pin'
+  digitalWriteOp pin true
+  return touched
+}
+

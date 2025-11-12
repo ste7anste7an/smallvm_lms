@@ -14,6 +14,7 @@ method initialize InputSlot default editRule blockColor slotMenu {
 	scale = (blockScale)
 	morph = (newMorph this)
 	text = (newText '')
+	isStatic = false
 	if ('auto' == editRule) {
 		// 'auto' slots switch between number or string depending on their contents
 		editRule = 'line'
@@ -25,6 +26,7 @@ method initialize InputSlot default editRule blockColor slotMenu {
 	setTextFont this
 	addPart morph (morph text)
 	if (editRule == 'static') {
+		isStatic = true
 		contents = default
 		if (notNil blockColor) { color = (lighter blockColor 75) }
 	}
@@ -37,7 +39,9 @@ method initialize InputSlot default editRule blockColor slotMenu {
 		}
 	}
 	menuSelector = slotMenu
-	isStatic = (isOneOf menuSelector 'sharedVarMenu' 'myVarMenu' 'localVarMenu' 'allVarsMenu' 'propertyMenu')
+	if (isOneOf menuSelector 'sharedVarMenu' 'myVarMenu' 'localVarMenu' 'allVarsMenu' 'propertyMenu') {
+		isStatic = true
+	}
 	if (and isAuto (isClass default 'String') ('' != default) (representsANumber default)) {
 		default = (toNumber default)
 	}
@@ -215,13 +219,26 @@ method textEdited InputSlot {
 	}
 }
 
+method editMenu InputSlot {
+	old = ''
+	if (notNil (contents this)) { old = (toString (contents this)) }
+	newContents = (freshPrompt (global 'page') 'New value?' old)
+	if ('' == newContents) { return }
+	setContents this newContents
+}
+
 method clicked InputSlot aHand {
+	addSlotEditCmd = (isMobile)
 	if (notNil menuSelector) {
-		arrowLeft = ((right morph) - (12 * (blockScale)))
-		if (or isStatic ((x aHand) >= arrowLeft)) {
+		arrowLeft = ((right morph) - (20 * (blockScale)))
+		if (or isStatic ((x aHand) >= arrowLeft) addSlotEditCmd) {
 			if (contains (methodNames (class 'InputSlot')) menuSelector) {
 				menu = (call menuSelector this)
 				if (notNil menu) {
+					if (and (not isStatic) addSlotEditCmd) {
+						addLine menu
+						addItem menu (localized 'edit') (action 'editMenu' this)
+					}
 					popUpAtHand menu (page aHand)
 					return true
 				}
@@ -654,11 +671,19 @@ method broadcastMenu InputSlot {
 		// special case for default broadcast string
 		defaultBroadcast = (localized 'go!')
 		remove msgList defaultBroadcast
+		remove msgList '' // wildcard (empty string)
 		addItemNonlocalized menu defaultBroadcast (action 'setContents' this defaultBroadcast)
 		addLine menu
 
 		for s msgList {
 			addItemNonlocalized menu s (action 'setContents' this s)
+		}
+		op = (primName (expression (handler (ownerThatIsA morph 'Block'))))
+		if ('whenBroadcastReceived' == op) {
+			// the empty string matches all broadcasts
+			// use "last message" block to get the message
+			addLine menu
+			addItem menu 'all' (action 'setContents' this '')
 		}
 	}
 	return menu

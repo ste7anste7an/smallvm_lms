@@ -1117,6 +1117,12 @@ OBJ primNeoPixelSend(int argCount, OBJ *args) {
 		}
 		sendNeoPixelData(val);
 	}
+
+	#if defined(FOXBIT) || defined(ARDUINO_Mbits) || defined(STEAMaker)
+		// Force a display update of the 5x5 display command after using NeoPixels
+		displaySnapshot = microBitDisplayBits = (1 << 26);
+	#endif
+
 	taskSleep(1); // NeoPixels latch time
 	return falseObj;
 }

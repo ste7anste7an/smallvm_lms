@@ -20,7 +20,7 @@ msgstr "‎‏خروجی"
 
 #. Block in Output category
 msgid "set user LED _"
-msgstr "LED روی برد را به حالت_ تنظیم کن"
+msgstr "LED روی برد را به حالت _ تنظیم کن"
 
 #. Block in Output category
 msgid "say _"
@@ -102,11 +102,11 @@ msgstr "پایه"
 
 #. Block in Pins category
 msgid "read digital pin _"
-msgstr "مقدار پایه دیجیتال شماره_ دریافت کن"
+msgstr "مقدار پایه دیجیتال شماره _ دریافت کن"
 
 #. Block in Pins category
 msgid "read analog pin _"
-msgstr "مقدار پایه آنالوگ_دریافت کن"
+msgstr "مقدار پایه آنالوگ _ دریافت کن"
 
 #. Block in Pins category
 #, fuzzy

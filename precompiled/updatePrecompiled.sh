@@ -17,20 +17,14 @@ cp .pio/build/ed1/firmware.bin precompiled/vm_citilab-ed1.bin
 pio run -e cocube
 cp .pio/build/cocube/firmware.bin precompiled/vm_cocube.bin
 
-pio run -e m5stack
-cp .pio/build/m5stack/firmware.bin precompiled/vm_m5stack.bin
 pio run -e esp32
 cp .pio/build/esp32/firmware.bin precompiled/vm_esp32.bin
 pio run -e cpx
 python precompiled/uf2conv.py -c .pio/build/cpx/firmware.bin -o precompiled/vm_circuitplay.uf2
 pio run -e cplay52
 python precompiled/uf2conv.py -c .pio/build/cplay52/firmware.hex -f 0xADA52840 -o precompiled/vm_cplay52.uf2
-pio run -e clue
-python precompiled/uf2conv.py -c -f 0xada52840 .pio/build/clue/firmware.hex -o precompiled/vm_clue.uf2
 pio run -e pico-w
 cp .pio/build/pico-w/firmware.uf2 precompiled/vm_pico_w.uf2
-pio run -e pico-ed
-cp .pio/build/pico-ed/firmware.uf2 precompiled/vm_pico_ed.uf2
 pio run -e wukong2040
 cp .pio/build/wukong2040/firmware.uf2 precompiled/vm_wukong2040.uf2
 pio run -e databot
