@@ -950,6 +950,12 @@ void hardwareInit() {
 	#define ANALOG_PINS 20
 	#define TOTAL_PINS 43
 	static const int analogPin[] = {};
+	#if defined(S3_CTF)
+		#define PIN_BUTTON_A 26
+		#define PIN_BUTTON_B 34
+		#define PIN_LED 1
+
+	#else
 	#ifdef LED_BUILTIN
 		#define PIN_LED LED_BUILTIN
 	#elif !defined(PIN_LED)
@@ -962,18 +968,39 @@ void hardwareInit() {
 			#define PIN_BUTTON_A 0
 		#endif
 	#endif
+	#endif
 	// See https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/peripherals/gpio.html
 	// strapping pins 0 (Boot), 3 (JTAG), 45 (VSPI), 46 (LOG)
 	// SPI (26-32); also 33-37 on boards with Octal SPI Flash PSRAM
 	// USB pins: 19 (USB D-), 20 (USB D+)
 	// also possibly: 39-42 (JTAG pins)
+	#if defined(S3_CTF)
+
+	/*Reversed these pins on the board
+
+# sw1 26
+# sw2 34
+# sw3 21
+# sw4 33
+# neopixel 17
+# led1 red 1
+# led2 yellow 2
+# led3 green 3
+# led4 white 4*/
+	static const char reservedPin[TOTAL_PINS] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+		1, 0, 1, 1, 1, 1, 0, 1, 1, 1,
+		1, 1, 1, 0, 1, 0, 0, 0, 1, 0,
+		0, 0, 0};
+	#else
 	static const char reservedPin[TOTAL_PINS] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
 		1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 1, 1, 1, 1, 0, 0, 0, 1, 0,
 		0, 0, 0};
-
+	#endif	
 #elif defined(ESP32_C3)
 	#define BOARD_TYPE "ESP32-C3"
 	#define DIGITAL_PINS 22
