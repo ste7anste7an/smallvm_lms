@@ -986,7 +986,13 @@ void hardwareInit() {
 # led1 red 1
 # led2 yellow 2
 # led3 green 3
-# led4 white 4*/
+# led4 white 4
+
+
+
+
+
+*/
 	static const char reservedPin[TOTAL_PINS] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 1, 1, 1,

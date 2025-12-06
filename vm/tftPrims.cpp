@@ -18,7 +18,7 @@
 #include "mem.h"
 #include "interp.h"
 
-#if defined(ESP32_ORIGINAL) || defined(C3LVGL)
+#if defined(ESP32_ORIGINAL) || defined(C3LVGL) || defined(S3_CTF)
 #include <LittleFS.h>
 #include <FS.h>
 #endif
@@ -38,7 +38,8 @@ static int deferUpdates = false;
 	defined(TTGO_RP2040) || defined(TTGO_DISPLAY) || defined(ARDUINO_M5STACK_Core2) || \
 	defined(GAMEPAD_DISPLAY) || defined(PICO_ED) || defined(OLED_128_64) || defined(COCUBE) || \
 	defined(ARDUINO_M5Atom_S3) || defined(LMSDISPLAY) || defined(LMS7789) || defined(UNIHIKER) ||\
-	defined(M5Atom_S3_TFT) || defined(CYDC) || defined(CYDR) || defined(CYDS343) || defined(C3LVGL) || defined(ELECROW)
+	defined(M5Atom_S3_TFT) || defined(CYDC) || defined(CYDR) || defined(CYDS343) || defined(C3LVGL) || defined(ELECROW) ||\
+	defined(S3_CTF)
 
 	//sodb
 	//#if !defined(TFT_ESPI)
@@ -885,8 +886,109 @@ void tftInit() {
 		// 	if (!touchEnabled) touchInit();
 		// 	return screenTouched() ? 10 : -1;
 		// }
+	#elif defined(S3_CTF)
+	bool flip_x_y=false;
+		bool flip_x=false;
+		bool flip_y=false;
+		#define HAS_TOUCH_SCREEN 1
+		#include <TFT_eSPI.h>
+
+		// in User_Setup,h #define ILI9341_DRIVER
+		// this definition also defines width and height.
+
+		#include <XPT2046_Touchscreen.h>
+		TFT_eSPI tft = TFT_eSPI();  // Invoke TFT object
+		XPT2046_Touchscreen ts(TOUCH_CS);
+		SPIClass& spix = SPI;
+//SPIClass mySPI(HSPI); 
+
+		void tftInit() {
+			
+			tft.init();
+			tft.initDMA();
+			//tft.setSwapBytes(true);
+			spix = tft.getSPIinstance(); 
+			//tft.fillScreen(TFT_BLACK);
+		
+			tft.begin();
+			tft.setRotation(3);
+	//			tft._freq = 80000000; // this requires moving _freq to public in AdaFruit_SITFT.h
+			tftClear();
+			// Turn on backlight on IoT-Bus
+			
+			pinMode(39, OUTPUT);
+			digitalWrite(39, HIGH);
+			useTFT = true;
+	}
+  
+	static void touchInit() {
+		
+		ts.begin(spix);
+		//pinMode(TOUCH_CS, INPUT);
+		//mySPI.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, TOUCH_CS);
+		//ts.begin(mySPI);
+  		ts.setRotation(3);
+		//ts.setCalibration(X_MIN, X_MAX, Y_MIN, Y_MAX);
+		//ts.setRotation(1);
+		touchEnabled = true;
+	}
+
+	static int screenTouched() {
+		if (!touchEnabled) touchInit();
+		// char s[100];
+		// sprintf(s,"touch init: %d ",ts.touched());
+		// outputString(s);
+		return ts.touched();
+	}
+
+	static int screenTouchX() {
+		if (!touchEnabled) touchInit();
+		if (!ts.touched()) { return -1; }
+		int16_t x;
+		if (flip_x_y) {
+			x = ts.getPoint().y;
+		} else
+		  	x = ts.getPoint().x;
+		// char s[100];
+		// sprintf(s,"touch x: %d ",x);
+		// outputString(s);
+		if (flip_x) 
+		   return map(x, 200, 3800, 0, TFT_HEIGHT);
+		else
+		   return map(x, 200, 3800, TFT_HEIGHT,0);
+	}
+		
+	static int screenTouchY() {
+		if (!touchEnabled) touchInit();
+		if (!ts.touched()) { return -1; }
+		int16_t y;
+		if (flip_x_y) 
+			y = ts.getPoint().x;
+		else
+			y = ts.getPoint().y;
+		// char s[100];
+		// sprintf(s,"touch y: %d ",y);
+		// outputString(s);
+		if (flip_y) 
+			return  map(y, 300, 3900, TFT_WIDTH,0);
+		else
+			return  map(y, 300, 3900, 0, TFT_WIDTH);
+		}
+		
+	static int screenTouchPressure() {
+		if (!touchEnabled) touchInit();
+		if (!ts.touched()) { return -1; }
+		return ts.getPoint().z;
+		}
+		
 
 
+static OBJ primfliptouch(int argCount, OBJ *args) {
+	flip_x = (trueObj == args[0]);
+	flip_y = (trueObj == args[1]);
+	flip_x_y = (trueObj == args[2]);
+return falseObj;
+}
 	#elif defined(LMSDISPLAY) && defined(TFT_ESPI)
 		bool flip_x_y=false;
 		bool flip_x=false;
@@ -4646,8 +4748,8 @@ void ui_set_value(char * obj_name, int value) {
 		if (lv_obj_get_class(obj) == &lv_switch_class) {
 			if (value==0) lv_obj_remove_state(obj, LV_STATE_CHECKED);
 			else if (value&1) lv_obj_add_state(obj, LV_STATE_CHECKED);
-			else if (value>1) lv_obj_add_state(obj, value);
-			else if (value<0) lv_obj_remove_state(obj, -value);
+			else if (value>1) lv_obj_add_state(obj, (lv_state_t)value);
+			else if (value<0) lv_obj_remove_state(obj,(lv_state_t) -value);
 			
 		} else
 		if (lv_obj_get_class(obj) == &lv_led_class) {
