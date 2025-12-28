@@ -425,8 +425,9 @@ static int functionNameMatches(int chunkIndex, char *functionName, int nameLengt
 	}
 	return true;
 }
-
-static int chunkIndexForFunction(char *functionName) {
+//sodb removed static for external usage in serialPrims
+//static
+  int chunkIndexForFunction(char *functionName) {
 	// Return the chunk index for the function with the given name or -1 if not found.
 
 	int nameLength = strlen(functionName);

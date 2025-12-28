@@ -61,6 +61,18 @@ OBJ primVarNameForIndex(int argCount, OBJ *args) {
 	return int2obj(maxVarIndex + 1);
 }
 
+
+
+//	extern "C" PrimitiveFunction findPrimitive(char *namedPrimitive);
+ int chunkIndexForFunction(char *functionName) ;
+
+// find primitive function
+OBJ primFunctionExists (int argCount, OBJ *args) {
+	char* prim_name = obj2str(args[0]);
+	return chunkIndexForFunction(prim_name) > - 1 ? trueObj : falseObj;
+}
+
+
 // Primitives
 
 static PrimEntry entries[] = {
@@ -68,6 +80,7 @@ static PrimEntry entries[] = {
 	{"varNamed", primVarNamed},
 	{"setVarNamed", primSetVarNamed},
 	{"varNameForIndex", primVarNameForIndex},
+	{"functionExists", primFunctionExists},
 };
 
 void addVarPrims() {
