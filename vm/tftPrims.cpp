@@ -3728,7 +3728,7 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 
 
 // only for these boards:
-#if (defined(LVGL) || defined(CDYR) || defined(CYDC))&& defined(TFT_ESPI)
+#if (defined(LVGL) || defined(CDYR) || defined(CYDC) || defined(S3_CTF))&& defined(TFT_ESPI)
 	#include <lvgl.h>
 	void setup_lvgl(void); 
 	extern bool useLVGL;
@@ -3745,10 +3745,17 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 		tft.setAddrWindow(area->x1, area->y1, w, h);
 
 		// Send entire area with DMA
-		tft.pushPixelsDMA(color_buf, w * h);
+		#if defined(S3_CTF)
+		  tft.pushPixels(color_buf, w * h);      // ← NOT DMA
+		  tft.endWrite();
+		  
+		#else
 
-		tft.endWrite();
+		   tft.pushPixelsDMA(color_buf, w * h);
 
+		   tft.endWrite();
+		   tft.dmaWait();
+		#endif
 		// Immediately notify LVGL since TFT_eSPI handles DMA behind the scenes
 		lv_disp_flush_ready(disp);
 		yield(); // sodb give wifi some air to breath
