@@ -87,7 +87,7 @@ typedef enum {
 #elif (defined(NRF51) || defined(ESP8266) || defined(DUELink))
 	#define STACK_LIMIT 54 // Task size is 6 + STACK_LIMIT words
 #else
-	#define STACK_LIMIT 100 // Task size is 6 + STACK_LIMIT words
+	#define STACK_LIMIT 125 // Task size is 6 + STACK_LIMIT words
 #endif
 
 typedef struct {
@@ -140,6 +140,7 @@ extern int extraByteDelay;
 #define varValueMsg				21
 #define versionMsg				22
 #define chunkCRCMsg				23
+#define clearGraphMsg			24
 
 // Serial Protocol Messages: Bidirectional
 
@@ -173,7 +174,7 @@ extern int extraByteDelay;
 #define needsIntegerIndexError	17	// List or string index must be an integer
 #define indexOutOfRangeError	18	// List or string index out of range
 #define byteArrayStoreError		19	// A ByteArray can only store integer values between 0 and 255
-#define hexRangeError			20	// Hexadecimal input must between between -1FFFFFFF and 1FFFFFFF
+#define hexRangeError			20	// Hexadecimal input must between between -40000000 and 3FFFFFFF
 #define i2cDeviceIDOutOfRange	21	// I2C device ID must be between 0 and 127
 #define i2cRegisterIDOutOfRange	22	// I2C register must be between 0 and 255
 #define i2cValueOutOfRange		23	// I2C value must be between 0 and 255
@@ -281,6 +282,8 @@ uint32 microsecs(void);
 uint32 millisecs(void);
 uint32 seconds();
 void handleMicosecondClockWrap();
+
+int chunkIndexForFunction(char *functionName);
 
 int ideConnected();
 int recvBytes(uint8 *buf, int count);

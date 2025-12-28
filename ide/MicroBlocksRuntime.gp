@@ -383,6 +383,20 @@ method decompileAllInProject SmallRuntime {
 	}
 }
 
+method analyzeGlobals SmallRuntime {
+	// analyzeGlobals (smallRuntime)
+	editor = (findMicroBlocksEditor)
+	for fn (listEmbeddedFiles) {
+		if (beginsWith fn 'Examples') {
+			openProjectFromFile editor (join '//' fn)
+			varCount = (count (allVariableNames (project (scripter editor))))
+			if (varCount > 10) {
+				print fn 'globals:' varCount
+			}
+		}
+	}
+}
+
 method analyzeAllExamples SmallRuntime {
 	grandTotal = 0
 	projectCount = 0
@@ -818,7 +832,9 @@ method selectPort SmallRuntime {
 	if ('Browser' == (platform)) {
 		menu = (menu 'Connect' (action 'webSerialConnect' this) true)
 		if (and (isNil port) ('boardie' != portName)) {
-			addItem menu 'connect (USB)'
+			if (not (isMobile)) {
+				addItem menu 'connect (USB)'
+			}
 			addItem menu 'connect (BLE)'
 			addLine menu
 			addItem menu 'open Boardie'
@@ -1256,7 +1272,8 @@ method checkVmVersion SmallRuntime {
 	if ((latestVmVersion this) > vmVersion) {
 		offerToUpdate = (not (isOneOf boardType
 			'CircuitPlayground' 'CircuitPlayground Bluefruit' 'Clue' 'MakerPort'
-			'RP2040' 'Pico W' 'Pico:ed' 'Wukong2040' 'DUELink'))
+			'RP2040' 'Pico W' 'Pico:ed' 'Wukong2040'))
+		if (or (dueBoardConnected this) (isMobile)) { offerToUpdate = false }
 		if (not offerToUpdate) {
 			// Inform the user but don't offer to update these boards since updating
 			// then requires the user to put the board into boot mode.
@@ -1500,7 +1517,7 @@ method saveAllChunks SmallRuntime checkCRCs {
 	progressInterval = (max 1 (floor (totalScripts / 20)))
 	processedScripts = 0
 	skipHiddenFunctions = true
-	if (saveVariableNames this) { recompileAll = true }
+	saveVariableNamesIfNeeded this
 	if recompileAll {
 		// Clear the source code field of all chunk entries to force script recompilation
 		// and possible re-download since variable offsets have changed.
@@ -1549,6 +1566,12 @@ method saveAllChunks SmallRuntime checkCRCs {
 		processedScripts += 1
 	}
 	if (scriptsSaved > 0) { print 'Downloaded' scriptsSaved 'scripts to board' (join '(' (msecSplit t) ' msecs)') }
+
+	globalVarCount = (count (allVariableNames (project scripter)))
+	if (and (globalVarCount > 128) (scriptsSaved > 0)) {
+		print 'Error: Project has' globalVarCount 'global variables! Limit is 128.'
+		print 'Project will behave unpredicably until this is fixed.'
+	}
 
 	recompileAll = false
 	if checkCRCs { verifyCRCs this }
@@ -1915,11 +1938,12 @@ method allCRCsReceived SmallRuntime data {
 	}
 }
 
-method saveVariableNames SmallRuntime {
+method saveVariableNamesIfNeeded SmallRuntime {
 	// If the variables list has changed, save the new variable names.
 	// Return true if varibles have changed, false otherwise.
 
-	newVarNames = (allVariableNames (project scripter))
+	project = (project scripter)
+	newVarNames = (allVariableNames project)
 	if (oldVarNames == newVarNames) { return false }
 
 	editor = (findMicroBlocksEditor)
@@ -1927,19 +1951,19 @@ method saveVariableNames SmallRuntime {
 	progressInterval = (max 1 (floor (varCount / 20)))
 
 	clearVariableNames this
-	varID = 0
-	for varName newVarNames {
+	for i varCount {
+		varName = (at newVarNames i)
+		varID = (indexForVar project varName)
 		if (notNil port) {
-			if (0 == (varID % 50)) {
-				// send a sync message every N variables
+			if ((i % 32) == 0) {
+				// send a sync message every 32 variables
 				sendMsgSync this 'varNameMsg' varID (toArray (toBinaryData varName))
 			} else {
 				sendMsg this 'varNameMsg' varID (toArray (toBinaryData varName))
 			}
 		}
-		varID += 1
-		if (0 == (varID % progressInterval)) {
-			showDownloadProgress editor 2 (varID / varCount)
+		if ((i % progressInterval) == 0) {
+			showDownloadProgress editor 2 (i / varCount)
 		}
 	}
 	oldVarNames = (copy newVarNames)
@@ -1991,18 +2015,21 @@ method setVar SmallRuntime varID val {
 	if (notNil body) { sendMsg this 'setVarMsg' varID body }
 }
 
-method variablesChanged SmallRuntime {
-	// Called by scripter when variables are added or removed.
+method clearVariableNames SmallRuntime {
+	if (notNil port) { sendMsgSync this 'clearVarsMsg' 1 }
+	oldVarNames = nil
+}
+
+// Library changes
+
+method librariesChanged SmallRuntime {
+	// Called by scripter when libraries are added or removed.
 
 	sendStopAll this
 	clearVariableNames this
 	scriptChanged scripter
 }
 
-method clearVariableNames SmallRuntime {
-	if (notNil port) { sendMsgSync this 'clearVarsMsg' 1 }
-	oldVarNames = nil
-}
 
 // Serial Delay
 
@@ -2055,6 +2082,7 @@ method msgNameToID SmallRuntime msgName {
 		atPut msgDict 'varValueMsg' 21
 		atPut msgDict 'versionMsg' 22
 		atPut msgDict 'chunkCRCMsg' 23
+		atPut msgDict 'clearGraphMsg' 24
 		atPut msgDict 'pingMsg' 26
 		atPut msgDict 'broadcastMsg' 27
 		atPut msgDict 'chunkAttributeMsg' 28
@@ -2094,7 +2122,7 @@ method errorString SmallRuntime errID {
 #define needsIntegerIndexError	17	// List or string index must be an integer
 #define indexOutOfRangeError	18	// List or string index out of range
 #define byteArrayStoreError		19	// A ByteArray can only store integer values between 0 and 255
-#define hexRangeError			20	// Hexadecimal input must between between -1FFFFFFF and 1FFFFFFF
+#define hexRangeError			20	// Hexadecimal input must between between -40000000 and 3FFFFFFF
 #define i2cDeviceIDOutOfRange	21	// I2C device ID must be between 0 and 127
 #define i2cRegisterIDOutOfRange	22	// I2C register must be between 0 and 255
 #define i2cValueOutOfRange		23	// I2C value must be between 0 and 255
@@ -2166,8 +2194,10 @@ method sendMsg SmallRuntime msgName chunkID byteList {
 
 	while ((byteCount dataToSend) > 0) {
 		byteCount = (byteCount dataToSend)
-		if ('webBLE' != portName) {
+		if (or ('webBLE' != portName) (isMobile)) {
 			// Note: Serial receive buffer is only 63 bytes on many boards so limit byteCount.
+			// In addition, some mobile devices (e.g. iPhones 11-13 and some Android devices)
+			// fail if over 63 bytes are written to BLE at a time due to a hardware/driver issue.
 			byteCount = (min 63 byteCount)
 		}
 		chunk = (copyFromTo dataToSend 1 byteCount)
@@ -2364,6 +2394,8 @@ method handleMessage SmallRuntime msg {
 		recordFileTransferMsg this (copyFromTo msg 6)
 	} (op == (msgNameToID this 'fileChunk')) {
 		recordFileTransferMsg this (copyFromTo msg 6)
+	} (op == (msgNameToID this 'clearGraphMsg')) {
+		clearLoggedData this
 	} else {
 		print 'msg:' (toArray msg)
 	}
@@ -2419,6 +2451,7 @@ method boardHasFileSystem SmallRuntime {
 	if (and (isWebSerial this) (not (isOpenSerialPort 1))) { return false }
 	if (not (connectedToBoard this)) { return false }
 	if (isNil boardType) { getVersion this }
+	if (and (notNil boardType) (notNil (findSubstring 'ESP' boardType))) { return true }
 	return (isOneOf boardType
 		'Citilab ED1' 'CoCube' 'M5Stack-Core' 'M5StickC+' 'M5StickC' 'M5Atom-Matrix'
 		'ESP32' 'ESP8266' 'RP2040' 'Pico W' 'Pico:ed' 'Wukong2040' 'TTGO RP2040'
@@ -2877,7 +2910,8 @@ method showOutputStrings SmallRuntime {
 
 method dueBoardConnected SmallRuntime {
 	if (isNil boardType) { return false }
-	return (isOneOf boardType 'CincoBit' 'Clipit' 'DueSTEM' 'PixoBit' 'DUELink')
+	return (isOneOf boardType
+		'DUELink' 'CincoBit' 'PixoBit' 'Clipit' 'DueSTEM' 'Ghizzy' 'Holiday Tree')
 }
 
 method installVM SmallRuntime eraseFlashFlag downloadLatestFlag {

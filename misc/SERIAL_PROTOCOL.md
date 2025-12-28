@@ -190,10 +190,11 @@ Return the version string in the body of this message.
 
 Return the four-byte CRC-32 (cyclic redundancy check) of the given chunk.
 
-### *Reserved* (OpCodes 0x18-0x19)
+### Clear Graph (OpCode: 0x18)
+
+### *Reserved* (OpCode 0x19)
 
 Reserved for additional Board → IDE messages.
-
 
 ## Bidirectional (OpCode: 0x1A to 0x1F)
 

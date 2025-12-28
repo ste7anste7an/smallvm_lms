@@ -1,32 +1,45 @@
 module 'DUELink Edu'
-author DUELink
-version 1 7 
-choices dueSTEM_clipItPad A B left right up down P1 P2 P3 
+author MicroBlocks
+version 1 12 
+choices dueSTEM_pianoPad left right C 'C#' D 'D#' E F 'F#' G 'G#' A 'A#' B 'High C' 
+choices dueSTEM_clipItPad A B left right up down 
 choices dueSTEM_buttonName left right up down 
 choices dueSTEM_axis x y z 
+choices dueSTEM_timeComponent 'time (H:M:S)' 'date (Y-M-D)' second minute hour day month year 'day of week' 
 description 'Library for DUELink Educational boards: CincoBit, PixoBit, ClipIt, and DueSTEM.
 
-The "due PIED" works on all DUELink boards.
-Blocks labeled "dueSTEM" work only on the DUEStem board.
+The "due PID" works on all DUELink boards.
+Blocks labeled "dueSTEM" work only on the DueSTEM board.
 
 Touch sensing works only on pins with capacitive touch circuits including pins 0, 1, 2 of the CincoBit and PixoBit and all but the SCL/SDA pins of the ClipIt.
 '
-variables dueSTEM_accelAddr 
+variables dueSTEM_accelAddr dueSTEM_touchAdjustments 
 
-  spec 'r' 'dueSTEM_light' 'due light level'
-  spec 'r' 'dueSTEM_touched' 'due pin _ touched' 'num' 1
+  spec 'r' 'dueSTEM_light' 'due light level (0-1000)'
+  spec 'r' 'dueSTEM_LDR_button' 'due LDR button'
   spec 'r' 'dueSTEM_buzzerPin' 'due buzzer pin'
-  spec 'r' '[misc:dueLinkPID]' 'due PID'
+  spec 'r' 'dueSTEM_PID' 'due PID'
+  space
+  spec 'r' 'dueSTEM_touched' 'due pin _ touched' 'num' 1
+  spec ' ' 'dueSTEM_waitForRelease' 'due wait for pin _ release' 'auto' 1
+  spec 'r' 'dueSTEM_clipitPadPin' 'Clipit _ pin' 'menu.dueSTEM_clipItPad' 'A'
+  spec 'r' 'dueSTEM_pianoPadPin' 'Piano _ pin' 'menu.dueSTEM_pianoPad' 'C'
   space
   spec ' ' 'dueSTEM_setLED' 'DueSTEM bulb red _ green _ blue _ (0-1000)' 'auto auto auto' 100 0 200
   spec 'r' 'dueSTEM_button' 'DueSTEM _ button' 'menu.dueSTEM_buttonName' 'left'
   spec 'r' 'dueSTEM_tilt' 'DueSTEM tilt _' 'menu.dueSTEM_axis' 'x'
   spec 'r' 'dueSTEM_temperature' 'DueSTEM temperature (x10)'
   space
-  spec 'r' 'dueSTEM_clipitTouched' 'Clipit pad _ touched : threshold _' 'menu.dueSTEM_clipItPad num' 'A' 100
+  spec 'r' 'dueSTEM_getTimeOrDate' 'due clock _' 'menu.dueSTEM_timeComponent' 'time (H:M:S)'
+  spec ' ' 'dueSTEM_setTime' 'due set hours _ minutes _ seconds _' 'num num num' 9 30 0
+  spec ' ' 'dueSTEM_setDate' 'due set year _ month _ day _ weekday _' 'num num num num' 2025 1 1 1
+  advanced
+  spec ' ' 'dueSTEM_shutdown' 'low power shutdown'
   space
   spec ' ' '_dueSTEM_accelInit' '_dueSTEM_accelInit'
   spec 'r' '_dueSTEM_accelRead16BitReg' '_dueSTEM_accelRead16BitReg _' 'auto' 13
+  spec 'r' '_dueSTEM_adjustmentForPin' '_dueSTEM_adjustmentForPin _' 'num' 1
+  spec 'r' '_dueSTEM_dischargeTime' '_dueSTEM_dischargeTime _' 'num' 1
 
 to '_dueSTEM_accelInit' {
   comment 'MC3216
@@ -55,6 +68,45 @@ to '_dueSTEM_accelRead16BitReg' reg {
   return ((100 * (v '16bit')) / 255)
 }
 
+to '_dueSTEM_adjustmentForPin' pin {
+  if (dueSTEM_touchAdjustments == 0) {dueSTEM_touchAdjustments = (newList (digitalPins) -1)}
+  local 'result' (at (pin + 1) dueSTEM_touchAdjustments)
+  if (result >= 0) {
+    return result
+  }
+  local 'total usecs' 0
+  repeat 80 {
+    'total usecs' += ('_dueSTEM_dischargeTime' pin)
+  }
+  result = (maximum 0 (minimum (((v 'total usecs') / 80) - 99) 30))
+  atPut (pin + 1) dueSTEM_touchAdjustments result
+  return result
+}
+
+to '_dueSTEM_dischargeTime' pin {
+  comment 'Charge up pin'
+  digitalWriteOp pin true
+  local 'startT' (microsOp)
+  waitUntil (not (digitalReadOp pin))
+  local 'usecs' (microsSince startT)
+  digitalWriteOp pin true
+  return usecs
+}
+
+to dueSTEM_LDR_button {
+  if (or ((boardType) == 'CincoBit') ((boardType) == 'PixoBit')) {return (buttonA)}
+  return (digitalReadOp 20 'down')
+}
+
+to dueSTEM_PID {
+  local 'result' ('[data:makeList]')
+  for i 6 {
+    local 'hexDigit' ((('[misc:dueLinkPID]') >> (24 - (4 * i))) & 15)
+    '[data:addLast]' (at (hexDigit + 1) '0123456789ABCDEF') result
+  }
+  return ('[data:joinStrings]' result)
+}
+
 to dueSTEM_button which {
   if ((boardType) != 'DueSTEM') {return (booleanConstant false)}
   if ('left' == which) {
@@ -76,48 +128,109 @@ to dueSTEM_buzzerPin {
     return 3
   } ((boardType) == 'Clipit') {
     return 7
-  } (('[misc:dueLinkPID]') == (hexToInt '0C0001')) {
+  } ((dueSTEM_PID) == '0C0001') {
     comment 'Ghizzy'
     return 3
-  } (('[misc:dueLinkPID]') == (hexToInt '0C0003')) {
+  } ((dueSTEM_PID) == '0C0003') {
     comment 'Holiday Tree'
     return 1
-  } (('[misc:dueLinkPID]') == (hexToInt '0C0005')) {
+  } ((dueSTEM_PID) == '0C0005') {
     comment 'Piano'
     return 3
-  } (('[misc:dueLinkPID]') == (hexToInt '070001')) {
+  } ((dueSTEM_PID) == '070001') {
     comment 'Buzzer'
     return 7
   }
   return -1
 }
 
-to dueSTEM_clipitTouched padName optionalThreshold {
-  local 'pin' 0
+to dueSTEM_clipitPadPin padName {
   if ('A' == padName) {
-    pin = 10
+    return 10
   } ('B' == padName) {
-    pin = 24
+    return 24
   } ('left' == padName) {
-    pin = 14
+    return 14
   } ('right' == padName) {
-    pin = 12
+    return 12
   } ('up' == padName) {
-    pin = 13
+    return 13
   } ('down' == padName) {
-    pin = 18
+    return 18
   } ('P1' == padName) {
-    pin = 1
+    return 1
   } ('P2' == padName) {
-    pin = 2
+    return 2
   } ('P3' == padName) {
-    pin = 3
+    return 3
   }
-  return (dueSTEM_touched pin (argOrDefault 2 100))
+  return 10
+}
+
+to dueSTEM_getTimeOrDate what {
+  local 'timeArray' ('[misc:dueGetTime]')
+  if ('time (H:M:S)' == what) {
+    return ('[data:join]' (at 5 timeArray) ':' (at 6 timeArray) ':' (at 7 timeArray))
+  } ('date (Y-M-D)' == what) {
+    return ('[data:join]' (at 1 timeArray) ':' (at 2 timeArray) ':' (at 3 timeArray))
+  } ('year' == what) {
+    return (at 1 timeArray)
+  } ('month' == what) {
+    return (at 2 timeArray)
+  } ('day' == what) {
+    return (at 3 timeArray)
+  } ('day of week' == what) {
+    return (at 4 timeArray)
+  } ('hour' == what) {
+    return (at 5 timeArray)
+  } ('minute' == what) {
+    return (at 6 timeArray)
+  } ('second' == what) {
+    return (at 7 timeArray)
+  }
 }
 
 to dueSTEM_light {
-  return ('[display:lightLevel]')
+  return (minimum ('[display:lightLevel]') 1000)
+}
+
+to dueSTEM_pianoPadPin padName {
+  if ('left' == padName) {
+    return 11
+  } ('right' == padName) {
+    return 7
+  } ('C' == padName) {
+    return 23
+  } ('C#' == padName) {
+    return 19
+  } ('D' == padName) {
+    return 12
+  } ('D#' == padName) {
+    return 13
+  } ('E' == padName) {
+    return 14
+  } ('F' == padName) {
+    return 15
+  } ('F#' == padName) {
+    return 16
+  } ('G' == padName) {
+    return 18
+  } ('G#' == padName) {
+    return 24
+  } ('A' == padName) {
+    return 10
+  } ('A#' == padName) {
+    return 9
+  } ('B' == padName) {
+    return 8
+  } ('High C' == padName) {
+    return 17
+  }
+  return 23
+}
+
+to dueSTEM_setDate year month day dayOfWeek {
+  '[misc:dueSetDate]' year month day dayOfWeek
 }
 
 to dueSTEM_setLED r g b {
@@ -125,6 +238,21 @@ to dueSTEM_setLED r g b {
   analogWriteOp 11 r
   analogWriteOp 4 g
   analogWriteOp 2 b
+}
+
+to dueSTEM_setTime hour minute second {
+  '[misc:dueSetTime]' hour minute second
+}
+
+to dueSTEM_shutdown {
+  comment 'Enter low-power sleep mode. Can be awoken by a low-to-high
+transition on P1 (PA0) or P3 (PA4). On DUELink boards with edge
+connectors those are the alligator clip holes marked P0 and P2.'
+  comment 'Note: Low power mode cannot be entered for the first five seconds
+after reset or power up The ensure that the IDE can connect to the
+board even if this function is called by a "when started" block.'
+  waitUntil ((secsOp) > 5)
+  '[misc:dueSleep]'
 }
 
 to dueSTEM_temperature {
@@ -146,22 +274,41 @@ to dueSTEM_tilt axis {
 }
 
 to dueSTEM_touched pin {
+  local 'touch adjustment' ('_dueSTEM_adjustmentForPin' pin)
   comment 'Charge up pin'
-  local 'startT' (millisOp)
   digitalWriteOp pin true
-  waitMicros 200
-  local 'on' (digitalReadOp pin)
-  comment 'Tricky code: MicroBlocks does not switch tasks for waits of 30 microdseconds
-or less so the following three blocks are essentially a busy wait. Because
-of overhead, this takes 100-120 usecs on DUELink boards.
-If the pin is still high after that time, it is because it is touched, thus increasing
-the discharge time of the effective capacitance on the pin.'
+  comment 'Switch pin to input mode. Capacitor starts
+discharging through 1M resistor to ground.'
+  local 'ignore' (digitalReadOp pin)
+  comment 'Tricky code: MicroBlocks does not switch tasks for waits of 30 usecs
+or less so the following four blocks are essentially a busy wait. Because
+of overhead, this takes ~140 usecs on DUELink boards. If the pin is still
+high after that time, it is because it is being touched, thus increasing
+the discharge time of the total effective capacitance of the pin.'
   waitMicros 30
   waitMicros 30
-  waitMicros 30
-  local 'touched' (digitalReadOp pin)
-  comment 'Start charging pin'
-  digitalWriteOp pin true
-  return touched
+  waitMicros 2
+  waitMicros (v 'touch adjustment')
+  return (digitalReadOp pin)
+}
+
+to dueSTEM_waitForRelease pin {
+  comment 'There is a lot of electrical noise while a pin is being touched.
+That noise causes "due pin touched" to sometimes return false
+even though the pin is still being touched. Experimentation
+determined that it requires 60 to 70 "false" reports in a row to
+be certain that the pin is not being touched. Those tests take
+about 16 milliseconds total on an otherwise idle DUELink board.'
+  local 'releaseCount' 0
+  forever {
+    if (dueSTEM_touched pin) {
+      releaseCount = 0
+    } else {
+      releaseCount += 1
+      if (releaseCount >= 80) {
+        return 0
+      }
+    }
+  }
 }
 

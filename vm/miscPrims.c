@@ -39,8 +39,20 @@ OBJ primHexToInt(int argCount, OBJ *args) {
 
 	char *s = obj2str(args[0]);
 	if ('#' == *s) s++; // skip leading # if there is one
+	if (('0' == *s) && (('x' == s[1]) || ('X' == s[1]))) s += 2; // skip leading '0x' or '0X'
 	long result = strtol(s, NULL, 16);
-	if ((result < -536870912) || (result > 536870911)) return fail(hexRangeError);
+	result = (result << 1) >> 1; // extend sign bit if bit 31 is set
+	if ((result < -0x40000000) || (result > 0x3FFFFFFF)) return fail(hexRangeError);
+	return int2obj(result);
+}
+
+OBJ primBinaryToInt(int argCount, OBJ *args) {
+	if (!IS_TYPE(args[0], StringType)) return fail(needsStringError);
+
+	char *s = obj2str(args[0]);
+	long result = strtol(s, NULL, 2);
+	result = (result << 1) >> 1; // extend sign bit if bit 31 is set
+	if ((result < -0x40000000) || (result > 0x3FFFFFFF)) return fail(hexRangeError);
 	return int2obj(result);
 }
 
@@ -184,7 +196,7 @@ static OBJ primIntSine(int argCount, OBJ *args) {
 	//	return int2obj((int) round(16384.0 * sin(evalInt(args[0]) * hundrethsToRadians)));
 
 	int angle = evalInt(args[0]) % 36000;
-	if (angle < 0) angle += 36000;  // positive angle in hundreds of a degree [0..35999]
+	if (angle < 0) angle += 36000; // positive angle in hundreds of a degree [0..35999]
 
 	int sign = 1;
 	if (angle < 9000) {
@@ -532,9 +544,253 @@ static OBJ primShapeforChar(int argCount, OBJ *args) {
 	return result;
 }
 
+static OBJ primClearGraph(int argCount, OBJ *args) {
+	if (!ideConnected()) return falseObj; // do nothing if not connected to IDE
+	waitAndSendMessage(clearGraphMsg, 0, 0, NULL);
+	return falseObj;
+}
+
+static OBJ primFunctionExists(int argCount, OBJ *args) {
+	if ((argCount < 1) || !IS_TYPE(args[0], StringType)) return fail(needsStringError);
+
+	return (chunkIndexForFunction(obj2str(args[0])) < 0) ? falseObj : trueObj;
+}
+
 static OBJ primDUELinkPID(int argCount, OBJ *args) {
 	return int2obj(*((uint32 *) 0x1FFF7004) & 0xFFFFFF);
 }
+
+#if defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
+
+#if defined(ARDUINO_ARCH_ESP32)
+	#include <esp_sleep.h>
+#else
+	// Defined in ioPrims.cpp because it needs to use the ESP C++ class.
+	void esp8266DeepSleep(uint64_t usecs);
+#endif
+
+static OBJ primESPSleep(int argCount, OBJ *args) {
+	// Deep sleep for N seconds. When that time elapses, the ESP32 will reset/boot.
+	// Note: on ESP8266, you must connect GPIO16 ("Wake" pin) to the RST to use deep sleep:
+	//	https://randomnerdtutorials.com/esp8266-deep-sleep-with-arduino-ide/
+
+	if ((argCount < 1) || !isInt(args[0])) return fail(needsIntegerError);
+
+	uint64_t usecs = obj2int(args[0]) * 1000000;
+	#if defined(ARDUINO_ARCH_ESP32)
+		esp_sleep_enable_timer_wakeup(usecs);
+		esp_deep_sleep_start();
+	#else
+		esp8266DeepSleep(usecs);
+	#endif
+	return falseObj; // this is never executed
+}
+
+#endif
+
+#if defined(DUELink)
+
+#include <stm32c0xx.h>
+#include <stm32c0xx_hal_pwr.h>
+#include <stm32c0xx_hal_pwr_ex.h>
+#include <usbd_cdc_if.h> // for CDC_deInit()
+
+void delay(unsigned long); // Arduino delay function
+
+// These are the only possible wakeup pins on C071:
+// WKUP1 - PA0 - Due P1
+// WKUP2 - PC13 (nc) or PA4 - Due P3
+// WKUP3 - PB6 (SCL) - Due P15
+// WKUP4 - PA2 (UART2 TX) - off limits
+// WKUP5 - PC5 (nc)
+// WKUP6 - PB5 (SPI) - Due P14
+// MicroBlocks currently supports only PA0, PA4 and PB5 (see below)
+
+static OBJ primDUESleep(int argCount, OBJ *args) {
+	// Some measurments:
+	//	HAL_PWR_EnterSTOPMode(0, 0); // 500-750 uA (Snowy)
+	//	HAL_PWR_EnterSTANDBYMode(); // 53 uA (can't recall which board; on Snowy it is < 1 uA)
+	//	HAL_PWREx_EnterSHUTDOWNMode(); // < 1 uA (too low to measure)
+	// Note: Boards with voltage regulators consume 1-3 mA even in shutdown mode.
+
+	// The following allows a user to recover if they create a script like "when started, sleep"
+	// It gives them ten seconds to connect the IDE to the board so they can change their code.
+	if (totalMicrosecs() < (5 * 1000000)) return falseObj; // do nothing for N secs after startup
+
+	HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1_HIGH);
+	HAL_PWREx_EnablePullUpPullDownConfig();
+	HAL_PWREx_EnableGPIOPullDown(PWR_GPIO_A, GPIO_PIN_0);
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF1);
+
+	HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN2_HIGH);
+	HAL_PWREx_EnablePullUpPullDownConfig();
+	HAL_PWREx_EnableGPIOPullDown(PWR_GPIO_A, GPIO_PIN_4);
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF2);
+
+// Commented out to save space (308 bytes)
+// 	if ((argCount > 0) && (args[0] == trueObj)) {
+// 		// STOP mode; wakes up on alarm but uses about 1 mA
+// 		CDC_deInit();
+// 		HAL_SuspendTick(); // suspend tick interrupts so we don't spontaneously wake up
+// 		HAL_PWR_EnterSTOPMode(0, PWR_STOPENTRY_WFI); // stop; continue from here on wakeup
+// 		SystemClock_Config(); // necessary; restarts the USB clock, I think
+// 		HAL_ResumeTick();
+// 		CDC_init();
+// 		HAL_PWREx_DisablePullUpPullDownConfig();
+// 	} else {
+		// default: SHUTDOWN mode; wake up on wakeup pin and uses less than 0.001 mA
+		// on boards without voltage regulators (e.g. Snowy or Chrono)
+		HAL_PWREx_EnterSHUTDOWNMode();
+		__WFI(); // shuts down here; restarts on wakeup
+// 	}
+
+	return falseObj;
+}
+
+#include <stm32c0xx_hal_rtc.h>
+
+static RTC_HandleTypeDef hrtc;
+static bool rtc_initialized = false;
+
+static void Rtc_Initialize() {
+	if (rtc_initialized) return;
+
+	LL_RCC_LSI_Enable(); // enable LSI clock
+	while (LL_RCC_LSI_IsReady() != 1) { /* wait until ready */ }
+
+	__HAL_RCC_SYSCFG_CLK_ENABLE();
+	__HAL_RCC_PWR_CLK_ENABLE();
+
+	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+	PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+	int status = HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+	if (status != HAL_OK) {
+		reportNum("HAL_RCCEx_PeriphCLKConfig error", status);
+		return;
+	}
+
+	// enable peripheral clock
+	__HAL_RCC_RTC_ENABLE();
+	__HAL_RCC_RTCAPB_CLK_ENABLE();
+
+	// initialize RTC
+	hrtc.Instance = RTC;
+	hrtc.Lock = HAL_UNLOCKED;
+	hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+	hrtc.Init.AsynchPrediv = 0x7F;
+	hrtc.Init.SynchPrediv = 0xFF;
+	hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+	hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+	hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+	hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+	hrtc.Init.OutPutPullUp = RTC_OUTPUT_PULLUP_NONE;
+	status = HAL_RTC_Init(&hrtc);
+	if (status != HAL_OK) {
+		reportNum("HAL_RTC_Init error", status);
+	}
+
+	rtc_initialized = true;
+}
+
+static OBJ primDUEGetDateAndTime(int argCount, OBJ *args) {
+	// Get current time and date.
+	// Result is list: year month day dayOfWeek hour minute second
+
+	if (!rtc_initialized) Rtc_Initialize();
+
+	RTC_TimeTypeDef sTime;
+	RTC_DateTypeDef sDate;
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	OBJ result = newObj(ListType, 8, falseObj);
+	if (!result) return fail(insufficientMemoryError); // allocation failed
+	FIELD(result, 0) = int2obj(7); // list size
+	FIELD(result, 1) = int2obj(2000 + sDate.Year);
+	FIELD(result, 2) = int2obj(sDate.Month);
+	FIELD(result, 3) = int2obj(sDate.Date);
+	FIELD(result, 4) = int2obj(sDate.WeekDay);
+	FIELD(result, 5) = int2obj(sTime.Hours);
+	FIELD(result, 6) = int2obj(sTime.Minutes);
+	FIELD(result, 7) = int2obj(sTime.Seconds);
+	return result;
+}
+
+static OBJ primDUESetTime(int argCount, OBJ *args) {
+	// Set time: hours minutes seconds
+
+	if (argCount < 3) return falseObj; // not enough arguments
+	if (!rtc_initialized) Rtc_Initialize();
+
+	RTC_TimeTypeDef sTime;
+	sTime.Hours = obj2int(args[0]);
+	sTime.Minutes = obj2int(args[1]);
+	sTime.Seconds = obj2int(args[2]);
+	sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+	sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+	return falseObj;
+}
+
+static OBJ primDUESetDate(int argCount, OBJ *args) {
+	// Set date: year month day [optional: weekeday (1-7)]
+
+	if (argCount < 3) return falseObj; // not enough arguments
+	if (!rtc_initialized) Rtc_Initialize();
+
+	int year = obj2int(args[0]);
+	if (year > 2000) year -= 2000;
+
+	RTC_DateTypeDef sDate;
+	sDate.Year = year;
+	sDate.Month = obj2int(args[1]);
+	sDate.Date = obj2int(args[2]);
+	if (argCount > 3) sDate.WeekDay = obj2int(args[3]);
+	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	return falseObj;
+}
+
+// Commented out to save space (~1000 bytes!):
+// static OBJ primDUESetAlarm(int argCount, OBJ *args) {
+// 	// Set the alarm: hours minutes seconds (date and weekday are ignored)
+// 	// Call without arguments to disable the alarm
+//
+// 	if (argCount < 3) return falseObj; // not enough arguments
+// 	if (!rtc_initialized) Rtc_Initialize();
+//
+// 	if (argCount < 3) { // disable alarm
+// 		HAL_NVIC_DisableIRQ(RTC_IRQn);
+// 		return falseObj;
+// 	}
+//
+// 	RTC_AlarmTypeDef sAlarm = {0};
+// 	sAlarm.Alarm = RTC_ALARM_A;
+// 	sAlarm.AlarmTime.Hours = obj2int(args[0]);
+// 	sAlarm.AlarmTime.Minutes = obj2int(args[1]);
+// 	sAlarm.AlarmTime.Seconds = obj2int(args[2]);
+// 	sAlarm.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY; // ignore date and weekday
+// 	sAlarm.AlarmTime.SubSeconds = 0;
+//	sAlarm.AlarmSubSecondMask = 0; // ignore subseconds
+//
+// 	HAL_NVIC_SetPriority(RTC_IRQn, 0, 0);
+// 	HAL_NVIC_EnableIRQ(RTC_IRQn);
+//
+// 	int status = HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN);
+// 	if (status != HAL_OK) {
+// 		reportNum("HAL_RTC_SetAlarm_IT error", status);
+// 	}
+//
+// 	return falseObj;
+// }
+//
+// void RTC_IRQHandler(void) {
+// 	HAL_RTC_AlarmIRQHandler(&hrtc);
+// }
+
+#endif
 
 // Primitives
 
@@ -544,13 +800,25 @@ static PrimEntry entries[] = {
 	{"version", primVersion},
 	{"bleID", primBLE_ID},
 	{"hexToInt", primHexToInt},
+	{"binToInt", primBinaryToInt},
 	{"rescale", primRescale},
 	{"connectedToIDE", primConnectedToIDE},
 	{"broadcastToIDE", primBroadcastToIDEOnly},
 	{"bme680GasResistance", primBMP680GasResistance},
 	{"shapeforChar", primShapeforChar},
+	{"clearGraph", primClearGraph},
+	{"functionExists", primFunctionExists},
+#if defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
+	{"espSleep", primESPSleep},
+#endif
+#if defined(DUELink)
 	{"dueLinkPID", primDUELinkPID},
-#if !defined(DUELink)
+	{"dueSleep", primDUESleep},
+	{"dueGetTime", primDUEGetDateAndTime},
+	{"dueSetTime", primDUESetTime},
+	{"dueSetDate", primDUESetDate},
+//	{"dueSetAlarm", primDUESetAlarm}, // commented out to save space
+#else
 	{"hsvColor", primHSVColor},
 	{"hue", primColorHue},
 	{"saturation", primColorSaturation},

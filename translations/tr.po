@@ -944,7 +944,7 @@ msgstr "x"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "Finch Kuyruk Kırmızı _ Yeşil _ Mavi _"
+msgstr "Finch Kuyruk _ Kırmızı _ Yeşil _ Mavi _"
 
 #. 5x5 LED Display library block
 msgid "clear display"

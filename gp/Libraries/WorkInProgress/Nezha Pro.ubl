@@ -1,0 +1,190 @@
+module 'Nezha Pro'
+author MicroBlocks
+version 1 2 
+choices nezhaPro_turnStyle 'nezhaPro;by shortest path' clockwise 'counter-clockwise' 
+choices nezhaPro_motor M1 M2 M3 M4 
+choices nezhaPro_forwardBack forward backward 
+choices nezhaPro_dir clockwise 'counter-clockwise' 
+description 'Support for Elecfreaks Nezha Pro.
+
+Use the "np set wheels" block to achieve precise distances and turns with a two-wheeled vehicle.
+Motors can be used as angle servos using the "np set angle" block.
+
+https://shop.elecfreaks.com/products/nezha-breakout-board-v2
+https://wiki.elecfreaks.com/en/microbit/expansion-board/nezha-v2/
+'
+variables nezhaPro_busy nezhaPro_leftWheel nezhaPro_rightWheel nezhaPro_circumference nezhaPro_axle 
+
+  spec ' ' 'nezhaPro_setWheels' 'np set wheels left _ right _ #BR# circumference _ mm axle _ mm' 'menu.nezhaPro_motor menu.nezhaPro_motor num num' 'M1' 'M2' 115 105
+  spec ' ' 'nezhaPro_move' 'np move _ for _ mm speed _ %' 'menu.nezhaPro_forwardBack num num' 'forward' 100 30
+  spec ' ' 'nezhaPro_turn' 'np turn _ by _ degrees speed _ %' 'menu.nezhaPro_dir num num' 'clockwise' 90 30
+  space
+  spec ' ' 'nezhaPro_runMotor' 'np run motor _ _ speed _ %' 'menu.nezhaPro_motor menu.nezhaPro_dir num' 'M1' 'clockwise' 30
+  spec ' ' 'nezhaPro_stopMotor' 'np stop motor _' 'menu.nezhaPro_motor' 'M1'
+  spec ' ' 'nezhaPro_stopAll' 'np stop all motors'
+  space
+  spec ' ' 'nezhaPro_rotateBy' 'np rotate _ _ by _ degrees speed _ %' 'menu.nezhaPro_motor menu.nezhaPro_dir num num' 'M1' 'clockwise' 90 30
+  spec ' ' 'nezhaPro_rotateTo' 'np rotate _ _ to _ degrees speed _ %' 'menu.nezhaPro_motor menu.nezhaPro_dir num num' 'M1' 'clockwise' 90 30
+  spec ' ' 'nezhaPro_setAngle' 'np set _ angle _ to _ degrees' 'menu.nezhaPro_motor menu.nezhaPro_turnStyle num' 'M1' 'nezhaPro;by shortest path' 0
+  space
+  spec 'r' 'nezhaPro_readSpeed' 'np speed _' 'menu.nezhaPro_motor' 'M1'
+  spec 'r' 'nezhaPro_angle' 'np angle _' 'menu.nezhaPro_motor' 'M1'
+  advanced
+  spec 'r' 'nezhaPro_readTotalAngle' 'np total angle _' 'menu.nezhaPro_motor' 'M1'
+  spec ' ' 'nezhaPro_resetTotalAngle' 'np reset total angle _' 'menu.nezhaPro_motor' 'M1'
+  space
+  spec 'r' 'nezhaPro_version' 'np version'
+  space
+  spec ' ' '_nezhaPro_initWheels' '_nezhaPro_initWheels'
+  spec 'r' '_nezhaPro_motor' '_nezhaPro_motor _' 'menu.nezhaPro_motor' 'M1'
+  spec ' ' '_nezhaPro_sendCmd' '_nezhaPro_sendCmd _ motor _ dir _ args _ _ _' 'num num num num num num'
+  spec 'r' '_nezhaPro_readCmd' '_nezhaPro_readCmd _ bytes _ args _ _ _ _' 'num num num num num num'
+
+to '_nezhaPro_initWheels' {
+  if (0 != nezhaPro_leftWheel) {return}
+  comment 'Use default values'
+  nezhaPro_leftWheel = 'M1'
+  nezhaPro_rightWheel = 'M2'
+  nezhaPro_circumference = 115
+  nezhaPro_axle = 105
+}
+
+to '_nezhaPro_motor' motor {
+  if ('M1' == motor) {
+    return 1
+  } ('M2' == motor) {
+    return 2
+  } ('M3' == motor) {
+    return 3
+  } ('M4' == motor) {
+    return 4
+  }
+  return 1
+}
+
+to '_nezhaPro_readCmd' cmd resultCount arg1 arg2 arg3 arg4 {
+  waitUntil (nezhaPro_busy == 0)
+  nezhaPro_busy = 1
+  waitMillis 4
+  '[sensors:i2cWrite]' 16 ('[data:makeList]' (hexToInt 'FF') (hexToInt 'F9') arg1 arg2 cmd arg3 arg4 0)
+  waitMillis 4
+  local 'buf' (newList resultCount)
+  '[sensors:i2cRead]' 16 buf
+  nezhaPro_busy = 0
+  return buf
+}
+
+to '_nezhaPro_sendCmd' cmd motor dir arg1 arg2 arg3 {
+  waitUntil (nezhaPro_busy == 0)
+  nezhaPro_busy = 1
+  '[sensors:i2cWrite]' 16 ('[data:makeList]' (hexToInt 'FF') (hexToInt 'F9') motor dir cmd arg1 arg2 arg3)
+  nezhaPro_busy = 0
+}
+
+to nezhaPro_angle motor {
+  return (((nezhaPro_readTotalAngle motor) / 10) % 360)
+}
+
+to nezhaPro_move forwardBackward mm speed {
+  '_nezhaPro_initWheels'
+  speed = (maximum 0 (minimum speed 100))
+  local 'degrees' ((360 * mm) / nezhaPro_circumference)
+  if ('forward' == forwardBackward) {
+    nezhaPro_rotateBy nezhaPro_leftWheel 'clockwise' degrees speed
+    nezhaPro_rotateBy nezhaPro_rightWheel 'counter-clockwise' degrees speed
+  } else {
+    nezhaPro_rotateBy nezhaPro_leftWheel 'counter-clockwise' degrees speed
+    nezhaPro_rotateBy nezhaPro_rightWheel 'clockwise' degrees speed
+  }
+  waitMillis (((111 * degrees) / speed) + 200)
+}
+
+to nezhaPro_readSpeed motor {
+  local 'buf' ('_nezhaPro_readCmd' (hexToInt '47') 2 ('_nezhaPro_motor' motor) 0 0 (hexToInt 'F5') 0)
+  return (((at 2 buf) << 8) | (at 1 buf))
+}
+
+to nezhaPro_readTotalAngle motor {
+  local 'buf' ('_nezhaPro_readCmd' (hexToInt '46') 4 ('_nezhaPro_motor' motor) 0 0 (hexToInt 'F5') 0)
+  return (((((at 4 buf) << 24) | ((at 3 buf) << 16)) | ((at 2 buf) << 8)) | (at 1 buf))
+}
+
+to nezhaPro_resetTotalAngle motor {
+  '_nezhaPro_sendCmd' (hexToInt '1D') ('_nezhaPro_motor' motor) 0 0 (hexToInt 'F5') 0
+}
+
+to nezhaPro_rotateBy motor dir degrees speed {
+  dir = (ifExpression ('clockwise' == dir) 1 2)
+  if (degrees < 0) {
+    comment 'rotate the other direction'
+    dir = (ifExpression (1 == dir) 2 1)
+    degrees = (absoluteValue degrees)
+  }
+  comment 'Set the motor speed. Internal speed range is 0-900.'
+  speed = (9 * (maximum 0 (minimum speed 100)))
+  '_nezhaPro_sendCmd' (hexToInt '77') 0 0 ((speed >> 8) & 255) 0 (speed & 255)
+  '_nezhaPro_sendCmd' (hexToInt '70') ('_nezhaPro_motor' motor) dir ((degrees >> 8) & 255) 2 (degrees & 255)
+}
+
+to nezhaPro_rotateTo motor dir degrees speed {
+  degrees = (((nezhaPro_angle motor) - degrees) % 360)
+  nezhaPro_rotateBy motor dir degrees speed
+}
+
+to nezhaPro_runMotor motor dir speed {
+  dir = (ifExpression ('clockwise' == dir) 1 2)
+  speed = (maximum 0 (minimum speed 100))
+  '_nezhaPro_sendCmd' (hexToInt '60') ('_nezhaPro_motor' motor) dir speed (hexToInt 'F5') 0
+}
+
+to nezhaPro_setAngle motor turnStyle angle {
+  local 'turnMode' 1
+  if ('clockwise' == turnStyle) {
+    turnMode = 2
+  } ('counter-clockwise' == turnStyle) {
+    turnMode = 3
+  }
+  angle = (angle % 360)
+  '_nezhaPro_sendCmd' (hexToInt '5D') ('_nezhaPro_motor' motor) 0 ((angle >> 8) & 255) turnMode (angle & 255)
+  waitMillis 500
+}
+
+to nezhaPro_setWheels left right circumference axle {
+  nezhaPro_leftWheel = left
+  nezhaPro_rightWheel = right
+  nezhaPro_circumference = circumference
+  nezhaPro_axle = axle
+}
+
+to nezhaPro_stopAll {
+  nezhaPro_stopMotor 'M1'
+  nezhaPro_stopMotor 'M2'
+  nezhaPro_stopMotor 'M3'
+  nezhaPro_stopMotor 'M4'
+}
+
+to nezhaPro_stopMotor motor {
+  '_nezhaPro_sendCmd' (hexToInt '5F') ('_nezhaPro_motor' motor) 0 0 (hexToInt 'F5') 0
+}
+
+to nezhaPro_turn dir turnDegrees speed {
+  '_nezhaPro_initWheels'
+  speed = (maximum 0 (minimum speed 100))
+  comment 'Each wheel must move turnDegrees/360 * circumference of axle circle (pi * axel length)'
+  local 'mm' ((turnDegrees * (314 * nezhaPro_axle)) / 36000)
+  local 'degrees' ((360 * mm) / nezhaPro_circumference)
+  if ('clockwise' == dir) {
+    nezhaPro_rotateBy nezhaPro_leftWheel 'counter-clockwise' degrees speed
+    nezhaPro_rotateBy nezhaPro_rightWheel 'counter-clockwise' degrees speed
+  } else {
+    nezhaPro_rotateBy nezhaPro_leftWheel 'clockwise' degrees speed
+    nezhaPro_rotateBy nezhaPro_rightWheel 'clockwise' degrees speed
+  }
+  waitMillis (((111 * degrees) / speed) + 200)
+}
+
+to nezhaPro_version {
+  local 'version' ('_nezhaPro_readCmd' (hexToInt '88') 3 0 0 0 0 0)
+  return ('[data:joinStrings]' version '.')
+}
+

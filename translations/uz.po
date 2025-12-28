@@ -334,7 +334,7 @@ msgstr "i2c qurilmani _ ro'yxatiga olish _"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "start WiFi _ password _"
-msgstr "Wi-Fi ni _ parol bilan ishga tushirish"
+msgstr "Wi-Fi ni _ parol _ bilan ishga tushirish"
 
 #. Block in Operators category
 msgid "hex _"
@@ -597,7 +597,7 @@ msgstr "fayl hajmi _"
 
 #. TFT Display library block
 msgid "write _ on TFT at x _ y _ color _"
-msgstr "TFT ustiga _ x _ y rangida _ yozish"
+msgstr "TFT ustiga _ x _ y rangida _ yozish _"
 
 #. File system library label
 msgid "Files"
@@ -625,7 +625,7 @@ msgstr "servo _ tezligini _ ga sozlang (-100 dan 100 gacha)"
 
 #. Servo motor library block
 msgid "set servo _ to _ degrees (-90 to 90)"
-msgstr "servo -ni _ darajasiga o'rnatish (-90 dan 90 gacha)"
+msgstr "servo _ ni _ darajasiga o'rnatish (-90 dan 90 gacha)"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "move motor _ _ steps _"
@@ -705,7 +705,7 @@ msgstr "PIR da aniqlangan harakat"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "move motor _ _ complete turns"
-msgstr "motorli mdvigatel _ to'liq buriladi"
+msgstr "motorli mdvigatel _ _ to'liq buriladi"
 
 #. Key name (as in computer keyboard key)
 msgid "kbd;Control"
@@ -841,7 +841,7 @@ msgstr "to'ldirilgan _"
 
 #. TFT Display library block
 msgid "scale _ wrap _"
-msgstr "o'lchov _"
+msgstr "o'lchov _ _"
 
 #. Turtle Geometry library block
 msgid "set pen to random color"
@@ -918,7 +918,7 @@ msgstr "TFT kengligi"
 
 #. Tone library block
 msgid "play midi key _ for _ ms"
-msgstr "midi tugmachasini _ ms ijro etish"
+msgstr "midi tugmachasini _ _ ms ijro etish"
 
 #. Turtle Geometry library block
 msgid "turn _ degrees"
@@ -1397,7 +1397,7 @@ msgstr "Calliope diodli qizil _ yashil _ ko'k _ belgilash"
 
 #. Tone library block
 msgid "play note _ octave _ for _ ms"
-msgstr "eslatmani _ octave _ ms davomida ijro etish"
+msgstr "eslatmani _ octave _ ms davomida ijro etish _"
 
 #. Calliope board library block
 msgid "Calliope loudness"
@@ -1405,11 +1405,11 @@ msgstr "Kalliopa balandligi"
 
 #. Tone library block
 msgid "play frequency _ for _ ms"
-msgstr "chastotasini _ ms davomida ijro etish"
+msgstr "chastotasini _ _ ms davomida ijro etish"
 
 #. File System library block
 msgid "append bytes _ to file _"
-msgstr "_ fayliga baytni qo'shish"
+msgstr "_ fayliga baytni qo'shish _"
 
 #. File System library block
 msgid "next line of file _"
@@ -1473,7 +1473,7 @@ msgstr "satr xususiyatini belgilash _ sarlavha _ @Turi _"
 
 #. Web Things library block
 msgid "set number property _ title _ @Type _"
-msgstr "raqam xususiyatini _ belgilash _ @Turi"
+msgstr "raqam xususiyatini _ belgilash _ @Turi _"
 
 #. Web Things library block
 msgid "start WebThing server"

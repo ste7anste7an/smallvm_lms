@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-28 16:23+0200\n"
-"PO-Revision-Date: 2025-10-06 13:38+0000\n"
+"PO-Revision-Date: 2025-11-17 19:51+0000\n"
 "Last-Translator: Josep Ferràndiz <josep.ferrandiz@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/microblocks/ide/"
 "es/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14-dev\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #. Block part type, while making a new block
 msgid "input"
@@ -485,7 +485,7 @@ msgstr "Tipo de placa:"
 
 #. Sphero-RVR robot library block
 msgid "set RGB LED _ to red _ green _ blue _"
-msgstr "pon el LED RGB a rojo _ verde _ azul _"
+msgstr "pon el LED RGB _ a rojo _ verde _ azul _"
 
 #. MicroBlocks IDE message
 msgid "Plug in the board."
@@ -2007,7 +2007,7 @@ msgstr "ESC"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "enciende la cola de color R _ % V _ % A _ %"
+msgstr "enciende la cola _ de color R _ % V _ % A _ %"
 
 #. Turtle Geometry library block
 msgid "turn _ degrees"
@@ -7642,3 +7642,7 @@ msgstr "#SVG#square11#ffffff semáforo rojo _ amarillo _ verde _ puerto _"
 #. Examples folder
 msgid "folder;MakerPort"
 msgstr "MakerPort"
+
+#. Option in dropdown menu of editable input slots on mobile devices:
+msgid "edit"
+msgstr "edita"

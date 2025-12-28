@@ -287,6 +287,11 @@ method extractOpcodes MicroBlocksDecompiler chunkData {
 			} else { // arg is 8-bit signed offset
 				if (arg > 127) { arg = (arg - 256) }
 			}
+		} ('exitLoop' == op) {
+				arg = (at chunkData i)
+				arg = (arg | ((at chunkData (i + 1)) << 8))
+				if (arg > 32767) { arg = (arg - 65536) }
+				extraWords += 1
 		} (isOneOf op 'commandPrimitive' 'reporterPrimitive') { // 24 bit arg
 			arg = (arg | ((at chunkData i) << 8))
 			arg = (arg | ((at chunkData (i + 1)) << 16))
@@ -1011,6 +1016,8 @@ method decodeCmd MicroBlocksDecompiler i {
 		} else {
 			add code (newCommand 'if' (removeLast stack) ifPart true elsePart)
 		}
+	} ('exitLoop' == op) {
+		add code (newCommand 'exitLoop')
 	} ('for' == op) {
 		body = (codeForSequence this (at cmd 3) (at cmd 4))
 		indexVarName = (localVarName this (at cmd 5))

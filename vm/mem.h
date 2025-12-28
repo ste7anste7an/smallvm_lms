@@ -45,6 +45,7 @@ extern "C" {
 	#define IS_DUE_CINCO (DUE_PID == 1)
 	#define IS_DUE_STEM (DUE_PID == 16)
 	#define IS_DUE_CLIPIT (DUE_PID == 17)
+	#define IS_DUE_CHRONO (DUE_PID == 0x0C0004)
 #endif
 
 #if defined(ESP32) && !(defined(ESP32_S2) || defined(ESP32_S3) || defined(ESP32_C3) || defined(ESP32_C6))

@@ -20,6 +20,7 @@ method initialize MicroBlocksHelp {
 		(array 'sayIt' 'output#say' 'Display a bubble showing the value.')
 		(array 'printIt' 'output#graph' 'Graph the value.') // used in pre-2.0 code
 		(array 'graphIt' 'output#graph' 'Graph the value(s). Multiple values can be graphed.')
+		(array '[misc:clearGraph]' 'output#clear-graph' 'Deletes all graph data and clears the graph window.')
 
 		// INPUT
 		(array 'buttonA' 'input#button-a' 'Report the state of button A ( (-o) or (o-) ).')
@@ -62,6 +63,8 @@ method initialize MicroBlocksHelp {
 		(array '[serial:write]' 'comm#serial-write' 'Send a byte array to the serial port.')
 		(array '[serial:writeBytes]' 'comm#serial-write-starting-at' 'Send a byte array to the serial port, starting at the given byte.')
 		(array '[io:softWriteByte]' 'comm#soft-serial-write' 'Write a byte to the pin at the specified baud rate.')
+		(array '[serial:dueRecv]' 'comm#duelink-receive' 'Report data received from the Duelink device (a byte array).')
+		(array '[serial:dueSend]' 'comm#duelink-send' 'Send a byte array to the Duelink device, starting at the given byte.')
 
 		// CONTROL
 		(array 'whenStarted' 'control#when-started' 'Run when the board powers up or when the IDE start button is clicked.')
@@ -115,6 +118,7 @@ method initialize MicroBlocksHelp {
 		(array '[misc:sqrt]' 'operators#sqrt' 'Returns the square root value of the number input.')
 		(array '[misc:atan2]' 'operators#arctan' 'Calculates the angle from x (adjacent), y (opposite) sides of a right-angled triangle, and returns degrees multiplied by 100.')
 		(array 'hexToInt' 'operators#hex' 'Report the numerical value of a hexadecimal string (range: -0x1FFFFFFF to 0x1FFFFFFF)')
+		(array '[misc:binToInt]' 'operators#binary' 'Converts a binary string to a decimal number. Max number of bits is 30.')
 		(array '&' 'operators#bitwise-and' 'Report bitwise AND of two numbers.')
 		(array '|' 'operators#bitwise-or' 'Report bitwise OR of two numbers.')
 		(array '^' 'operators#bitwise-xor' 'Report bitwise XOR (exclusive OR) of two numbers.')
@@ -122,7 +126,7 @@ method initialize MicroBlocksHelp {
 		(array '<<' 'operators#bitwise-left-shift' 'Report the given number shifted left by the given number of bits.')
 		(array '>>' 'operators#bitwise-right-shift' 'Report the given number shifted right by the given number of bits (arithmetic shift; sign is maintained).')
 		(array 'sum' 'operators#sum' 'Returns the sum of the inputs.')
-		(array 'toString' 'operators#tostring' 'Returns the input as a string (e.g. "123" is a three letter string not a number).')
+		(array '[data:toString]' 'operators#to-string' 'Returns the input as a string (e.g. "123" is a three letter string not a number).')
 
 		// VARIABLES
 		(array 'v' 'variables#xxx' '')

@@ -219,26 +219,13 @@ method textEdited InputSlot {
 	}
 }
 
-method editMenu InputSlot {
-	old = ''
-	if (notNil (contents this)) { old = (toString (contents this)) }
-	newContents = (freshPrompt (global 'page') 'New value?' old)
-	if ('' == newContents) { return }
-	setContents this newContents
-}
-
 method clicked InputSlot aHand {
-	addSlotEditCmd = (isMobile)
 	if (notNil menuSelector) {
 		arrowLeft = ((right morph) - (20 * (blockScale)))
-		if (or isStatic ((x aHand) >= arrowLeft) addSlotEditCmd) {
+		if (or isStatic ((x aHand) >= arrowLeft)) {
 			if (contains (methodNames (class 'InputSlot')) menuSelector) {
 				menu = (call menuSelector this)
 				if (notNil menu) {
-					if (and (not isStatic) addSlotEditCmd) {
-						addLine menu
-						addItem menu (localized 'edit') (action 'editMenu' this)
-					}
 					popUpAtHand menu (page aHand)
 					return true
 				}

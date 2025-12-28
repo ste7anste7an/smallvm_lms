@@ -744,7 +744,7 @@ msgstr "Dial"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "cauda de color do Finch R _ % G _ % B _ %"
+msgstr "cauda _ de color do Finch R _ % G _ % B _ %"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "x"

@@ -40,7 +40,7 @@ to newProjTest fileName {
 
 // MicroBlocksProject Class
 
-defineClass MicroBlocksProject main libraries blockSpecs
+defineClass MicroBlocksProject main libraries blockSpecs varIndices nextVarIndex
 
 to newMicroBlocksProject {
 	return (initialize (new 'MicroBlocksProject'))
@@ -50,6 +50,8 @@ method initialize MicroBlocksProject {
 	main = (newMicroBlocksModule 'main')
 	libraries = (dictionary)
 	blockSpecs = (dictionary)
+	varIndices = (dictionary)
+	nextVarIndex = 0
 	return this
 }
 
@@ -249,9 +251,39 @@ method addVariable MicroBlocksProject newVar {
 }
 
 method deleteVariable MicroBlocksProject varName {
+	deleteVariable main varName
 	for lib (values libraries) {
 		deleteVariable lib varName
 	}
+}
+
+method indexForVar MicroBlocksProject varName {
+	// Return a unique index for the given global variable.
+	// Details: Assign indices sequentially without trying to recycle the indices
+	// of variables that have been deleted. When we run out of indices, clear the
+	// dictionary and recompile all scripts. (This is not common since most projects
+	// will not run out of variable indices.)
+
+	result = (at varIndices varName)
+	if (notNil result) { return result }
+	if (nextVarIndex >= 128) {
+		// Rare case: No more variable indices
+		if ((count (allVariableNames this)) > 128) {
+			// Very rare: Too many global variables. Assign 127 to remaining variables.
+			// Code will run strangely but won't crash.
+			return 127
+		}
+		// There are enough indices for all globals (perhaps because variables have been deleted)
+		// Recompile all scripts, to re-assign all global variable indices.
+		varIndices = (dictionary)
+		nextVarIndex = 0
+		recompileNeeded (smallRuntime)
+	}
+	// Common case: Assign the next global variable index to varName
+	varIndex = nextVarIndex
+	nextVarIndex += 1
+	atPut varIndices varName varIndex
+	return varIndex
 }
 
 // Variables

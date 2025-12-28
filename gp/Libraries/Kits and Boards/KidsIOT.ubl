@@ -1,6 +1,6 @@
 module KidsIOT
 author 'Josep Ferràndiz'
-version 1 6 
+version 1 7 
 depends Tone '_Temperature Humidity (DHT11, DHT22)' '_Distance (HC-SR04)' NeoPixel '_IR Remote' TFT 'LED Display' '_Real Time Clock' 
 choices kiot_rotarySensor 'kiot;rotation' 'kiot;button pressed?' 
 choices kiot_twoPins '1' '3' '4' '6' '7' '8' '9' 
@@ -42,7 +42,7 @@ variables _kiot_buzzer_init _kiot_avg_loudness _kiot_encoder_port1 _kiot_encoder
   space
   spec 'r' 'kiot joystick' '#SVG#square11#00c612 joystick _' 'menu.kiot_joystick' 'X'
   space
-  spec 'r' 'kiot getTimeDate' '#SVG#square11#00c612 get _' 'menu.rtc_timeOrDate' 'rtc;time (H:M:S)'
+  spec 'r' 'kiot getTimeDate' '#SVG#square11#00c612 get _' 'menu.rtc_timeOrDate' 'time (H:M:S)'
   spec ' ' 'kiot setTime' '#SVG#square11#00c612 set hours _ minutes _ seconds _' 'num num num' 9 30 0
   spec ' ' 'kiot setDate' '#SVG#square11#00c612 set year _ month _ day _' 'num num num' 2025 1 1
 

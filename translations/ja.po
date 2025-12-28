@@ -800,7 +800,7 @@ msgstr "Hummingbird 電池容量 (mV)"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "Finch しっぽ 赤 _ 緑 _ 青 _"
+msgstr "Finch しっぽ _ 赤 _ 緑 _ 青 _"
 
 #. PN532 RFID reader library block
 msgid "RFID _ = _"

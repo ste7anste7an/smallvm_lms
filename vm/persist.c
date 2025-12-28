@@ -487,8 +487,8 @@ static void flashWriteData(int *dst, int wordCount, uint8 *src) {
 #define STM32_FLASH_START 0x08000000
 #define STM32_PAGE_SIZE 0x800 // 2k bytes
 
-#define START (STM32_FLASH_START + (92 * 1024))
-#define HALF_SPACE (18 * 1024)
+#define START (STM32_FLASH_START + (96 * 1024))
+#define HALF_SPACE (16 * 1024)
 
 static void flashErase(int *startAddr, int *endAddr) {
 	int startPage = ((int) startAddr - STM32_FLASH_START) / STM32_PAGE_SIZE;

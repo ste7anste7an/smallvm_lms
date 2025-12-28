@@ -31,7 +31,7 @@ method initialize ColorPicker anAction initialColor withTransparentButton {
 	addSwatch this 228 32 52 52
 	if (isNil withTransparentButton) { withTransparentButton = false }
 	if withTransparentButton { addTransparentButton this 244 141 }
-	addCloseButton this 256 8
+	addCloseButton this
 	addReadouts this 250 82
 	action = anAction
 	if (notNil initialColor) {
@@ -141,14 +141,13 @@ method setTransparent ColorPicker {
 	if (notNil action) { call action (transparent) }
 }
 
-method addCloseButton ColorPicker x y {
+method addCloseButton ColorPicker {
 	scale = (global 'scale')
-	x = (x * scale)
-	y = (y * scale)
-
-	buttonW = (20 * scale)
-	buttonH  = (15 * scale)
+	buttonW = (40 * scale)
+	buttonH  = (25 * scale)
 	closeBtn = (pushButton 'X' (action 'destroy' (morph this)) buttonW buttonH)
+	x = ((width morph) - ((width (morph closeBtn)) + (5 * scale)))
+	y = (5 * scale)
 	setPosition (morph closeBtn) x y
 	addPart morph (morph closeBtn)
 }

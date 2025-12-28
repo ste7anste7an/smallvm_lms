@@ -56,8 +56,11 @@ to openMicroBlocksEditor devMode {
 	applyUserPreferences editor
 	developerModeChanged editor
 	if ('Browser' == (platform)) {
-		// attempt to extra project or scripts from URL; does nothing if absent
-		importFromURL editor (browserURL)
+		url = (browserURL)
+		langCode = (urlParameter url 'lang')
+		if (notNil langCode) { setLanguage editor langCode }
+		// attempt to open a project or scripts from URL; does nothing if absent
+		importFromURL editor url
 	}
 	startSteppingSafely page
 }
@@ -235,7 +238,9 @@ method addZoomButtonHints MicroBlocksEditor {
 }
 
 method restoreZoom MicroBlocksEditor {
-	setBlockScalePercent this 100
+	normalPercent = 100
+	if (isMobile) { normalPercent = 125 }
+	setBlockScalePercent this normalPercent
 }
 
 method zoomIn MicroBlocksEditor {
@@ -440,7 +445,7 @@ method copyProjectURLToClipboard MicroBlocksEditor {
 		projName = (text title)
 		codeString = (join 'projectName ''' projName '''' (newline) (newline) codeString)
 	}
-	setClipboard (join (urlPrefix this) '#project='(urlEncode codeString true))
+	setClipboard (join (urlPrefix this) '?project='(urlEncode codeString true))
 }
 
 method saveProject MicroBlocksEditor fName {
@@ -715,7 +720,7 @@ method processDroppedFiles MicroBlocksEditor {
 
 method processDroppedFile MicroBlocksEditor fName data {
 	lcFilename = (toLowerCase fName)
-	if (endsWith lcFilename '.ubp') {
+	if (or (endsWith lcFilename '.ubp') (endsWith lcFilename '.ubp.txt')) {
 		if (not (canReplaceCurrentProject this)) { return }
 		openProject this data fName
 	} (endsWith lcFilename '.ubl') {
@@ -785,28 +790,25 @@ method processDroppedText MicroBlocksEditor text {
 }
 
 method importFromURL MicroBlocksEditor url {
-	i = (findSubstring 'scripts=' url)
-	if (notNil i) { // import scripts embedded in URL
-		scriptString = (urlDecode (substring url (i + 8)))
+	scripts = (urlParameter url 'scripts')
+	if (notNil scripts) { // import scripts embedded in URL
+		scriptString = (urlDecode scripts)
 		pasteScripts scripter scriptString
 		return
 	}
-	i = (findSubstring 'project=' url)
-	if (notNil i) { // open a complete project
-		urlOrData = (substring url (i + 8))
-		if (beginsWith urlOrData 'http') {
-			// project link
-			fileName = (substring urlOrData ((findLast urlOrData '/') + 1) ((findLast urlOrData '.') - 1))
-			if (not (canReplaceCurrentProject this)) { return }
-			openProject this (httpBody (httpGetInBrowser urlOrData)) fileName
+	proj = (urlParameter url 'project')
+	if (not (canReplaceCurrentProject this)) { return }
+	if (notNil proj) { // open a complete project
+		if (beginsWith proj 'http') {
+			// proj is a project link
+			projectString = (toString (httpBody (httpGetInBrowser proj)))
+			projName = (substring proj ((findLast proj '/') + 1) ((findLast proj '.') - 1))
 		} else {
-			// project embedded in URL
-			projectString = (urlDecode (substring url (i + 8)))
-			if (not (canReplaceCurrentProject this)) { return }
+			// proj is a project embedded in the URL
+			projectString = (urlDecode proj)
 			projName = (extractProjectName this projectString)
-			if (not (canReplaceCurrentProject this)) { return }
-			openProject this projectString projName
 		}
+		openProject this projectString projName
 		return
 	}
 }
@@ -1022,6 +1024,15 @@ method autoDecompileEnabled MicroBlocksEditor {
 //	return (autoDecompile == true)
 }
 
+method openVMFolder MicroBlocksEditor {
+	if isPilot {
+		url = 'https://microblocks.fun/downloads/pilot/vm/'
+	} else {
+		url = 'https://microblocks.fun/downloads/latest/vm/'
+	}
+	openURL url
+}
+
 method toggleShowHiddenBlocks MicroBlocksEditor {
 	showHiddenBlocks = (not (showHiddenBlocksEnabled this))
 	saveToUserPreferences this 'showImplementationBlocks' showHiddenBlocks
@@ -1163,6 +1174,8 @@ method gearMenu MicroBlocksEditor {
 		addItem menu 'autoload board libraries' (action 'toggleBoardLibAutoLoad' this) nil (newCheckmark this (not (boardLibAutoLoadDisabled this)))
 // Does anyone ever enable 'PlugShare when project empty'?
 //		addItem menu 'PlugShare when project empty' (action 'toggleAutoDecompile' this) 'when plugging a board, automatically read its contents into the IDE if the current project is empty' (newCheckmark this (autoDecompileEnabled this))
+		addLine menu
+		addItem menu 'open vm folder on microblocks.fun' (action 'openVMFolder' this)
 		addLine menu
 		addItem menu 'install ESP firmware from URL' (action 'installESPFirmwareFromURL' (smallRuntime))
 		addItem menu 'install ESP firmware from microblocks.fun' (action 'installESPFirmwareFromRepo' (smallRuntime))

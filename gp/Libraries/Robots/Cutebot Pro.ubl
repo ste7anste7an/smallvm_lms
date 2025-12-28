@@ -1,12 +1,12 @@
 module 'Cutebot Pro' Output
 author MicroBlocks
-version 0 10 
+version 0 11 
 depends 'Distance (HC-SR04)' 'IR Remote' NeoPixel 
-choices wheelMenu 'cutebotwheel;left' 'cutebotwheel;right' 'cutebotwheel;both'
-choices lightMenu 'cutebotlight;left' 'cutebotlight;right' 'cutebotlight;both'
-choices leftRightMenu 'cutebotwheel;left' 'cutebotwheel;right'
+choices wheelMenu 'cutebotwheel;left' 'cutebotwheel;right' 'cutebotwheel;both' 
+choices leftRightMenu 'cutebotwheel;left' 'cutebotwheel;right' 
 choices turnAngleMenu '45 degrees' '90 degrees' '135 degrees' '180 degrees' 
-choices directionMenu 'cutebot;forward' 'cutebot;backward'
+choices directionMenu 'cutebot;forward' 'cutebot;backward' 
+choices lightMenu 'cutebotlight;left' 'cutebotlight;right' 'cutebotlight;both' 
 choices servoTypeMenu '180 degree' '270 degree' '360 degree' 
 choices turnTypeMenu 'cutebotturn;left' 'cutebotturn;right' 'cutebotturn;left-in-place' 'cutebotturn;right-in-place' 
 description 'The ELECFREAKS Cutebot Pro features:
@@ -60,7 +60,7 @@ I2C Commands:
 '
 variables _cbpro_leftCount _cbpro_rightCount _cppro_orientation 
 
-  spec ' ' 'cbpro_setWheelSpeed' 'CBPro set wheel speed left _ right _ (-60 to 60 cm/s)' 'num num' 30 30
+  spec ' ' 'cbpro_setWheelSpeed' 'CBPro set wheel speed left _ right _ (-60 to 60 cm/s)' 'num num' 20 -20
   spec 'r' 'cbpro_wheelSpeed' 'CBPro speed of _ wheel (cm/s)' 'menu.leftRightMenu' 'cutebotwheel;left'
   spec ' ' 'cbpro_stopWheel' 'CBPro stop wheel _' 'menu.wheelMenu' 'cutebotwheel;both'
   spec ' ' 'cbpro_stopAll' 'CBPro stop all'

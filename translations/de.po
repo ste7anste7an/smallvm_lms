@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-28 16:43+0200\n"
-"PO-Revision-Date: 2025-11-09 19:51+0000\n"
+"PO-Revision-Date: 2025-12-16 10:21+0000\n"
 "Last-Translator: Ralf Krause <ralf.krause@moodleschule.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/microblocks/ide/"
 "de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15-dev\n"
+"X-Generator: Weblate 5.15.1-dev\n"
 
 #. Name of data type, as in the dropdown menu in the ( (123) is a ( number v ) ) block
 msgid "number"
@@ -805,7 +805,7 @@ msgstr "sortiert _"
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "Hummingbird Tri-LED _ R _ % G _ % B _ %"
-msgstr "Hummingbird Dreifarben-LED _ R _ % G _ % B _ %"
+msgstr "Hummingbird setze LED _ R _ G _ B _ (0~100)"
 
 #. MIDI library block
 msgid "play MIDI note _ for _ ms on channel _ volume _"
@@ -1018,7 +1018,7 @@ msgstr "Scrollen"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "counter-clockwise"
-msgstr "gegen Uhrzeigersinn"
+msgstr "gegen Uhrzeiger"
 
 #. Lists library block
 msgid "sort _"
@@ -1408,7 +1408,7 @@ msgstr "BMX280 Temperatur"
 
 #. Citilab ED1 Stepper Motor library block
 msgid "clockwise"
-msgstr "im Uhrzeigersinn"
+msgstr "mit Uhrzeiger"
 
 #. WiFi library label
 msgid "WiFi"
@@ -1556,7 +1556,7 @@ msgstr ""
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "Hummingbird Position Servo _ _ °"
-msgstr "Hummingbird Position Servo _ _ °"
+msgstr "Hummingbird Positionsservo _ _ °"
 
 #. BirdBrain Technologies Hummingbird kit library block
 msgid "humm;Sound"
@@ -2041,9 +2041,8 @@ msgstr "Gibt die bitweise Negation der Zahl zurück."
 #. Tip Bar text for a block (at the bottom of the IDE, gives info on the currently hovered block or input)
 msgid "Report the given number shifted right by the given number of bits (arithmetic shift; sign is maintained)."
 msgstr ""
-"Gibt die Zahl zurück, die aus der bitweisen Verschiebung der Eingabe um die "
-"angegebene Anzahl von Bits nach rechts entsteht (arithmetische Verschiebung; "
-"Vorzeichen bleibt erhalten)."
+"Gibt die Zahl zurück, die bei der bitweisen Verschiebung der Eingabe nach "
+"rechts entsteht (arithmetische Verschiebung. Vorzeichen bleibt erhalten)."
 
 #. Tip Bar text for a block (at the bottom of the IDE, gives info on the currently hovered block or input)
 msgid "Set a variable to the given value."
@@ -2756,11 +2755,11 @@ msgstr "Eingabe"
 
 #. Block in Input category
 msgid "timer"
-msgstr "Stoppuhr"
+msgstr "Zeitgeber"
 
 #. Block in Input category
 msgid "reset timer"
-msgstr "setze Stoppuhr zurück"
+msgstr "setze Zeitgeber zurück"
 
 #. Block in Input category
 msgid "microseconds"
@@ -3460,7 +3459,7 @@ msgstr "pullup _"
 
 #. Servo motor library block
 msgid "set servo _ to _ degrees (-90 to 90)"
-msgstr "setze 180°-Servo _ auf Winkel _ ° (-90~90)"
+msgstr "setze Servo _ auf Winkel _ ° (-90~90)"
 
 #. 5x5 LED display library label
 #. Supports the micro:bit display, but also simulated 5x5 displays on boards
@@ -4269,7 +4268,7 @@ msgstr "_ mit Farbton _ (0-360)"
 
 #. OLED Graphics library block
 msgid "_flip display top _"
-msgstr "drehe Display flip _"
+msgstr "_drehe Display flip _"
 
 #. Cutebot Pro library block dropdown option
 #. as in "right" light
@@ -4918,7 +4917,7 @@ msgstr "Wukong2040 drehe Motor _ mit Tempo _ (-100~100)"
 
 #. Wukong robot library block
 msgid "Wukong set servo _ to _ degrees (-90 to 90)"
-msgstr "Wukong setze 180°-Servo _ auf Winkel _ (-90~90)"
+msgstr "Wukong setze Servo _ auf Winkel _ (-90~90)"
 
 #. Wukong robot library block
 msgid "Wukong set NeoPixels _ _ _ _"
@@ -5832,7 +5831,7 @@ msgstr "Nezha Trimmpoti _"
 
 #. NeZha2 robot library block
 msgid "Nezha crash sensor _"
-msgstr "Nezha Unfallsensor _"
+msgstr "Nezha Stoßsensor _"
 
 #. NeZha2 robot library block
 msgid "Nezha line sensor _ sees line on left _ right _"
@@ -6486,7 +6485,7 @@ msgstr "Calliope setze NeoPixel auf Helligkeit _"
 
 #. Calliope Servoboard library block
 msgid "Calliope set motor _ to speed _ (-100~100)"
-msgstr "Calliope drehe Motor _ mit _ (-100~100)"
+msgstr "Calliope drehe Motor _ mit Tempo _ (-100~100)"
 
 #. Calliope Servoboard library block
 msgid "Calliope stop motor _"
@@ -7637,11 +7636,11 @@ msgstr "Drehung"
 
 #. KidsIOT library choice
 msgid "kiot;clockwise"
-msgstr "im Uhrzeigersinn"
+msgstr "mit Uhrzeiger"
 
 #. KidsIOT library choice
 msgid "kiot;counter-clockwise"
-msgstr "gegen den Uhrzeigersinn"
+msgstr "gegen Uhrzeiger"
 
 #. KidsIOT library choice
 msgid "kiot;stop"
@@ -7718,3 +7717,229 @@ msgstr "#SVG#square11#0070ff Temperatur (DS18B20) _ Port _"
 #. KidsIOT library block
 msgid "#SVG#square11#ffffff traffic light red _ yellow _ green _ port _"
 msgstr "#SVG#square11#ffffff Ampel rot _ gelb _ grün _ Port _"
+
+#. Option in dropdown menu of editable input slots on mobile devices:
+msgid "edit"
+msgstr "bearbeiten"
+
+#. Generic servo type
+msgid "360°"
+msgstr "360°"
+
+#. Generic servo type
+msgid "180°"
+msgstr "180°"
+
+#. Generic servo type
+msgid "270°"
+msgstr "270°"
+
+#. Calliope MotionKit library block
+msgid "MotionKit set motor _ _ speed _ (0~100)"
+msgstr "MotionKit Motor _ _ Tempo _ (0~100)"
+
+#. Calliope MotionKit library block
+msgid "MotionKit stop all"
+msgstr "MotionKit stoppe alles"
+
+#. Calliope MotionKit library block
+msgid "MotionKit set led _ _"
+msgstr "MotionKit setze LED _ _"
+
+#. Calliope MotionKit library block
+msgid "MotionKit set servo _ to _ degrees (0-180)"
+msgstr "MotionKit setze Servo _ auf Winkel _ ° (0~180)"
+
+#. Calliope MotionKit library block
+msgid "MotionKit set _ servo _ to _ degrees"
+msgstr "MotionKit setze _ Servo _ auf Winkel _ °"
+
+#. Calliope MotionKit library block
+msgid "MotionKit rotate servo _ _ speed _ (0~100)"
+msgstr "MotionKit drehe Servo _ _ Tempo _ (0~100)"
+
+#. Calliope Callibot library choice
+msgid "callibot;left front"
+msgstr "links vorne"
+
+#. Calliope Callibot library choice
+msgid "callibot;right front"
+msgstr "rechts vorne"
+
+#. Calliope Callibot library choice
+msgid "callibot;left back"
+msgstr "links hinten"
+
+#. Calliope Callibot library choice
+msgid "callibot;right back"
+msgstr "rechts hinten"
+
+#. Calliope Callibot library choice
+msgid "violett"
+msgstr "violett"
+
+#. Calliope Callibot library choice
+msgid "aqua"
+msgstr "aqua"
+
+#. Calliope Callibot library choice
+msgid "callibot;bright"
+msgstr "hell"
+
+#. Calliope Callibot library choice
+msgid "callibot;dark"
+msgstr "dunkel"
+
+#. Calliope Callibot library choice
+msgid "callibot;S1"
+msgstr "S1"
+
+#. Calliope Callibot library choice
+msgid "callibot;S2"
+msgstr "S2"
+
+#. Calliope Callibot library block
+msgid "Callibot2E encoder _"
+msgstr "Callibot2E Encoder _"
+
+#. Calliope Callibot library block
+msgid "Callibot2E reset encoder _"
+msgstr "Callibot2E reset Encoder _"
+
+#. Calliope Callibot library block
+msgid "Callibot2 battery (mV)"
+msgstr "Callibot2 Batterie (mV)"
+
+#. Calliope Callibot library block
+msgid "Callibot2 bumper _ _"
+msgstr "Callibot2 Stoßsensor _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot clear NeoPixels"
+msgstr "Callibot lösche NeoPixel"
+
+#. Calliope Callibot library block
+msgid "Callibot distance (cm)"
+msgstr "Callibot Entfernung (cm)"
+
+#. Calliope Callibot library block
+msgid "Callibot line sensor _ _"
+msgstr "Callibot Liniensensor _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot set led _ _"
+msgstr "Callibot setze LED _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot set motor _ _ speed _ (0~100)"
+msgstr "Callibot setze Motor _ _ Tempo _ (0~100)"
+
+#. Calliope Callibot library block
+msgid "Callibot set neopixel _ to _ intensity _"
+msgstr "Callibot setze NeoPixel _ auf _ Helligkeit _"
+
+#. Calliope Callibot library block
+msgid "Callibot set servo _ to _ ° (0~180)"
+msgstr "Callibot setze Servo _ auf Winkel _ ° (0~180)"
+
+#. Calliope Callibot library block
+msgid "Callibot set _ servo _ to _ °"
+msgstr "Callibot setze _ Servo _ auf Winkel _ °"
+
+#. Calliope Callibot library block
+msgid "Callibot rotate servo _ _ speed _ (0~100)"
+msgstr "Callibot drehe Servo _ _ Tempo _ (0~100)"
+
+#. Calliope Callibot library block
+msgid "Callibot stop all"
+msgstr "Callibot stoppe alles"
+
+#. Calliope Callibot library block
+msgid "Callibot stop motor _"
+msgstr "Callibot stoppe Motor _"
+
+#. Nehza Pro library choice
+msgid "M1"
+msgstr "M1"
+
+#. Nehza Pro library choice
+msgid "M2"
+msgstr "M2"
+
+#. Nehza Pro library choice
+msgid "M3"
+msgstr "M3"
+
+#. Nehza Pro library choice
+msgid "M4"
+msgstr "M4"
+
+#. Nehza Pro library choice
+msgid "nehzaPro;by shortest path"
+msgstr "auf kürzestem Weg"
+
+#. Nehza Pro library block
+msgid "np angle _"
+msgstr "np Winkel _"
+
+#. Nehza Pro library block
+msgid "np move _ for _ mm speed _ %"
+msgstr "np bewege Robot _ um _ mm Tempo _ %"
+
+#. Nehza Pro library block
+msgid "np speed _"
+msgstr "np Tempo _"
+
+#. Nehza Pro library block
+msgid "np total angle _"
+msgstr "np Gesamtwinkel _"
+
+#. Nehza Pro library block
+msgid "np reset total angle _"
+msgstr "np reset Gesamtwinkel _"
+
+#. Nehza Pro library block
+msgid "np rotate _ _ by _ degrees speed _ %"
+msgstr "np drehe _ _ um _ ° Tempo _ %"
+
+#. Nehza Pro library block
+msgid "np rotate _ _ to _ degrees speed _ %"
+msgstr "np drehe _ _ auf _ ° Tempo _ %"
+
+#. Nehza Pro library block
+msgid "np run motor _ _ speed _ %"
+msgstr "np starte Motor _ _ Tempo _ %"
+
+#. Nehza Pro library block
+msgid "np set _ angle _ to _ degrees"
+msgstr "np setze _ Winkel _ auf _ °"
+
+#. Nehza Pro library block
+msgid "np set wheels left _ right _ #BR# circumference _ mm axle _ mm"
+msgstr ""
+"np setze linkes Rad _ rechtes Rad _ #BR# mit Radumfang _ mm und Achslänge _ "
+"mm"
+
+#. Nehza Pro library block
+msgid "np stop all motors"
+msgstr "np stoppe alle Motoren"
+
+#. Nehza Pro library block
+msgid "np stop motor _"
+msgstr "np stoppe Motor _"
+
+#. Nehza Pro library block
+msgid "np turn _ by _ degrees speed _ %"
+msgstr "np drehe Robot _ um _ ° Tempo _ %"
+
+#. Nehza Pro library block
+msgid "np version"
+msgstr "np Version"
+
+#. Nehza Pro library choice
+msgid "nezhaPro;by shortest path"
+msgstr "auf kürzestem Weg"
+
+#. Nezha Pro library label
+msgid "Nezha Pro"
+msgstr "Nezha Pro"

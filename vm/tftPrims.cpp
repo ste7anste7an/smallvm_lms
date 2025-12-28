@@ -2748,8 +2748,10 @@ void pca9535_BL() {
 		}
 
 	#elif defined(M5Atom_S3_TFT)
-		#include "Adafruit_GFX.h"
-		#include "Adafruit_ST7789.h"
+		#undef BLACK // defined GFX
+		#undef WHITE // defined GFX
+		#define drawRGBBitmap draw16bitRGBBitmap
+		#include <Arduino_GFX_Library.h>
 		#define TFT_MOSI 21
 		#define TFT_SCLK 17
 		#define TFT_CS   15
@@ -2758,23 +2760,11 @@ void pca9535_BL() {
 		#define TFT_BL   16
 		#define TFT_WIDTH 128
 		#define TFT_HEIGHT 128
-		// make a subclass so we can adjust the x/y offsets
-		class AtomS3LCD : public Adafruit_ST7789 {
-		public:
-			AtomS3LCD(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk, int8_t rst) : Adafruit_ST7789(cs, dc, mosi, sclk, rst) {}
-			void setOffsets(int colOffset, int rowOffset) {
-				_xstart = _colstart = colOffset;
-				_ystart = _rowstart = rowOffset;
-			}
-		};
-		AtomS3LCD tft = AtomS3LCD(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+		Arduino_ESP32SPI bus = Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCLK, TFT_MOSI, -1);
+		Arduino_GC9107 tft = Arduino_GC9107(&bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 
 		void tftInit() {
-			//tft.init(TFT_HEIGHT, TFT_WIDTH, SPI_MODE2);
-			//tft.setSPISpeed(40000000);
-			tft.init(TFT_HEIGHT, TFT_WIDTH);
-			tft.setOffsets(2, 1);
-			tft.setRotation(0);
+			tft.begin();
 			tftClear();
 			pinMode(TFT_BL, OUTPUT);
 			digitalWrite(TFT_BL, HIGH);
@@ -2821,7 +2811,7 @@ static int color24to16b(int color24b) {
 	r = (color24b >> 19) & 0x1F; // 5 bits
 	g = (color24b >> 10) & 0x3F; // 6 bits
 	b = (color24b >> 3) & 0x1F; // 5 bits
-	#if defined(ARDUINO_M5Stick_C) || defined(M5Atom_S3_TFT) && !defined(ARDUINO_M5Stick_Plus)
+	#if defined(ARDUINO_M5Stick_C) && !defined(ARDUINO_M5Stick_Plus)
 		return (b << 11) | (g << 5) | r; // color order: BGR
 	#else
 		return (r << 11) | (g << 5) | b; // color order: RGB

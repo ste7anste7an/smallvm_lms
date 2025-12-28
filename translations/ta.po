@@ -429,7 +429,7 @@ msgstr "சேர _ _"
 
 #. Block in Data category
 msgid "copy _ from _"
-msgstr "_ இலிருந்து நகலெடு"
+msgstr "_ இலிருந்து நகலெடு _"
 
 #. Example value for the ( copy (smiles) from 2 > ) block, which will become "miles" when run.
 #. You could think of a word that still has meaning when you remove its first character in your language.
@@ -628,7 +628,7 @@ msgstr "புறக்கணிக்கவும்"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "draw shape _ at x _ y _"
-msgstr "ஃச் _ ஒய் _ இல் வடிவத்தை வரையவும்"
+msgstr "ஃச் _ ஒய் _ இல் வடிவத்தை வரையவும் _"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "shape for letter _"
@@ -848,7 +848,7 @@ msgstr "நியோபனெல் நிரப்பு செவ்வகம�
 
 #. NeoPanel library block
 msgid "NeoPanel draw text _ at x _ y _ color _"
-msgstr "ஃச் _ ஒய் _ வண்ணத்தில் நியோபனெல் டிரா உரை _"
+msgstr "ஃச் _ ஒய் _ வண்ணத்தில் நியோபனெல் டிரா உரை _ _"
 
 #. NeoPanel library block
 msgid "NeoPanel draw BMP file _ at x _ y _"
@@ -1619,7 +1619,7 @@ msgstr "ஃச் _ ஒய் _ ஆரம் _ அழி _ இல் வட்�
 
 #. OLED Graphics library block
 msgid "draw image _ at x _ y _"
-msgstr "ஃச் _ ஒய் _ இல் படத்தை வரையவும்"
+msgstr "ஃச் _ ஒய் _ இல் படத்தை வரையவும் _"
 
 #. OLED Graphics library block
 msgid "draw line from x _ y _ to x _ y _ erase _"
@@ -1696,7 +1696,7 @@ msgstr ""
 
 #. TFT Display library block
 msgid "draw circle on TFT at x _ y _ radius _ color _"
-msgstr "ஃச் _ ஒய் _ ஆரம் _ வண்ணத்தில் tft இல் வட்டத்தை வரையவும்"
+msgstr "ஃச் _ ஒய் _ ஆரம் _ வண்ணத்தில் tft இல் வட்டத்தை வரையவும் _"
 
 #. TFT Display library block
 msgid "draw triangle on TFT at x _ y _ , x _ y _ , x _ y _ color _"
@@ -1721,7 +1721,7 @@ msgstr "அளவுகோல் _ மடக்கு _"
 
 #. TFT Display library block
 msgid "draw text _ on TFT at x _ y _ color _"
-msgstr "ஃச் _ ஒய் _ வண்ணத்தில் tft இல் உரையை _ வரையவும்"
+msgstr "ஃச் _ ஒய் _ வண்ணத்தில் tft இல் உரையை _ வரையவும் _"
 
 #. TFT Display library block
 msgid "scale _"
@@ -1813,11 +1813,11 @@ msgstr "பின்னங்கள்"
 
 #. Fractions library block
 msgid "fract _ / _"
-msgstr "பின்னம் _ /"
+msgstr "பின்னம் _ / _"
 
 #. Fractions library block
 msgid "fract _ + _"
-msgstr "பின்னம் _"
+msgstr "பின்னம் _ + _"
 
 #. Fractions library block
 msgid "fract _ - _"
@@ -1833,11 +1833,11 @@ msgstr "பின்னம் _ = _"
 
 #. Fractions library block
 msgid "fract _ < _"
-msgstr "பின்னம் _ <_ _"
+msgstr "பின்னம் _ < _"
 
 #. Fractions library block
 msgid "fract _ > _"
-msgstr "Fract _>"
+msgstr "Fract _ > _"
 
 #. Fractions library block
 msgid "simplify fraction _"
@@ -2690,7 +2690,7 @@ msgstr "கோப்பை நீக்கு _"
 
 #. File System library block
 msgid "append line _ to file _"
-msgstr "கோப்பு _"
+msgstr "கோப்பு _ _"
 
 #. File System library block
 msgid "append bytes _ to file _"
@@ -4589,19 +4589,19 @@ msgstr "பின்னோக்கு"
 
 #. CoCube library block
 msgid "move _ at _ speed (0-50) for _ msecs"
-msgstr "_ msecs க்கு _ வேகத்தில் (0-50) நகர்த்தவும்"
+msgstr "_ msecs க்கு _ வேகத்தில் (0-50) நகர்த்தவும் _"
 
 #. CoCube library block
 msgid "rotate _ at _ speed (0-50) for _ msecs"
-msgstr "_ msecs க்கு _ வேகத்தில் (0-50) சுழற்றுங்கள்"
+msgstr "_ msecs க்கு _ வேகத்தில் (0-50) சுழற்றுங்கள் _"
 
 #. CoCube library block
 msgid "move _ at _ speed (0-50)"
-msgstr "_ வேகத்தில் (0-50) நகர்த்தவும்"
+msgstr "_ வேகத்தில் (0-50) நகர்த்தவும் _"
 
 #. CoCube library block
 msgid "rotate _ at _ speed (0-50)"
-msgstr "_ வேகத்தில் (0-50) சுழற்றுங்கள்"
+msgstr "_ வேகத்தில் (0-50) சுழற்றுங்கள் _"
 
 #. CoCube library block
 msgid "set wheel left _ right _ (-50 to 50)"
@@ -4629,11 +4629,11 @@ msgstr "திசை"
 
 #. CoCube library block
 msgid "move _ at _ speed (0-50) by _ steps"
-msgstr "_ படிகளால் _ வேகத்தில் (0-50) நகர்த்தவும்"
+msgstr "_ படிகளால் _ வேகத்தில் (0-50) நகர்த்தவும் _"
 
 #. CoCube library block
 msgid "rotate _ at _ speed (0-50) by _ degrees"
-msgstr "_ வேகத்தில் (0-50) _ டிகிரி மூலம் சுழற்றுங்கள்"
+msgstr "_ வேகத்தில் (0-50) _ டிகிரி மூலம் சுழற்றுங்கள் _"
 
 #. CoCube library block
 msgid "rotate to angle _ at _ speed (0-50)"

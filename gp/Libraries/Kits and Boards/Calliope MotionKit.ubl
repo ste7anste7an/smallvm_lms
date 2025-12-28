@@ -1,7 +1,8 @@
 module 'Calliope MotionKit'
-author 'Michael Klein kleinswelt, Ralf Krause'
-version 1 8 
+author 'Ralf Krause, Michael Klein (kleinswelt)'
+version 1 10 
 choices mk2_line 'mk2;bright' 'mk2;dark' 
+choices mk2_color red green blue yellow magenta cyan white black 
 choices mk2_position left right 
 choices mk2_motor left right both 
 choices mk2_IR '1' '2' '3' '4' '5' '6' '7' '8' '9' '0' '*' '#' 'mk2;ok' 'mk2;up' 'mk2;down' left right 
@@ -22,25 +23,25 @@ https://webshop.calliope.cc/MotionKit-20-fuer-Calliope-mini
 '
 variables _mk2_i2cAddr _mk2_lastIRcode 
 
-  spec ' ' 'mk2_setMotor' 'MotionKit motor _ _ speed _ (0~100)' 'menu.mk2_motor menu.mk2_direction num' 'both' 'forward' 100
+  spec ' ' 'mk2_setMotor' 'MotionKit set motor _ _ speed _ (0~100)' 'menu.mk2_motor menu.mk2_direction num' 'both' 'forward' 100
   spec ' ' 'mk2_stopMotor' 'MotionKit stop motor _' 'menu.mk2_motor' 'both'
-  spec ' ' 'mk2_setServo' 'MotionKit set _ servo _ to _ degrees' 'menu.mk2_servoType menu.mk2_servo num' '180°' 'mk2;S1' 90
-  spec ' ' 'mk2_rotateServo' 'MotionKit rotate servo _ _ speed _ (0~100)' 'menu.mk2_servo menu.mk2_direction num' 'mk2;S1' 'forward' 100
   spec ' ' 'mk2_stopAll' 'MotionKit stop all'
   space
-  spec ' ' 'mk2_setLED' 'MotionKit LED _ _' 'menu.mk2_motor bool' 'both' true
-  spec ' ' 'mk2_setNeoPixels' 'MotionKit set NeoPixels _ : brightness _' 'color num' nil 100
+  spec ' ' 'mk2_setLED' 'MotionKit set led _ _' 'menu.mk2_motor bool' 'both' true
+  spec ' ' 'mk2_setNeoPixels' 'MotionKit set NeoPixels _ : brightness _' 'color num' 255 50
+  spec ' ' 'mk2_setNeoPixels2' 'MotionKit set NeoPixels _ : brightness _' 'menu.mk2_color num' 'blue' 50
   spec ' ' 'mk2_clearNeoPixels' 'MotionKit clear NeoPixels'
-  spec 'r' 'mk2_colorRGB' 'color r _ g _ b _ (0~255)' 'num num num' 0 100 100
-  spec 'r' 'mk2_colorRed' '_' 'color' 16711680
-  spec 'r' 'mk2_colorYellow' '_' 'color' 16776960
-  spec 'r' 'mk2_colorGreen' '_' 'color' 1171215
   space
   spec 'r' 'mk2_distance' 'MotionKit distance (cm)'
   spec 'r' 'mk2_lineSensor' 'MotionKit line sensor _ _' 'menu.mk2_position menu.mk2_line' 'left' 'mk2;dark'
   space
   spec 'r' 'mk2_IRreceived' 'IR code received?'
   spec 'r' 'mk2_IRkey' 'IR key _ pressed?' 'menu.mk2_IR' 'mk2;up'
+  space
+  advanced
+  spec ' ' 'mk2_setServo' 'MotionKit set servo _ to _ degrees (0-180)' 'menu.mk2_servo num' 'mk2;S1' 90
+  spec ' ' 'mk2_setServoAngle' 'MotionKit set _ servo _ to _ degrees' 'menu.mk2_servoType menu.mk2_servo num' '180°' 'mk2;S1' 90
+  spec ' ' 'mk2_setServoRotation' 'MotionKit rotate servo _ _ speed _ (0~100)' 'menu.mk2_servo menu.mk2_direction num' 'mk2;S1' 'forward' 100
   space
   spec 'r' '_mk2_initialized' '_mk2_initialized'
   spec 'r' '_mk2_i2cRead' '_mk2_i2cRead reg _' 'num'
@@ -99,26 +100,7 @@ to mk2_IRreceived {
 }
 
 to mk2_clearNeoPixels {
-  mk2_setNeoPixels (colorSwatch 0 0 0 255)
-}
-
-to mk2_colorGreen color {
-  return color
-}
-
-to mk2_colorRGB r g b {
-  r = (maximum 0 (minimum r 255))
-  g = (maximum 0 (minimum g 255))
-  b = (maximum 0 (minimum b 255))
-  return (((r << 16) | (g << 8)) | b)
-}
-
-to mk2_colorRed color {
-  return color
-}
-
-to mk2_colorYellow color {
-  return color
+  mk2_setNeoPixels 0
 }
 
 to mk2_distance {
@@ -148,30 +130,14 @@ to mk2_lineSensor which brightdark {
   return sensorvalue
 }
 
-to mk2_rotateServo servo dir speed {
-  speed = (maximum 0 (minimum speed 100))
-  if (dir == 'forward') {
-    speed = ('[misc:rescale]' speed 100 0 0 90)
-  } else {
-    speed = ('[misc:rescale]' speed 0 100 90 180)
-  }
-  if (servo == 'mk2;S1') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed)
-  } (servo == 'mk2;S2') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '15') speed)
-  } else {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed speed)
-  }
-}
-
 to mk2_setLED which on {
   on = ('[data:convertType]' on 'number')
   if (which == 'left') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0B') on)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt 'B') on)
   } (which == 'right') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0C') on)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt 'B') on)
   } else {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0B') on on)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt 'B') on on)
   }
 }
 
@@ -180,30 +146,66 @@ to mk2_setMotor motor dir speed {
   speed = ('[misc:rescale]' speed 0 100 0 255)
   dir = ('[data:convertType]' (dir != 'forward') 'number')
   if (motor == 'left') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '00') dir speed)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0') dir speed)
   } (motor == 'right') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '02') dir speed)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '2') dir speed)
   } else {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '00') dir speed dir speed)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0') dir speed dir speed)
   }
 }
 
 to mk2_setNeoPixels pixelcolor optionalBrightness {
-  local 'brightness' 100
+  local 'c' pixelcolor
+  local 'brightness' 50
   if ((pushArgCount) > 1) {
     brightness = optionalBrightness
   }
   if (brightness < 100) {
-    local 'c' pixelcolor
-    pixelcolor = ('[misc:hsvColor]' ('[misc:hue]' c) ('[misc:saturation]' c) ((('[misc:brightness]' c) * brightness) / 100))
+    c = ('[misc:hsvColor]' ('[misc:hue]' c) ('[misc:saturation]' c) ((('[misc:brightness]' c) * brightness) / 100))
   }
-  local 'r' ((pixelcolor >> 16) & 255)
-  local 'g' ((pixelcolor >> 8) & 255)
-  local 'b' (pixelcolor & 255)
+  local 'r' ((c >> 16) & 255)
+  local 'g' ((c >> 8) & 255)
+  local 'b' (c & 255)
   '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '18') r g b)
 }
 
-to mk2_setServo servoType servo degrees {
+to mk2_setNeoPixels2 pixelcolor optionalBrightness {
+  local 'c' 0
+  local 'brightness' 50
+  if ((pushArgCount) > 1) {
+    brightness = optionalBrightness
+  }
+  if (pixelcolor == 'red') {
+    c = ((255 << 16) | ((0 << 8) | 0))
+  } (pixelcolor == 'green') {
+    c = ((0 << 16) | ((255 << 8) | 0))
+  } (pixelcolor == 'blue') {
+    c = ((0 << 16) | ((0 << 8) | 255))
+  } (pixelcolor == 'yellow') {
+    c = ((200 << 16) | ((200 << 8) | 0))
+  } (pixelcolor == 'magenta') {
+    c = ((234 << 16) | ((10 << 8) | 142))
+  } (pixelcolor == 'cyan') {
+    c = ((54 << 16) | ((160 << 8) | 202))
+  } (pixelcolor == 'white') {
+    c = ((200 << 16) | ((200 << 8) | 200))
+  }
+  mk2_setNeoPixels c brightness
+}
+
+to mk2_setServo servo degrees {
+  degrees = (maximum 0 (minimum degrees 180))
+  degrees = ('[misc:rescale]' degrees 180 0 0 180)
+  if (servo == 'mk2;S1') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') degrees)
+  } (servo == 'mk2;S2') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '15') degrees)
+  } else {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') degrees degrees)
+  }
+}
+
+to mk2_setServoAngle servoType servo degrees {
   local 'range' 180
   if ('270°' == servoType) {
     range = 270
@@ -221,20 +223,36 @@ to mk2_setServo servoType servo degrees {
   }
 }
 
+to mk2_setServoRotation servo dir speed {
+  speed = (maximum 0 (minimum speed 100))
+  if (dir == 'forward') {
+    speed = ('[misc:rescale]' speed 100 0 0 90)
+  } else {
+    speed = ('[misc:rescale]' speed 0 100 90 180)
+  }
+  if (servo == 'mk2;S1') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed)
+  } (servo == 'mk2;S2') {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '15') speed)
+  } else {
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '14') speed speed)
+  }
+}
+
 to mk2_stopAll {
   mk2_stopMotor 'both'
-  mk2_rotateServo 'both' 'forward' 0
+  mk2_setServo 'both' 90
   mk2_setLED 'both' off
   mk2_clearNeoPixels
 }
 
 to mk2_stopMotor motor {
   if (motor == 'left') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '00') 0 0)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0') 0 0)
   } (motor == 'right') {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '02') 0 0)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '2') 0 0)
   } else {
-    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '00') 0 0 0 0)
+    '_mk2_i2cWrite' ('[data:makeList]' (hexToInt '0') 0 0 0 0)
   }
 }
 

@@ -1,8 +1,8 @@
 module 'Tiny OLED' Output
 author MicroBlocks
-version 1 5 
+version 1 6 
 description 'Tiny graphics library for a 128x64 pixel monochrome OLED display with a SSD1306 controller.
-Useful on boards with very limited code store space such as the DUELink PixoBit.
+Useful on boards with very limited code store space such as the DUELink PixoBit and DueSTEM.
 '
 variables _tinyOLED_buffer _tinyOLED_hideUpdates 
 
@@ -309,6 +309,7 @@ to tinyOLED_drawStringBig s x y white {
       }
       x += 2
     }
+    x += 1
   }
   '_tinyOLED_updateDisplay'
 }

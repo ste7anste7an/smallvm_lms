@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-30 07:10+0200\n"
-"PO-Revision-Date: 2025-10-06 13:38+0000\n"
+"PO-Revision-Date: 2025-12-17 20:00+0000\n"
 "Last-Translator: Josep Ferràndiz <josep.ferrandiz@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/microblocks/ide/"
 "ca/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14-dev\n"
+"X-Generator: Weblate 5.15.1-dev\n"
 
 #. "Output" blocks category label
 msgid "cat;Output"
@@ -956,7 +956,7 @@ msgstr "encén el bec de color R _ % G _ % B _ %"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "encén la cua de color R _ % G _ % B _ %"
+msgstr "encén la cua _ de color R _ % G _ % B _ %"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Move _ _ cm at _ %"
@@ -7586,3 +7586,87 @@ msgstr "#SVG#square11#ffffff semàfor vermell _ groc _ verd _ port _"
 #. Examples folder
 msgid "folder;MakerPort"
 msgstr "MakerPort"
+
+#. Option in dropdown menu of editable input slots on mobile devices:
+msgid "edit"
+msgstr "edita"
+
+#. Nehza Pro library choice
+msgid "nezhaPro;by shortest path"
+msgstr "pel camí més curt"
+
+#. Nezha Pro library block
+msgid "np angle _"
+msgstr "np angle _"
+
+#. Nezha Pro library block
+msgid "np move _ for _ mm speed _ %"
+msgstr "np mou_ _ mm al _ % de velocitat"
+
+#. Nezha Pro library block
+msgid "np speed _"
+msgstr "np velocitat _"
+
+#. Nezha Pro library block
+msgid "np total angle _"
+msgstr "np angle total _"
+
+#. Nezha Pro library block
+msgid "np reset total angle _"
+msgstr "np reinicia l'angle total _"
+
+#. Nezha Pro library block
+msgid "np rotate _ _ by _ degrees speed _ %"
+msgstr "np gira _ _ graus _ velocitat _ %"
+
+#. Nezha Pro library block
+msgid "np rotate _ _ to _ degrees speed _ %"
+msgstr "np gira _ _ a _ graus velocitat _ %"
+
+#. Nezha Pro library block
+msgid "np run motor _ _ speed _ %"
+msgstr "np motor _ _ velocitat _ %"
+
+#. Nezha Pro library block
+msgid "np set _ angle _ to _ degrees"
+msgstr "np posa _ angle _ a _ graus"
+
+#. Nezha Pro library block
+msgid "np set wheels left _ right _ #BR# circumference _ mm axle _ mm"
+msgstr "np posa les rodes esquerra _ dreta _ #BR# circumferència _ mm eix _ mm"
+
+#. Nezha Pro library block
+msgid "np stop all motors"
+msgstr "np atura tots els motors"
+
+#. Nezha Pro library block
+msgid "np stop motor _"
+msgstr "np atura el motor _"
+
+#. Nezha Pro library block
+msgid "np turn _ by _ degrees speed _ %"
+msgstr "np gira _ graus _ velocitat _ %"
+
+#. Nezha Pro library block
+msgid "np version"
+msgstr "np versió"
+
+#. Nezha Pro library label
+msgid "Nezha Pro"
+msgstr "Nezha Pro"
+
+#. Nehza Pro library choice
+msgid "M1"
+msgstr "M1"
+
+#. Nehza Pro library choice
+msgid "M2"
+msgstr "M2"
+
+#. Nehza Pro library choice
+msgid "M3"
+msgstr "M3"
+
+#. Nehza Pro library choice
+msgid "M4"
+msgstr "M4"

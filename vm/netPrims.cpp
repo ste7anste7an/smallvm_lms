@@ -290,21 +290,40 @@ static OBJ primGetMAC(int argCount, OBJ *args) {
 
 static OBJ primSetDomainName(int argCount, OBJ *args) {
 	if (!isConnectedToWiFi()) return fail(wifiNotConnected);
+	if ((argCount < 1) || !IS_TYPE(args[0], StringType)) return fail(needsStringError);
+
+	// Copy arg into mdsnName omitting illegal characters.
+	// mDNS names include only letters, digits, and hyphens and cannot start or end with a hyphen.
+	char mdsnName[64];
+	char *dst = mdsnName;
+	char *src = obj2str(args[0]);
+	int count = strlen(src);
+	if (count > 63) count = 63;
+	for (int i = 0; i < count; i++) {
+		char ch = src[i];
+		if ((('a' <= ch) && (ch <= 'z')) ||
+			(('A' <= ch) && (ch <= 'Z')) ||
+			(('0' <= ch) && (ch <= '9')) ||
+			('-' == ch)) {
+				*dst++ = ch;
+		}
+	}
+	*dst = 0; // null terminator
 
 	#if defined(PICO_WIFI)
 		if (!mdnsInitialized) { // initialize before first use
 			mdnsInitialized = true;
 			mdns_resp_init();
-			mdns_resp_add_netif(netif_default, obj2str(args[0]));
+			mdns_resp_add_netif(netif_default, mdsnName);
 		} else {
-			mdns_resp_rename_netif(netif_default, obj2str(args[0]));
+			mdns_resp_rename_netif(netif_default, mdsnName);
 		}
 	#elif defined(USE_WIFI101)
 		// do nothing; MDNS not yet supported on WiFi101
 		// if needed, see https://github.com/arduino-libraries/ArduinoMDNS
 	#else
 		MDNS.end();
-		MDNS.begin(obj2str(args[0]));
+		MDNS.begin(mdsnName);
 	#endif
 	return falseObj;
 }

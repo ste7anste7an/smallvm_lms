@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: interest@microblocks.fun\n"
 "POT-Creation-Date: 2024-10-28 11:46+0200\n"
-"PO-Revision-Date: 2025-02-06 13:02+0000\n"
-"Last-Translator: Bernat Romagosa <bernat@romagosa.work>\n"
+"PO-Revision-Date: 2025-11-24 11:51+0000\n"
+"Last-Translator: Crafter <weiyanfengv@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/microblocks/ide/zh_Hans/>\n"
 "Language: zh-chs\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #. Block in Control category
 msgid "by _"
@@ -1682,7 +1682,7 @@ msgstr "显示图像 _"
 
 #. OLED Graphics library block
 msgid "_flip display top _"
-msgstr "反转显示 上 _"
+msgstr "_反转显示 上 _"
 
 #. NeZha robot library label
 msgid "NeZha"
@@ -2191,7 +2191,7 @@ msgstr "Finch 喙部 红 _ 绿 _ 蓝 _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "Finch 尾部 红 _ 绿 _ 蓝 _"
+msgstr "Finch 尾部 _ 红 _ 绿 _ 蓝 _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Battery"
@@ -3273,7 +3273,7 @@ msgstr "缩放 _"
 
 #. TFT Display library block
 msgid "draw bitmap _ palette _ on TFT at x _ y _"
-msgstr "在TFT上制位图 _  调色板 _ 位置 x _ y _"
+msgstr "在TFT上制位图 _ 调色板 _ 位置 x _ y _"
 
 #. Color library block
 msgid "color r _ g _ b _ (0-255)"
@@ -3769,7 +3769,7 @@ msgstr "八爪鱼 OLED 绘制直线 从 x _ y _ 到 x _ y _"
 
 #. Elecfreaks Octopus sensor library block
 msgid "Octopus OLED draw rectangle x _ y _ w _ h _ rounding _ (3~15)"
-msgstr "八爪鱼 OLED 绘制长方形 x _ y _ w _ h _  圆角 _ (3~15)"
+msgstr "八爪鱼 OLED 绘制长方形 x _ y _ w _ h _ 圆角 _ (3~15)"
 
 #. Octostudio communication library block
 msgid "duration _ ms"
@@ -4598,3 +4598,19 @@ msgstr "右"
 #. CoCube library block
 msgid "cocube;backward"
 msgstr "后"
+
+#. TFT display library block
+msgid "clear TFT display"
+msgstr "清除 TFT 屏幕显示"
+
+#. NeoPanel library block
+msgid "NeoPanel draw line from x _ y _ to x _ y _ color _"
+msgstr "像素屏绘制行从坐标x_ y_到坐标x_ y_ 颜色 _"
+
+#. NeoPanel library block
+msgid "NeoPanel draw circle at x _ y _ radius _ color _"
+msgstr "像素屏绘制圆, 圆心x_ y_ 半径_ 颜色_"
+
+#. CoCube Sengo2 library choice
+msgid "AprilTag"
+msgstr "标签识别"

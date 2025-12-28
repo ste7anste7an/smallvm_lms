@@ -505,7 +505,8 @@ function adjustButtonVisibility() {
 		document.getElementById('PresentButton').style.display = 'inline';
 	}
 }
-adjustButtonVisibility();
+// don't show keyboard button
+//adjustButtonVisibility();
 
 // Canvas shadow effects
 
@@ -943,8 +944,10 @@ async function webSerialConnect() {
 		{ usbVendorId: 0x2E8A},		// Raspberry Pi Pico RP2040
 		{ usbVendorId: 0x303a},		// Espressif USB JTAG/serial debug unit
 		{ usbVendorId: 0x0483},		// STMicroelectronics
+		{ usbVendorId: 0x1B9F},		// GHI/DUELink
 		{ usbVendorId: 0x1B4F},		// XRP
 		{ usbVendorId: 0x2886},		// Seeed
+		{ usbVendorId: 0x0005},		// HC-05
 	];
 	webSerialDisconnect();
 	GP_webSerialPort = await navigator.serial.requestPort({filters: vendorIDs}).catch((e) => { console.log(e); });
@@ -1274,6 +1277,8 @@ async function GP_ReadFile(ext) {
 			accepts: [{ description: 'MicroBlocks', extensions: [ext] }]
 		};
 		chrome.fileSystem.chooseEntry(options, onFileSelected);
+	} else if (GP_isMobile()) {
+		GP_UploadFiles();
 	} else if (typeof window.showOpenFilePicker != 'undefined') { // Native Filesystem API
 		var options = {};
 		if ('' != ext) {
@@ -1381,6 +1386,270 @@ if ((typeof chrome != 'undefined') &&
 	(typeof chrome.runtime != 'undefined') &&
 	(typeof chrome.runtime.getBackgroundPage != 'undefined')) {
 		chrome.runtime.getBackgroundPage(GP_ChromebookLaunch);
+}
+
+// Floating Keyboard Input dialog for mobile browsers
+// Adapted from Zhongrui You's CoCube MicroBlocks app. Thanks!
+
+function GP_isMobile() {
+	var isKindle = /Kindle|Silk|KFAPW|KFARWI|KFASWI|KFFOWI|KFJW|KFMEWI|KFOT|KFS‌​AW|KFSOWI|KFTBW|KFTH‌​W|KFTT|WFFOWI/i.test(navigator.userAgent);
+	var isOtherMobile = /Android|webOS|iPhone|iPad|iPod|CriOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+	return isKindle || isOtherMobile;
+}
+
+let GP_floatingContainer = null;
+let GP_floatingInput = null;
+let GP_isFloatingInputActive = false;
+
+// 创建浮动输入 UI
+function GP_createFloatingUI() {
+	if (GP_floatingContainer) return;
+
+	// 检测系统语言
+	const isChinese = navigator.language.toLowerCase().startsWith('zh');
+	const labels = {
+		placeholder: isChinese ? '请输入...' : 'Enter text...',
+		confirm: isChinese ? '确认' : 'Confirm',
+		cancel: isChinese ? '取消' : 'Cancel'
+	};
+
+	// 外层遮罩
+	const wrapper = document.createElement('div');
+	wrapper.id = 'floating-input-wrapper';
+	wrapper.style.cssText = `
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999999;
+		display: none;
+		align-items: center;
+		justify-content: center;
+	`;
+
+	// 输入框容器
+	const container = document.createElement('div');
+	container.style.cssText = `
+		background: white;
+		border-radius: 12px;
+		padding: 20px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		min-width: 320px;
+		max-width: 90vw;
+		animation: slideUp 0.3s ease-out;
+	`;
+
+	// 输入框
+	const input = document.createElement('input');
+	input.type = 'text';
+	input.placeholder = labels.placeholder;
+	input.style.cssText = `
+		width: 100%;
+		padding: 12px 16px;
+		font-size: 16px;
+		border: 2px solid #e0e0e0;
+		border-radius: 8px;
+		box-sizing: border-box;
+		outline: none;
+		-webkit-appearance: none;
+	`;
+
+	// 按钮容器
+	const btnContainer = document.createElement('div');
+	btnContainer.style.cssText = `
+		display: flex;
+		gap: 12px;
+		margin-top: 16px;
+	`;
+
+	// 取消按钮
+	const cancelBtn = document.createElement('button');
+	cancelBtn.textContent = labels.cancel;
+	cancelBtn.style.cssText = `
+		flex: 1;
+		padding: 12px;
+		font-size: 16px;
+		background: #f5f5f5;
+		color: #666;
+		border: none;
+		border-radius: 8px;
+		font-weight: 500;
+		-webkit-tap-highlight-color: transparent;
+	`;
+
+	// 确认按钮
+	const confirmBtn = document.createElement('button');
+	confirmBtn.textContent = labels.confirm;
+	confirmBtn.style.cssText = `
+		flex: 1;
+		padding: 12px;
+		font-size: 16px;
+		background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-weight: 500;
+		-webkit-tap-highlight-color: transparent;
+	`;
+
+	// 添加动画
+	const style = document.createElement('style');
+	style.textContent = `
+		@keyframes slideUp {
+			from { opacity: 0; transform: translateY(30px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+	`;
+	document.head.appendChild(style);
+
+	// 组装 DOM
+	btnContainer.appendChild(cancelBtn);
+	btnContainer.appendChild(confirmBtn);
+	container.appendChild(input);
+	container.appendChild(btnContainer);
+	wrapper.appendChild(container);
+	document.body.appendChild(wrapper);
+
+	GP_floatingContainer = wrapper;
+	GP_floatingInput = input;
+
+	// 绑定事件
+	confirmBtn.onclick = () => GP_confirmFloatingInput();
+	cancelBtn.onclick = () => GP_cancelFloatingInput();
+
+	// 修复退格键问题 - 阻止事件冒泡
+	input.onkeydown = (e) => {
+		// 阻止事件冒泡到 document,避免被全局键盘处理器拦截
+		e.stopPropagation();
+
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			GP_confirmFloatingInput();
+		}
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			GP_cancelFloatingInput();
+		}
+		// 其他按键(包括退格)允许默认行为
+	};
+
+	// stop propagation of other keyboard input events
+	input.addEventListener('keypress', (e) => { e.stopPropagation() });
+	input.addEventListener('keyup', (e) => { e.stopPropagation() });
+	input.addEventListener('compositionstart', (e) => { e.stopPropagation() });
+	input.addEventListener('compositionupdate', (e) => { e.stopPropagation() });
+	input.addEventListener('compositionend', (e) => { e.stopPropagation() });
+
+	// 防止点击遮罩关闭
+	wrapper.onclick = (e) => {
+		if (e.target === wrapper) GP_cancelFloatingInput();
+	};
+
+	// 防止按钮事件冒泡
+	confirmBtn.onclick = (e) => {
+		e.stopPropagation();
+		GP_confirmFloatingInput();
+	};
+	cancelBtn.onclick = (e) => {
+		e.stopPropagation();
+		GP_cancelFloatingInput();
+	};
+}
+
+// 显示浮动输入框
+function GP_showFloatingInput() {
+	if (!GP_isMobile()) return;
+	if (GP_isFloatingInputActive) return;
+
+	GP_createFloatingUI();
+
+	// 显示容器
+	GP_floatingContainer.style.display = 'flex';
+	if (!GP.defaultEditText) GP.defaultEditText = '';
+	GP_floatingInput.value = GP.defaultEditText;
+
+	// 标记为激活状态
+	GP_isFloatingInputActive = true;
+
+	// 延迟聚焦,确保键盘正确弹出
+	setTimeout(() => {
+		GP_floatingInput.focus();
+		GP_floatingInput.select();
+
+		// iOS 额外触发
+		if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+			GP_floatingInput.click();
+		}
+	}, 100);
+
+	// 阻止原生 clipboard 获得焦点
+	GP.clipboard.blur();
+}
+
+// 确认输入
+function GP_confirmFloatingInput() {
+	if (!GP_isFloatingInputActive) return;
+
+	const value = GP_floatingInput.value;
+
+	// 🔑 关键修改:完全覆盖,而非追加
+	// 1. 先清空原有内容(发送退格键删除所有字符)
+
+	const KEY_DOWN = 5;
+	const KEY_UP = 6;
+
+	// 方案1: 发送 Ctrl+A 全选 + Delete
+	// 模拟 Ctrl+A (全选)
+	GP.events.push([KEY_DOWN, 17, 0, 2]); // Ctrl down (keyCode=17, modifiers=2)
+	GP.events.push([KEY_DOWN, 65, 97, 2]); // A down (keyCode=65, charCode=97)
+	GP.events.push([KEY_UP, 65, 97, 2]);   // A up
+	GP.events.push([KEY_UP, 17, 0, 2]);    // Ctrl up
+
+	// 模拟 Delete/Backspace
+	GP.events.push([KEY_DOWN, 8, 8, 0]);   // Backspace down
+	GP.events.push([KEY_UP, 8, 8, 0]);     // Backspace up
+
+
+	// 2. 写入新内容
+	GP.clipboard.value = value;
+
+	// 3. 生成新内容的 textinput 事件
+	const TEXTINPUT = 7;
+	if (/Android/i.test(navigator.userAgent)) {
+		// Android 特殊处理
+		for (let i = 0; i < value.length; i++) {
+			GP.events.push([TEXTINPUT, value.charCodeAt(i)]);
+		}
+		if (value.length === 0) {
+			GP.events.push([TEXTINPUT, 13]); // 空字符串插入换行符
+		}
+	} else {
+		// 其他平台
+		for (let ch of value) {
+			GP.events.push([TEXTINPUT, ch.codePointAt(0)]);
+		}
+	}
+
+	GP_hideFloatingInput();
+}
+// 取消输入
+function GP_cancelFloatingInput() {
+	if (!GP_isFloatingInputActive) return;
+	GP_hideFloatingInput();
+}
+
+// 隐藏浮动输入框
+function GP_hideFloatingInput() {
+	if (!GP_floatingContainer) return;
+
+	GP_floatingContainer.style.display = 'none';
+	GP_floatingInput.blur();
+	GP_isFloatingInputActive = false;
+
+	// 将焦点返回给 canvas
+	document.getElementById('canvas').focus();
 }
 
 // warn before leaving page

@@ -1,67 +1,50 @@
-module 'DUELink Comm'
+module 'DUELink Daisylink' Comm
 author 'GHI Electronics'
-version 0 8 
+version 0 13 
+choices due_combx b0 b1 b2 b3 b4 b5 b6 b7 
 description 'DUELink base library used by all other DUELink libraries.
 
 Handles daisylink communications via I2C or serial (UART).
-
-
-By default, this library uses serial over the Downlink port on DUELink boards and I2C on other boards but that can be changed by using the advanced "DUELink useI2C" block.
-
-
+By default, this library uses serial over the Downlink port on DUELink boards and I2C on other boards but that can be changed by using the advanced "use I2C" block.
 
 See https://www.duelink.com/docs/engine/stdlib
 
 '
 variables _dueUseI2C _dueReadTimeout 
 
-  spec 'r' 'due_connected' 'DUELink connected?'
+  spec ' ' 'due_select_device' 'select device _' 'auto' 1
+  spec 'r' 'due_connected' 'connected?'
+  spec ' ' 'due_set_statled' 'set STAT LED to high _ ms, low _ ms, count _' 'auto auto auto' 100 100 10
   space
   space
-  spec 'r' 'due_runWithResult' 'Write command _ returns string' 'str' 'version()'
-  spec ' ' 'due_run' 'Write command _' 'str' 'statled(100,100,10)'
-  spec 'r' 'Write command' 'Write command _ returns number' 'auto' 'dread(1,2)'
-  spec ' ' 'Set Stat LED to high' 'Set Stat LED to high _ (ms), low _ (ms), count _' 'auto auto auto' 100 100 10
-  spec ' ' 'due_setReadTimeout' 'Set response timeout _ milliseconds' 'auto' 1000
-  spec ' ' 'Select device' 'Select device _' 'auto' 1
+  spec 'r' 'due_make_command' 'command _ : with _ : _ : ...' 'str auto auto' 'version'
+  spec ' ' 'due_run' 'do command _' 'str' 'statled(100,100,10)'
+  spec 'r' 'due_returnNum' 'do command _ returns number' 'auto' 'dread(1,2)'
+  spec 'r' 'due_returnStr' 'do command _ returns string' 'str' 'version()'
+  space
+  space
+  spec 'r' 'due_device_PID' 'device PID'
+  spec 'r' 'due_device_version' 'device firmware version'
   advanced
-  spec ' ' 'due_useI2C' 'DUELink useI2C _' 'bool' true
+  spec ' ' 'due_setReadTimeout' 'set response timeout _ ms' 'auto' 1000
+  spec ' ' 'due_useI2C' 'use I2C _' 'bool' true
+  space
+  space
+  spec 'r' 'due_stream_read_bytes' 'stream read from _ count _' 'menu.due_combx auto' 'b1' 3
+  space
+  space
+  spec ' ' 'due_stop' 'stop'
+  spec ' ' 'due_exec' 'run'
+  space
+  space
   spec ' ' '_due_init' '_due_init'
-  spec 'r' '_due_templateWith' '_due_template _ : with _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _ : _' 'str auto auto auto auto auto auto auto auto auto auto auto auto' 'test(%)' 123
   spec ' ' '_due_send' '_due send _' 'str'
-  spec ' ' '_due send raw' '_due send raw _' 'auto' '10'
+  spec ' ' '_dueSendRaw' '_due send raw _' 'auto' '10'
   spec 'r' '_due_awaitResult' '_due await result'
   spec 'r' '_due_awaitResultI2C' '_due await result (I2C)'
   spec 'r' '_due_endsWithPrompt' '_due byte array ends with prompt _' 'str'
-  spec 'r' 'due_readResponse' 'Read response'
-  space
-  space
-  spec ' ' 'due_stop' 'Stop'
-  spec ' ' 'due_exec' 'Run'
-  space
-  space
-  spec ' ' 'due_otpw' 'OTP write address _ data _' 'auto auto' 0 '1,2,3,4,5,6,7,8'
-  spec 'r' 'due_otpr' 'OTP read address _' 'auto' 0
-  space
-  space
-  spec ' ' '_due_stream_write_bytes' 'Stream write to _ data _' 'auto auto' 'b1' '1,2,3'
-  spec 'r' 'due_stream_read_bytes' 'Stream read from _ count _' 'auto auto' 'b1' 3
 
-to 'Select device' dev {
-  due_run ('_due_templateWith' 'sel(%)' dev)
-}
-
-to 'Set Stat LED to high' high low count {
-  due_run ('_due_templateWith' 'statled(%,%,%)' high low count)
-}
-
-to 'Write command' cmd {
-  '_due_send' cmd
-  waitMillis 5
-  return ('[data:convertType]' ('_due_awaitResult') 'number')
-}
-
-to '_due send raw' s {
+to '_dueSendRaw' s {
   '_due_init'
   comment 'Clear receive buffer.'
   if _dueUseI2C {
@@ -145,15 +128,18 @@ to '_due_init' {
   if (_dueReadTimeout == 0) {_dueReadTimeout = 1000}
   if (not (isType _dueUseI2C 'boolean')) {
     comment 'Not yet initialized, set _dueUseI2C.'
-    for s ('[data:makeList]' 'CincoBit' 'PixoBit' 'DueSTEM' 'Clipit' 'DUELink') {
-      if (('[data:find]' s (boardType)) > 0) {
-        comment 'This is a DUELink board; use serial.'
-        _dueUseI2C = (booleanConstant false)
-        return 0
+    if (('[misc:dueLinkPID]') > 0) {
+      comment 'This is a DUELink board; use serial.'
+      _dueUseI2C = (booleanConstant false)
+      if ('[serial:dueSend]' ('[data:unicodeString]' 10) 1) {
+        comment 'Serial need first byte is 10, 13 or ''s'', ''S'''
       }
+      comment 'Wait a bit because device will see multiple commands'
+      return 0
+    } else {
+      comment 'Not a DUELink board; use I2C.'
+      _dueUseI2C = (booleanConstant true)
     }
-    comment 'Not a DUELink board; use I2C.'
-    _dueUseI2C = (booleanConstant true)
   }
 }
 
@@ -181,65 +167,107 @@ to '_due_send' s {
   }
 }
 
-to '_due_stream_write_bytes' 'array name' data {
-  local 'buf' ('[data:split]' data ',' true)
-  local 'buf_read' (newList 1)
-  local 'found prompt' 0
-  '_due_send' ('_due_templateWith' 'strmwr(%,%)' (v 'array name') (size buf))
-  repeatUntil ((v 'found prompt') == 1) {
-    if _dueUseI2C {
-      '[sensors:i2cRead]' 82 buf_read
-      for byte buf_read {
-        if (byte == 38) {'found prompt' = 1}
-      }
-    } else {
-      local 'buf_read' ('[serial:dueRecv]')
-      if ((size buf_read) != 0) {
-        for byte buf_read {
-          if (byte == 38) {'found prompt' = 1}
-        }
-      }
-    }
-  }
-  if _dueUseI2C {
-    '[sensors:i2cWrite]' 82 buf
-  } else {
-    local 'ignore' ('[serial:dueSend]' buf 1)
-  }
-  if ('[data:convertType]' (due_readResponse) 'number') {
-  }
-}
-
-to '_due_templateWith' s optionalArgs {
-  local 'parts' ('[data:split]' s '%')
-  local 'result' ('[data:makeList]')
-  for i ((size parts) - 1) {
-    '[data:addLast]' (at i parts) result
-    '[data:addLast]' (argOrDefault (i + 1) '') result
-  }
-  '[data:addLast]' (at 'last' parts) result
-  return ('[data:joinStrings]' result)
-}
-
 to due_connected {
   '_due_send' ('[data:unicodeString]' 27)
   local 'n' ('[data:convertType]' (random 1 9) 'string')
-  return ((due_runWithResult n) == n)
+  return ((due_returnStr n) == n)
+}
+
+to due_device_PID {
+  local 'module PID' (due_returnNum 'info(0)')
+  local 'result' ('[data:makeList]')
+  for i 6 {
+    local 'hexDigit' (((v 'module PID') >> (24 - (4 * i))) & 15)
+    '[data:addLast]' (at (hexDigit + 1) '0123456789ABCDEF') result
+  }
+  return ('[data:joinStrings]' result)
+}
+
+to due_device_version {
+  return (due_returnNum '100*info(1)')
 }
 
 to due_exec {
   due_run 'run'
 }
 
-to due_otpr address {
-  return ('[data:convertType]' (due_runWithResult ('_due_templateWith' 'OtpR(%)' address)) 'number')
+to due_make_command s optionalArgs {
+  local 'result' ('[data:makeList]')
+  local 'str' (booleanConstant false)
+  local 'arr' (booleanConstant false)
+  '[data:addLast]' s result
+  '[data:addLast]' '(' result
+  for i 8 {
+    str = (booleanConstant false)
+    arr = (booleanConstant false)
+    if ((argOrDefault (i + 1) '') != '') {
+      comment 'check if string and "'
+      if (isType (argOrDefault (i + 1) '') 'string') {
+        str = (booleanConstant true)
+        if (('[data:unicodeAt]' 1 (argOrDefault (i + 1) '')) == ('[data:unicodeAt]' 1 '[')) {
+          comment 'Dont add "'
+          arr = (booleanConstant true)
+        } else {
+          '[data:addLast]' '"' result
+        }
+      } else {
+        comment 'check if array and ['
+        if (isType (argOrDefault (i + 1) '') 'byte array') {
+          '[data:addLast]' '[' result
+        } else {
+          comment 'check if list and {'
+          if (isType (argOrDefault (i + 1) '') 'list') {
+            '[data:addLast]' '{' result
+          }
+        }
+      }
+      if (or (isType (argOrDefault (i + 1) '') 'list') (isType (argOrDefault (i + 1) '') 'byte array')) {
+        local 'arg_list' (argOrDefault (i + 1) '')
+        for x (size arg_list) {
+          '[data:addLast]' (at x arg_list) result
+          if (x < (size arg_list)) {
+            '[data:addLast]' ',' result
+          }
+        }
+      } else {
+        '[data:addLast]' (argOrDefault (i + 1) '') result
+      }
+      comment 'if this is a string then add "'
+      if str {
+        if arr {
+          comment 'Dont add "'
+        } else {
+          '[data:addLast]' '"' result
+        }
+      } else {
+        comment 'check if array and ['
+        if (isType (argOrDefault (i + 1) '') 'byte array') {
+          '[data:addLast]' ']' result
+        } else {
+          comment 'check if list and {'
+          if (isType (argOrDefault (i + 1) '') 'list') {
+            '[data:addLast]' '}' result
+          }
+        }
+      }
+    }
+    if ((argOrDefault (i + 2) '') != '') {
+      '[data:addLast]' ',' result
+    }
+  }
+  '[data:addLast]' ')' result
+  return ('[data:joinStrings]' result)
 }
 
-to due_otpw address data {
-  due_run ('_due_templateWith' 'OtpW(%,[%])' address data)
+to due_returnNum cmd {
+  '_due_send' cmd
+  waitMillis 5
+  return ('[data:convertType]' ('_due_awaitResult') 'number')
 }
 
-to due_readResponse {
+to due_returnStr cmd {
+  '_due_send' cmd
+  waitMillis 5
   return ('_due_awaitResult')
 }
 
@@ -248,14 +276,16 @@ to due_run cmd {
   local 'ignore' ('_due_awaitResult')
 }
 
-to due_runWithResult cmd {
-  '_due_send' cmd
-  waitMillis 5
-  return ('_due_awaitResult')
+to due_select_device dev {
+  due_run (due_make_command 'sel' dev)
 }
 
 to due_setReadTimeout millisecond {
   _dueReadTimeout = millisecond
+}
+
+to due_set_statled high low count {
+  due_run (due_make_command 'statled' high low count)
 }
 
 to due_stop {
@@ -271,7 +301,7 @@ to due_stream_read_bytes 'array name' count {
   local 'found prompt' 0
   local 'idx' 0
   local 'buf2' ('[data:makeList]')
-  '_due_send' ('_due_templateWith' 'strmrd(%,%)' (v 'array name') count)
+  '_due_send' ('[data:join]' 'strmrd(' (v 'array name') ',' count ')')
   repeatUntil ((v 'found prompt') == 1) {
     if _dueUseI2C {
       '[sensors:i2cRead]' 82 buf_read
@@ -319,7 +349,10 @@ to due_stream_read_bytes 'array name' count {
     local 'buf5' ('[data:makeList]')
     local 'ret' 0
     for byte buf2 {
-      if (ret < count) {'[data:addLast]' byte buf5}
+      if (ret < count) {
+        '[data:addLast]' byte buf5
+        ret += 1
+      }
     }
     return ('[data:convertType]' buf5 'byte array')
   }
@@ -337,7 +370,7 @@ when one wants to force different behavior from the default
   if _dueUseI2C {
   } else {
     comment 'If Uart we need to send 10 or 13 or 27 or ''s'' or ''S'''
-    'Select device' 1
+    due_select_device 1
   }
 }
 

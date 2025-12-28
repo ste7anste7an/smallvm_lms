@@ -57,15 +57,28 @@ static void debugBeep(int count) {
 
 #include <stm32c0xx.h>
 #include <stm32c071xx.h>
+#include <usbd_cdc_if.h> // for CDC_deInit()
 
-__attribute__ ((section (".ramfunc"))) static void dueLinkEraseFlashAndReset() {
+__RAM_FUNC __NOINLINE static void dueLinkEraseFlashAndReset() {
 	// Danger! This function erases all of Flash memory then reboots the board in DFU mode.
+
+	CDC_deInit(); // stop USB serial
 
 	// disable interrupts
 	__disable_irq();
 
+	while (FLASH->SR & FLASH_SR_BSY1_Msk); // wait for any previous operation to complete
+
+	if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_CFGBSY) != 0) {
+		__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
+	}
+
 	// mass erase all of Flash
+	HAL_FLASH_Unlock();
 	FLASH->CR |= (FLASH_CR_STRT | FLASH_CR_MER1);
+	while (FLASH->SR & FLASH_SR_BSY1_Msk); // wait for erase to complete
+
+	// NOTE: Flash has been erased! Do not call any library functions after this point!
 
 	// set the Flash empty flag
 	SET_BIT(FLASH->ACR, 1 << 16);
@@ -77,6 +90,7 @@ __attribute__ ((section (".ramfunc"))) static void dueLinkEraseFlashAndReset() {
 
 	// wait for reset
 	while (1);
+	// This function never returns because the board resets.
 }
 
 #else

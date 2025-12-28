@@ -379,6 +379,8 @@ void updateMicrobitDisplay() {
 
 #elif defined(DUELink)
 
+#define DUELINK_HAS_LED_DISPLAY (IS_DUE_CINCO || IS_DUE_CLIPIT || IS_DUE_CHRONO)
+
 static int displaySnapshot = 0;
 static uint8 displayCycle = 0;
 static uint8 dueLEDInitialized = 0;
@@ -397,6 +399,17 @@ static void initDUELedPins() {
 		columnPins[2] = mapDigitalPinNum(6);
 		columnPins[3] = mapDigitalPinNum(5);
 		columnPins[4] = mapDigitalPinNum(4);
+	} else if (IS_DUE_CHRONO) {
+		rowPins[0] = mapDigitalPinNum(7);
+		rowPins[1] = mapDigitalPinNum(5);
+		rowPins[2] = mapDigitalPinNum(0);
+		rowPins[3] = mapDigitalPinNum(8);
+		rowPins[4] = mapDigitalPinNum(6);
+		columnPins[0] = mapDigitalPinNum(9);
+		columnPins[1] = mapDigitalPinNum(19);
+		columnPins[2] = mapDigitalPinNum(18);
+		columnPins[3] = mapDigitalPinNum(4);
+		columnPins[4] = mapDigitalPinNum(3);
 	} else { // Cinco
 		rowPins[0] = mapDigitalPinNum(22);
 		rowPins[1] = mapDigitalPinNum(23);
@@ -415,7 +428,7 @@ static void initDUELedPins() {
 #define DISPLAY_BIT(n) (((displaySnapshot >> n) & 1) ? LOW : HIGH)
 
 static void turnDisplayOn() {
-	if (!(IS_DUE_CINCO || IS_DUE_CLIPIT)) return;
+	if (!DUELINK_HAS_LED_DISPLAY) return;
 	if (!dueLEDInitialized) initDUELedPins();
 
 	for (int i = 0; i < 5; i++) {
@@ -425,7 +438,7 @@ static void turnDisplayOn() {
 }
 
 static void turnDisplayOff() {
-	if (!(IS_DUE_CINCO || IS_DUE_CLIPIT)) return;
+	if (!DUELINK_HAS_LED_DISPLAY) return;
 	if (!dueLEDInitialized) initDUELedPins();
 
 	for (int i = 0; i < 5; i++) {
@@ -444,7 +457,7 @@ void updateMicrobitDisplay() {
 	// for each column. To minimize display artifacts, the display bits are snapshot
 	// at the start of each cycle and the snapshot is not changed during the cycle.
 
-	if (!(IS_DUE_CINCO || IS_DUE_CLIPIT)) return;
+	if (!DUELINK_HAS_LED_DISPLAY) return;
 	if (disableLEDDisplay) return;
 	if (!dueLEDInitialized) initDUELedPins();
 

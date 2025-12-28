@@ -166,9 +166,11 @@ method drawLabelCostumes Trigger label minWidth minHeight isActive onDark {
 		// special case for Window close button
 		bitmap = (readSVGIcon 'icon-close' (microBlocksColor 'blueGray' 100))
 		hlBitmap = (readSVGIcon 'icon-close' (microBlocksColor 'yellow'))
-		normalCostume = (buttonImage bitmap (transparent) 0 0 false false 12 12 true (transparent))
-		highlightCostume = (buttonImage hlBitmap (transparent) 0 0 false false 12 12 true (transparent))
-		pressedCostume = (buttonImage hlBitmap (transparent) 0 0 true false 12 12 true (transparent))
+		w = (40 * scale)
+		h = (25 * scale)
+		normalCostume = (closeButtonImage bitmap w h)
+		highlightCostume = (closeButtonImage hlBitmap w h)
+		pressedCostume = highlightCostume
 		setCostume morph normalCostume
 		return
 	}
@@ -202,6 +204,15 @@ to buttonBitmap label color w h isInset corner border hasFrame flat {
 		lbm = nil
 	}
 	return (buttonImage lbm bgColor corner border isInset hasFrame w h flat borderColor)
+}
+
+to closeButtonImage labelBitmap w h {
+	w = (max w (width labelBitmap))
+	h = (max h (height labelBitmap))
+	bm = (newBitmap w h)
+	drawBitmap bm labelBitmap (w - (width labelBitmap)) 0
+	if ('Browser' != (platform)) { unmultiplyAlpha bm }
+	return bm
 }
 
 to buttonImage labelBitmap color corner border isInset hasFrame width height flat borderColor {

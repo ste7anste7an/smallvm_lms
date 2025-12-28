@@ -1,11 +1,11 @@
 module 'OLED Graphics' Output
 author 'Turgut Guneysu and Miroslav Klimos'
-version 1 22 
-choices ModeMenu Horizontal Vertical 
+version 1 24 
 choices OnOffMenu On Off 
 choices VideoMenu Inverse Normal 
-choices DispTypeMenu 'OLED_0.96in' 'OLED_1.3in' 'OLED_1.54in' 'OLED_2.42in' 
-description 'Supports 0.96in and 1.54in Displays with SSD1306 and 2.42in OLED with SSD1309 chipsets, also 1.3in with SHT1106 chipset. Comm mode is I2C or SPI.
+choices DispTypeMenu 'OLED_0.42in' 'OLED_0.96in' 'OLED_1.3in' 'OLED_1.54in' 'OLED_2.42in' 
+description 'Supports 0.42in, 0.96in and 1.54in Displays with SSD1306 and 2.42in OLED with SSD1309 chipsets, also 1.3in with SHT1106 chipset. Comm mode is I2C or SPI.
+*** As of version 1.22 character table has been changed to MicroBlocks 5x8 internal characters. ***
 Changes:
 - always display buffer
 - defer display updates block
@@ -24,11 +24,17 @@ Changes:
 - improve conversion ops, i2c io, rect fill, img processing, and buffer displays
 - reduce i2c buffer to 64 bytes
 - correct internal draws, clean-up vars, restore _clearDisplay
+- added support for ESP32C3miniOLED 0.42in 72x40 display.
+- Corrected page display / clear and PAGE mode operations
+- Removed remnants of the old character Table logic.
+- Corrected x and y coordinate calculations for proper character wrapping.
+- Added IREF Voltage adjustment for brighter display.
 Miroslav Klimos
 - added Zoom option for text
 - added support for 1.3in OLED (1106) - thanks to KwyjiboYue
+
 '
-variables OLEDReady OLEDi2cAddr _GDBuffer _cDecTBL _cTABLE _comMode _dcPin _delayGDUpd _displayType _eol _resetPin _textX _textY _dataPrefix _byteCount _imgData _imgWidth _imgHeight _ColumnOffset 
+variables OLEDReady OLEDi2cAddr _GDBuffer _comMode _dcPin _delayGDUpd _displayType _eol _resetPin _textX _textY _dataPrefix _byteCount _imgData _imgWidth _imgHeight _ColumnOffset 
 
   spec ' ' 'OLEDInit_I2C_auto' 'initialize i2c(auto) reset pin# _ flip _' 'auto bool' '-' false
   spec ' ' 'OLEDInit_I2C' 'initialize i2c _ address(hex) _ reset pin# _ flip _' 'str.DispTypeMenu auto auto bool' 'OLED_0.96in' '3C' '-' false
@@ -71,11 +77,14 @@ to OLEDInit_I2C dispType i2cAddr resetPin flip {
 Do NOT set a ResetPin# unless one exists on the display hardware.
 NOTE:
 Displays supported:
+- OLED 0.42in (SD1306 chip - displayType=5) and
 - OLED 0.96in (SD1306 chip - displayType=3) and
 - OLED 1.3in (SH1106 chip- displayType=8) and
 - OLED 1.54in (SD1309 chip - displayType=6) and
 - OLED 2.42" (SD1309 chip - displayType=6 ??? )
-All displays are 128x64 pixels or 16x8 characters in size.
+
+OLED 0.42in display is 72x40 pixels or 12x5 characters in size.
+All other displays are 128x64 pixels or 16x8 characters in size.
 Displays come in dual mode version (i2c and spi) and pure i2c.
 Pure i2c models do not have a Reset pin.
 flip setting controls display hardware write direction:
@@ -87,7 +96,7 @@ flip setting controls display hardware write direction:
 to OLEDInit_I2C_auto resetPin flip {
   comment 'Sets display type and interface and initializes HW settings.
 I2C addresss is checked for 0x3C and 0x3D automatically.
-Display typ is read from status register'
+Display type is read from status register'
   _resetPin = resetPin
   _comMode = 'i2c'
   _ColumnOffset = '0x00'
@@ -110,7 +119,7 @@ Display typ is read from status register'
   _displayType = ((at 1 _statusreg) & 15)
   sayIt 'Display found at  address: ' OLEDi2cAddr '- type:' _displayType
   if (_displayType == 8) {
-    _ColumnOffset = '0x02'
+    _ColumnOffset = ('[data:toString]' '2')
   }
   '_initDisplayHW'
   if flip {
@@ -162,7 +171,7 @@ flip setting controls display hardware write direction:
 to OLEDclear {
   comment 'Set bounds to FullScreen and CLEARs display
 and GDBuffer.'
-  _GDBuffer = ('[data:newByteArray]' 1024)
+  _GDBuffer = ('[data:newByteArray]' (ifExpression (5 == _displayType) 360 1024))
   '_initCheck'
   '_OLEDcursorReset'
   OLEDshowGDBuffer
@@ -172,7 +181,7 @@ to OLEDcontrast contrast {
   comment 'Sets the brightness control of the display to one of four values.
 1 is the least bright, 4 is the brightest setting.'
   '_initCheck'
-  local 'cLevels' ('[data:makeList]' 0 '1F' '2F' 'F0')
+  local 'cLevels' ('[data:makeList]' 0 '1F' '2F' 'FF')
   if (and (contrast >= 1) (contrast <= 4)) {
     local 'i2cCmd' ('[data:join]' '81,' (at contrast cLevels))
     '_sendCmd' i2cCmd
@@ -239,15 +248,15 @@ to OLEDdrawImage image x y {
   }
   local 'oldDelayGDUpd' _delayGDUpd
   _delayGDUpd = (booleanConstant true)
-  for row# (maximum 1 ((minimum _imgHeight (64 - y)) / 8)) {
-    local 'GDidx' ((((y / 8) * 128) + x) + 1)
+  for row# (maximum 1 ((minimum _imgHeight ((ifExpression (5 == _displayType) 40 64) - y)) / 8)) {
+    local 'GDidx' ((((y / 8) * (ifExpression (5 == _displayType) 72 128)) + x) + 1)
     local 'imgDispl' ((row# - 1) * _imgWidth)
-    for byte# (minimum _imgWidth (128 - x)) {
+    for byte# (minimum _imgWidth ((ifExpression (5 == _displayType) 72 128) - x)) {
       comment 'If y is on page boundary, just copy'
       if (0 == (y % 8)) {
         atPut GDidx _GDBuffer (at (imgDispl + byte#) image)
         GDidx += 1
-        if (GDidx > 1024) {
+        if (GDidx > (ifExpression (5 == _displayType) 360 1024)) {
           _delayGDUpd = oldDelayGDUpd
           if (not _delayGDUpd) {
             OLEDshowGDBuffer
@@ -264,12 +273,12 @@ to OLEDdrawImage image x y {
         local 'GDHiBits' (255 - GDLowBits)
         tempLO = ((hexToInt tempLO) | ((at GDidx _GDBuffer) & GDLowBits))
         atPut GDidx _GDBuffer tempLO
-        if ((GDidx + 128) <= 1024) {
-          tempHI = ((hexToInt tempHI) | ((at (GDidx + 128) _GDBuffer) & GDHiBits))
-          atPut (GDidx + 128) _GDBuffer tempHI
+        if ((GDidx + (ifExpression (5 == _displayType) 72 128)) <= (ifExpression (5 == _displayType) 360 1024)) {
+          tempHI = ((hexToInt tempHI) | ((at (GDidx + (ifExpression (5 == _displayType) 72 128)) _GDBuffer) & GDHiBits))
+          atPut (GDidx + (ifExpression (5 == _displayType) 72 128)) _GDBuffer tempHI
         }
         GDidx += 1
-        if (GDidx > 1024) {
+        if (GDidx > (ifExpression (5 == _displayType) 360 1024)) {
           _delayGDUpd = oldDelayGDUpd
           if (not _delayGDUpd) {
             OLEDshowGDBuffer
@@ -447,8 +456,8 @@ verify x and y are in range of display limits
 if X <= num <= Y'
   '_initCheck'
   local 'pagePixel#' (y % 8)
-  local 'GDIndex' ((x + ((y / 8) * 128)) + 1)
-  if (GDIndex <= 1024) {
+  local 'GDIndex' ((x + ((y / 8) * (ifExpression (5 == _displayType) 72 128))) + 1)
+  if (GDIndex <= (ifExpression (5 == _displayType) 360 1024)) {
     local 'byteBMP' (at GDIndex _GDBuffer)
     byteBMP = (ifExpression (not erase) (byteBMP | (1 << pagePixel#)) (byteBMP & ('~' (1 << pagePixel#))))
     atPut GDIndex _GDBuffer byteBMP
@@ -476,19 +485,49 @@ i2c:
    page selection is used to work on OLED with SH1106 cipset
 spi:
    fastest is dump buffer
- _GDBuffer is in decimal'
+ _GDBuffer is in decimal
+
+ESP32C3OLED with 72x40 display:
+HORIZONTAL Mode: 20,00
+COL Start, End: 21,28,99
+PAGE Start, End: 22,0,4'
   '_initCheck'
+  comment 'Set display RAM display start line register from 0-63.
+0x40: 0     0x7F: 63 '
   '_sendCmd' '40'
+  comment 'Set HORIZONTAL Mode (default)'
+  '_sendCmd' ('[data:toString]' '20,0')
+  if (5 == _displayType) {
+    comment 'Set COL and PAGE start/end values'
+    '_sendCmd' ('[data:toString]' '21,1c,63')
+    '_sendCmd' ('[data:toString]' '22,0,4')
+  } (8 == _displayType) {
+    comment 'Set PAGE Mode'
+    '_sendCmd' ('[data:toString]' '20,10')
+  }
   if (_comMode == 'i2c') {
     local 'idx' 1
-    for j 8 {
-      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:makeList]' (hexToInt '80') ((hexToInt 'B0') + (j - 1)))
-      '_sendCmd' _ColumnOffset
-      '_sendCmd' '10'
-      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' _GDBuffer idx (idx + 63)))
-      idx += 64
-      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' _GDBuffer idx (idx + 63)))
-      idx += 64
+    comment 'This LOOP is for:
+128 x 64 displays with 1024 byte buffer @ 64 x 2 x 8
+OR
+72 x 40 displays with 360 byte buffer @ 36 x 2 x 5'
+    for j (ifExpression (5 == _displayType) 5 8) {
+      if (8 == _displayType) {
+        comment 'In PAGE addressing mode, the following steps are required to define the starting RAM access pointer location:
+• Set the page start address of the target display location by command B0h to B7h.
+• Set the lower start column address of pointer by command 00h~0Fh.
+• Set the upper start column address of pointer by command 10h~1Fh. '
+        '[sensors:i2cWrite]' OLEDi2cAddr ('[data:makeList]' (hexToInt '80') ((hexToInt 'B0') + (j - 1)))
+        comment 'Sets COL displacement values for LOW (0-F) and HIGH (10-1F) nibbles of the COL Number Byte.'
+        if ((hexToInt _ColumnOffset) < (hexToInt '10')) {
+          '_sendCmd' _ColumnOffset
+          '_sendCmd' ('[data:toString]' '10')
+        }
+      }
+      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' _GDBuffer idx (idx + (ifExpression (5 == _displayType) 35 63))))
+      idx += (ifExpression (5 == _displayType) 36 64)
+      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' _GDBuffer idx (idx + (ifExpression (5 == _displayType) 35 63))))
+      idx += (ifExpression (5 == _displayType) 36 64)
     }
   } else {
     '_SPIWriteData'
@@ -516,16 +555,16 @@ _textX and _textY are next write locations.'
     } (10 == unicode) {
       x = origX
       y += (8 * scale)
-      if (y > 63) {
+      if (y >= (ifExpression (5 == _displayType) ((40 / (8 * scale)) * (8 * scale)) ((64 / (8 * scale)) * (8 * scale)))) {
         y = 0
       }
     } (and (unicode > 31) (unicode < 128)) {
       '_OLEDwriteChar' char x y invFlag scale
-      x += (7 * scale)
-      if (x > 127) {
+      x += (6 * scale)
+      if (x >= (ifExpression (5 == _displayType) ((72 / (6 * scale)) * (6 * scale)) ((128 / (6 * scale)) * (6 * scale)))) {
         x = origX
         y += (8 * scale)
-        if (y > 63) {
+        if (y >= (ifExpression (5 == _displayType) ((40 / (8 * scale)) * (8 * scale)) ((64 / (8 * scale)) * (8 * scale)))) {
           y = 0
         }
       }
@@ -567,10 +606,14 @@ to '_OLEDcursorReset' {
 to the origin top-left (0,0)
 Rows: 0-7
 Cols: 0-127
-Cursor position is affected by any display operation
-and also by OLEDColMode block.'
+Cursor position is affected by any display operation.'
   '_initCheck'
-  local 'cmdString' '22,00,07,21,00,7F'
+  if (5 == _displayType) {
+    comment 'Set COL and PAGE start/end values'
+    local 'cmdString' '21,28,99,22,0,4'
+  } else {
+    local 'cmdString' '22,00,07,21,00,7F'
+  }
   '_sendCmd' cmdString
   _textX = 0
   _textY = 0
@@ -613,6 +656,7 @@ to '_OLEDwriteChar' char x y inverse scale {
   if (shape == 0) {
     return 0
   }
+  comment 'This LOOP writes a SCALED blank column before the 5 col character.'
   for row ('[data:range]' 0 ((9 * scale) - 1)) {
     for col ('[data:range]' 0 ((7 * scale) - 1)) {
       OLEDpixel (x + col) (y + row) (not inverse)
@@ -627,10 +671,7 @@ to '_OLEDwriteChar' char x y inverse scale {
     repeat 8 {
       repeat scale {
         repeat scale {
-          if (((at c shape) & mask) != 0) {
-            OLEDpixel x y inverse
-          } else {
-          }
+          if (((at c shape) & mask) != 0) {OLEDpixel x y inverse}
           x += 1
         }
         x += (0 - scale)
@@ -660,20 +701,46 @@ to '_clearDisplay' {
   comment 'Clear Screen without initializing _GDBuffer'
   '_initCheck'
   '_OLEDcursorReset'
-  local 'clearBuff' ('[data:newByteArray]' 128 0)
+  local 'clearBuff' ('[data:newByteArray]' (ifExpression (5 == _displayType) 36 64) 0)
   '_sendCmd' '40'
-  for j 8 {
-    '[sensors:i2cWrite]' OLEDi2cAddr ('[data:makeList]' (hexToInt '80') ((hexToInt 'B0') + (j - 1)))
-    '_sendCmd' '01'
-    '_sendCmd' '10'
-    '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix clearBuff)
+  comment 'Set HORIZONTAL Mode (default)'
+  '_sendCmd' ('[data:toString]' '20,0')
+  if (5 == _displayType) {
+    comment 'Set COL and PAGE start/end values'
+    '_sendCmd' ('[data:toString]' '21,1c,63')
+    '_sendCmd' ('[data:toString]' '22,0,4')
+  } (8 == _displayType) {
+    comment 'Set PAGE Mode'
+    '_sendCmd' ('[data:toString]' '20,10')
   }
-  for j 8 {
-    '[sensors:i2cWrite]' OLEDi2cAddr ('[data:makeList]' (hexToInt '80') ((hexToInt 'B0') + (j - 1)))
-    '_sendCmd' '03'
-    '_sendCmd' '10'
-    '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix clearBuff)
+  if (_comMode == 'i2c') {
+    comment 'This LOOP is for:
+128 x 64 displays with 1024 byte buffer @ 64 x 2 x 8
+OR
+72 x 40 displays with 360 byte buffer @ 36 x 2 x 5'
+    for j (ifExpression (5 == _displayType) 5 8) {
+      if (8 == _displayType) {
+        comment 'In PAGE addressing mode, the following steps are required to define the starting RAM access pointer location:
+• Set the page start address of the target display location by command B0h to B7h.
+• Set the lower start column address of pointer by command 00h~0Fh.
+• Set the upper start column address of pointer by command 10h~1Fh. '
+        '[sensors:i2cWrite]' OLEDi2cAddr ('[data:makeList]' (hexToInt '80') ((hexToInt 'B0') + (j - 1)))
+        comment 'Sets COL displacement values for LOW (0-F) and HIGH (10-1F) nibbles of the COL Number Byte.'
+        if ((hexToInt _ColumnOffset) < (hexToInt '10')) {
+          '_sendCmd' _ColumnOffset
+          '_sendCmd' ('[data:toString]' '10')
+        }
+      }
+      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' clearBuff 1))
+      '[sensors:i2cWrite]' OLEDi2cAddr ('[data:join]' _dataPrefix ('[data:copyFromTo]' clearBuff 1))
+    }
+  } else {
+    '_SPIWriteData'
+    repeat 8 {
+      '[sensors:spiExchange]' ('[data:copyFromTo]' clearBuff 1)
+    }
   }
+  _delayGDUpd = (booleanConstant false)
 }
 
 to '_corner' loc cx cy r erase filled {
@@ -776,11 +843,17 @@ D9 22 - Set pre-charge period HB:Phase2 / LB:Phase1 (1-15 DCLK)
 DB 20 - Set Vcomh deselect level 20:1306(~0.77xVcc), 34:1309(~0.78xVcc)
 8D 14 - Charge Pump Setting 10:disable CP, 14:enable CP
 20 00 - Set HORIZONTAL mode
+AD 30 - Internal IREF mode. Sets the reference current to 30\mu, resulting in 240\mu for maximum brightness.
 AF    - Display ON/OFF AE:off (sleep mode), AF:on'
   if (_resetPin != '-') {
     '_OLEDreset' _resetPin
   }
-  local 'initCmd' 'A8,3F,D3,00,40,A1,C8,DA,12,81,7F,A4,A6,D5,70,D9,22,DB,34,8D,14,20,00,AF'
+  if (_displayType == 5) {
+    comment '72x40 OLED MUX value is 39 : 0x27'
+    local 'initCmd' 'A8,27,D3,00,40,A1,C8,DA,12,81,7F,A4,A6,D5,70,D9,11,DB,34,8D,14,20,00,AD,30,AF'
+  } else {
+    local 'initCmd' 'A8,3F,D3,00,40,A1,C8,DA,12,81,7F,A4,A6,D5,70,D9,22,DB,34,8D,14,20,00,AF'
+  }
   '_sendCmd' initCmd
 }
 
@@ -791,27 +864,32 @@ NOTE:
 Displays supported: OLED1306 (0.96in) and OLED1309 (2.42"), selected via boolean position.
 OLED1309 requires the connection of RESET pin to a digital pin.
 Both displays are 128x64 pixels or 16x8 characters in size.
-Make sure the character hex tables are \n (LF) terminated.
-Otherwise, extra lines are added in between and it gets messed up.
-eg: A: 00,7C,12,11,11,12,7C,00\n
+
 Max i2c IO is 64 bytes: buffered writes need to be max that size - 16 x 64'
   _eol = ('[data:unicodeString]' 10)
   comment 'Col starts are in HEX'
   _dataPrefix = ('[data:newByteArray]' 1 (hexToInt '40'))
-  comment 'There is no FF/255 in th cHexTBL.
-this value is used to build the byteArray.'
-  _cDecTBL = ('[data:newByteArray]' 768 255)
-  _GDBuffer = ('[data:newByteArray]' 1024)
+  _GDBuffer = ('[data:newByteArray]' (ifExpression (5 == _displayType) 360 1024))
   _textX = 0
   _textY = 0
   _delayGDUpd = (booleanConstant false)
   OLEDReady = (booleanConstant true)
   '_OLEDsetDisplay' 'On'
-  repeat 2 {
-    setUserLED true
-    waitMillis 50
-    setUserLED false
-    waitMillis 50
+  if (_displayType == 5) {
+    repeat 2 {
+      digitalWriteOp 8 false
+      waitMillis 50
+      digitalWriteOp 8 true
+      waitMillis 50
+    }
+  } else {
+    repeat 2 {
+      setUserLED true
+      waitMillis 50
+      setUserLED false
+      waitMillis 50
+      OLEDpixel 0 0 false
+    }
   }
 }
 

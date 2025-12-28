@@ -604,9 +604,11 @@ method aboutToBeGrabbed Block {
 	removeStackPart (morph tb)
 	removeHighlight (morph tb)
 
-	if (or
-		(commandKeyDown (keyboard page))
-		(controlKeyDown (keyboard page))
+	if (and
+			(or
+				(commandKeyDown (keyboard page))
+				(controlKeyDown (keyboard page)))
+			(not (isPrototypeHat this))
 	) {
 		// duplicate all with control + grab
 		dup = (duplicate this)
@@ -1006,12 +1008,6 @@ method contextMenu Block {
 		addLine menu
 	}
 
-	if (isVariadic this) {
-		if (canExpand this) {addItem menu 'expand' 'expand'}
-		if (canCollapse this) {addItem menu 'collapse' 'collapse'}
-		addLine menu
-	}
-
 	addItem menu 'duplicate' 'grabDuplicate' 'duplicate this block'
 	if (and ('reporter' != type) (notNil (next this))) {
 		addItem menu 'duplicate all' 'grabDuplicateAll' 'duplicate this block and all blocks below it'
@@ -1021,6 +1017,11 @@ method contextMenu Block {
 		addItem menu 'extract block' 'extractBlock' 'pull out this block'
 	}
 	addLine menu
+	if (isVariadic this) {
+		if (canExpand this) {addItem menu 'expand' 'expand'}
+		if (canCollapse this) {addItem menu 'collapse' 'collapse'}
+		addLine menu
+	}
 	if (hasHelpEntryFor pe this) {
 		addItem menu 'help' (action 'openHelp' pe this) 'show help for this block in a browser'
 		addLine menu

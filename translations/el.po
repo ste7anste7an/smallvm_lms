@@ -748,7 +748,7 @@ msgstr "διάβασε μόνο _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "Finch Ουρά Κόκκινο _ Πράσινο _ Μπλέ _"
+msgstr "Finch Ουρά _ Κόκκινο _ Πράσινο _ Μπλέ _"
 
 #. Primitive block. Mostly hidden from end users.
 msgid "radio receive packet _"
@@ -1569,7 +1569,7 @@ msgstr "όρισε την ικανότητα του αντικειμένου σ�
 
 #. Web Things library block
 msgid "set boolean property _ title _ @Type _"
-msgstr "όρισε δυαδική ιδιότητα _ τίτλος _ @Τύπος"
+msgstr "όρισε δυαδική ιδιότητα _ τίτλος _ @Τύπος _"
 
 #. Web Things library block
 msgid "start WebThing server"

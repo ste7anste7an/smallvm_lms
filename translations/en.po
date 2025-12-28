@@ -472,6 +472,10 @@ msgstr "with all _"
 msgid "free memory"
 msgstr "free memory"
 
+#. Option in dropdown menu of editable input slots on mobile devices:
+msgid "edit"
+msgstr "edit"
+
 #. Option in dropdown menu of blocks:
 #. [ replace item ( all v ) of list ( aList ) with ( 10 ) ]
 #. [ delete item ( all v ) of list ( aList ) ]
@@ -3672,6 +3676,18 @@ msgstr "left sensor"
 msgid "both sensors"
 msgstr "both sensors"
 
+#. Generic servo type
+msgid "180°"
+msgstr "180°"
+
+#. Generic servo type
+msgid "270°"
+msgstr "270°"
+
+#. Generic servo type
+msgid "360°"
+msgstr "360°"
+
 #. InnovaDidàctic TdR shield library block
 msgid "TdR test buzzer"
 msgstr "TdR test buzzer"
@@ -4887,10 +4903,6 @@ msgid "gripper degrees _ (0 to 70)"
 msgstr "gripper degrees _ (0 to 70)"
 
 #. CoCube Module library block
-msgid "set all NeoPixels color _"
-msgstr "set all NeoPixels color _"
-
-#. CoCube Module library block
 msgid "ASR play command _"
 msgstr "ASR play command _"
 
@@ -4901,10 +4913,6 @@ msgstr "power on module"
 #. CoCube Module library block
 msgid "DLight level"
 msgstr "DLight level"
-
-#. CoCube Module library block
-msgid "clear NeoPixels"
-msgstr "clear NeoPixels"
 
 #. CoCube Module library block
 msgid "ultrasonic distance (mm)"
@@ -5250,77 +5258,265 @@ msgstr "Calliope set continous servo _ to speed _ (-100~100)"
 msgid "Calliope stop servo _"
 msgstr "Calliope stop servo _"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;bright"
 msgstr "bright"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;dark"
 msgstr "dark"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;ok"
 msgstr "ok"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;up"
 msgstr "up"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;down"
 msgstr "down"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;S1"
 msgstr "S1"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "mk2;S2"
 msgstr "S2"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "MotionKit distance (cm)"
 msgstr "MotionKit distance (cm)"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "IR key _ pressed?"
 msgstr "IR key _ pressed?"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "MotionKit set NeoPixels _"
 msgstr "MotionKit set NeoPixels _"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "MotionKit clear NeoPixels"
 msgstr "MotionKit clear NeoPixels"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
+msgid "MotionKit set motor _ _ speed _ (0~100)"
+msgstr "MotionKit set motor _ _ speed _ (0~100)"
+
+#. Calliope MotionKit library block
 msgid "MotionKit stop motor _"
 msgstr "MotionKit stop motor _"
 
-#. Calliope MotionKit2 library block
-msgid "MotionKit motor _ dir _ speed _ (0~255)"
-msgstr "MotionKit motor _ dir _ speed _ (0~255)"
+#. Calliope MotionKit library block
+msgid "MotionKit stop all"
+msgstr "MotionKit stop all"
 
-#. Calliope MotionKit2 library block
-msgid "MotionKit LED _ _"
-msgstr "MotionKit LED _ _"
+#. Calliope MotionKit library block
+msgid "MotionKit set led _ _"
+msgstr "MotionKit set led _ _"
 
-#. Calliope MotionKit2 library block
-msgid "color r _ g _ b _ (0~255)"
-msgstr "color r _ g _ b _ (0~255)"
-
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "MotionKit line sensor _ _"
 msgstr "MotionKit line sensor _ _"
 
-#. Calliope MotionKit2 library block
+#. Calliope MotionKit library block
 msgid "IR code received?"
 msgstr "IR code received?"
 
-#. Calliope MotionKit2 library block
-msgid "MotionKit set servo _ to _ ° (0~180)"
-msgstr "MotionKit set servo _ to _ ° (0~180)"
+#. Calliope MotionKit library block
+msgid "MotionKit set servo _ to _ degrees (0-180)"
+msgstr "MotionKit set servo _ to _ degrees (0-180)"
+
+#. Calliope MotionKit library block
+msgid "MotionKit set _ servo _ to _ degrees"
+msgstr "MotionKit set _ servo _ to _ degrees"
+
+#. Calliope MotionKit library block
+msgid "MotionKit rotate servo _ _ speed _ (0~100)"
+msgstr "MotionKit rotate servo _ _ speed _ (0~100)"
+
+#. Calliope Callibot library choice
+msgid "callibot;left front"
+msgstr "left front"
+
+#. Calliope Callibot library choice
+msgid "callibot;right front"
+msgstr "right front"
+
+#. Calliope Callibot library choice
+msgid "callibot;left back"
+msgstr "left back"
+
+#. Calliope Callibot library choice
+msgid "callibot;right back"
+msgstr "right back"
+
+#. Calliope Callibot library choice
+msgid "violett"
+msgstr "violett"
+
+#. Calliope Callibot library choice
+msgid "aqua"
+msgstr "aqua"
+
+#. Calliope Callibot library choice
+msgid "callibot;bright"
+msgstr "bright"
+
+#. Calliope Callibot library choice
+msgid "callibot;dark"
+msgstr "dark"
+
+#. Calliope Callibot library choice
+msgid "callibot;S1"
+msgstr "S1"
+
+#. Calliope Callibot library choice
+msgid "callibot;S2"
+msgstr "S2"
+
+#. Calliope Callibot library block
+msgid "Callibot2E encoder _"
+msgstr "Callibot2E encoder _"
+
+#. Calliope Callibot library block
+msgid "Callibot2E reset encoder _"
+msgstr "Callibot2E reset encoder _"
+
+#. Calliope Callibot library block
+msgid "Callibot2 battery (mV)"
+msgstr "Callibot2 battery (mV)"
+
+#. Calliope Callibot library block
+msgid "Callibot2 bumper _ _"
+msgstr "Callibot2 bumper _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot clear NeoPixels"
+msgstr "Callibot clear NeoPixels"
+
+#. Calliope Callibot library block
+msgid "Callibot distance (cm)"
+msgstr "Callibot distance (cm)"
+
+#. Calliope Callibot library block
+msgid "Callibot line sensor _ _"
+msgstr "Callibot line sensor _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot set led _ _"
+msgstr "Callibot set led _ _"
+
+#. Calliope Callibot library block
+msgid "Callibot set motor _ _ speed _ (0~100)"
+msgstr "Callibot set motor _ _ speed _ (0~100)"
+
+#. Calliope Callibot library block
+msgid "Callibot set neopixel _ to _ intensity _"
+msgstr "Callibot set neopixel _ to _ intensity _"
+
+#. Calliope Callibot library block
+msgid "Callibot set servo _ to _ ° (0~180)"
+msgstr "Callibot set servo _ to _ ° (0~180)"
+
+#. Calliope Callibot library block
+msgid "Callibot set _ servo _ to _ °"
+msgstr "Callibot set _ servo _ to _ °"
+
+#. Calliope Callibot library block
+msgid "Callibot rotate servo _ _ speed _ (0~100)"
+msgstr "Callibot rotate servo _ _ speed _ (0~100)"
+
+#. Calliope Callibot library block
+msgid "Callibot stop all"
+msgstr "Callibot stop all"
+
+#. Calliope Callibot library block
+msgid "Callibot stop motor _"
+msgstr "Callibot stop motor _"
+
+#. Nezha Pro library label
+msgid "Nezha Pro"
+msgstr "Nezha Pro"
+
+#. Nehza Pro library choice
+msgid "M1"
+msgstr "M1"
+
+#. Nehza Pro library choice
+msgid "M2"
+msgstr "M2"
+
+#. Nehza Pro library choice
+msgid "M3"
+msgstr "M3"
+
+#. Nehza Pro library choice
+msgid "M4"
+msgstr "M4"
+
+#. Nehza Pro library choice
+msgid "nezhaPro;by shortest path"
+msgstr "by shortest path"
+
+#. Nezha Pro library block
+msgid "np angle _"
+msgstr "np angle _"
+
+#. Nezha Pro library block
+msgid "np move _ for _ mm speed _ %"
+msgstr "np move _ for _ mm speed _ %"
+
+#. Nezha Pro library block
+msgid "np speed _"
+msgstr "np speed _"
+
+#. Nezha Pro library block
+msgid "np total angle _"
+msgstr "np total angle _"
+
+#. Nezha Pro library block
+msgid "np reset total angle _"
+msgstr "np reset total angle _"
+
+#. Nezha Pro library block
+msgid "np rotate _ _ by _ degrees speed _ %"
+msgstr "np rotate _ _ by _ degrees speed _ %"
+
+#. Nezha Pro library block
+msgid "np rotate _ _ to _ degrees speed _ %"
+msgstr "np rotate _ _ to _ degrees speed _ %"
+
+#. Nezha Pro library block
+msgid "np run motor _ _ speed _ %"
+msgstr "np run motor _ _ speed _ %"
+
+#. Nezha Pro library block
+msgid "np set _ angle _ to _ degrees"
+msgstr "np set _ angle _ to _ degrees"
+
+#. Nezha Pro library block
+msgid "np set wheels left _ right _ #BR# circumference _ mm axle _ mm"
+msgstr "np set wheels left _ right _ #BR# circumference _ mm axle _ mm"
+
+#. Nezha Pro library block
+msgid "np stop all motors"
+msgstr "np stop all motors"
+
+#. Nezha Pro library block
+msgid "np stop motor _"
+msgstr "np stop motor _"
+
+#. Nezha Pro library block
+msgid "np turn _ by _ degrees speed _ %"
+msgstr "np turn _ by _ degrees speed _ %"
+
+#. Nezha Pro library block
+msgid "np version"
+msgstr "np version"
 
 #. LCD 16x2 (Seeed) library block
 msgid "LCD init display"

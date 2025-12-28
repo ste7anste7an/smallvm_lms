@@ -42,6 +42,7 @@ method microBlocksSpecs SmallCompiler {
 		(array ' ' 'setUserLED'			'set user LED _' 'bool' true)
 		(array ' ' 'sayIt'				'say _ : _ : ...' 'str str str str str str str str str str str str' 123 '' '')
 		(array ' ' 'graphIt'			'graph _ : _ : ...' 'auto auto auto auto auto auto auto auto auto auto' 100)
+		(array ' ' '[misc:clearGraph]'	'clear graph')
 	'cat;Input'
 		(array 'r' 'buttonA'			'button A')
 		(array 'r' 'buttonB'			'button B')
@@ -158,6 +159,7 @@ method microBlocksSpecs SmallCompiler {
 	'cat;Operators-Advanced'
 		(array 'r' 'ifExpression'		'if _ then _ else _' 'bool auto auto' true 1 0)
 		(array 'r' 'hexToInt'			'hex _' 'str' '3F')
+		(array 'r' '[misc:binToInt]'	'binary _' 'str' '1111')
 		'-'
 		(array 'r' '[misc:rescale]'		'rescale _ from ( _ , _ ) to ( _ , _ )' 'num num num num num' 3 0 10 0 100)
 		(array 'r' '[misc:sqrt]'		'sqrt _' 'num' 9)
@@ -263,6 +265,8 @@ method microBlocksSpecs SmallCompiler {
 		(array 'r' '[misc:hue]' 'hue _'	'color')
 		(array 'r' '[misc:saturation]'	'saturation _' 'color')
 		(array 'r' '[misc:brightness]'	'brightness _' 'color')
+
+		(array 'r' '[misc:dueLinkPID]'	'DUELink PID')
 
 		(array 'r' '[sensors:touchRead]'	'capacitive sensor _' 'num' 1)
 		(array 'r' '[sensors:readDHT]'		'read DHT data pin _' 'num' 1)
@@ -1104,13 +1108,7 @@ method incrementVar SmallCompiler varName {
 }
 
 method globalVarIndex SmallCompiler varName {
-	varNames = (allVariableNames (project (scripter (smallRuntime))))
-	id = (indexOf varNames varName)
-	if (isNil id) {
-		error 'Unknown variable' varName
-	}
-	if (id >= 128) { error 'Id' id 'for variable' varName 'is out of range' }
-	return (id - 1) // VM uses zero-based index
+	return (indexForVar (project (scripter (smallRuntime))) varName)
 }
 
 // function calls

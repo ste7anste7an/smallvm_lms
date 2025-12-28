@@ -1025,7 +1025,7 @@ msgstr "sentido horário"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "cor da cauda do Finch R _ % G _ % B _ %"
+msgstr "cor da cauda _ do Finch R _ % G _ % B _ %"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Right"

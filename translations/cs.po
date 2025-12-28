@@ -1579,7 +1579,7 @@ msgstr "aktivuj OLED SPI _ adresa (hex) _ reset pin# _ otoč _"
 
 #. OLED Graphics library block
 msgid "write _ at x _ y _ inverse _"
-msgstr "OLED napiš _ na x _ y _ inverze"
+msgstr "OLED napiš _ na x _ y _ inverze _"
 
 #. OLED Graphics library block
 msgid "show display buffer"
@@ -1595,7 +1595,7 @@ msgstr "nastav kontrast OLED (1-4) _"
 
 #. OLED Graphics library block
 msgid "draw circle at x _ y _ radius _ erase _"
-msgstr "OLED nakresli kružnici střed x _ y _ poloměr _ výmaz"
+msgstr "OLED nakresli kružnici střed x _ y _ poloměr _ výmaz _"
 
 #. OLED Graphics library block
 msgid "draw image _ at x _ y _"
@@ -3274,7 +3274,7 @@ msgstr "sb krokový motor _ (1-2) _ otoč _ _"
 
 #. Shield:bit library block
 msgid "sb set pin S- _ (1-8) to _ %"
-msgstr "sb nastav pin S- (1-8) na hodnotu _ %"
+msgstr "sb nastav pin S- _ (1-8) na hodnotu _ %"
 
 #. Shield:bit library motor type
 msgid "sb;DC/Stepper_motors"
@@ -4209,7 +4209,7 @@ msgstr "NeZha zastav všechny motory"
 
 #. NeZha robot library block
 msgid "NeZha set _ servo _ angle to _"
-msgstr "NeZha nsatav servo _ úhel _ stupňů"
+msgstr "NeZha nsatav servo _ _ úhel _ stupňů"
 
 #. NeZha robot library block
 msgid "NeZha set continuous rotation servo _ speed to _ %"
@@ -4225,7 +4225,7 @@ msgstr "WuKong2040 duhová LED _ barva _"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 rainbowLED _ R _ G _ B _ (0~255)"
-msgstr "WuKong2040 duhová LED _ R _ G _ B (0-255)"
+msgstr "WuKong2040 duhová LED _ R _ G _ B _ (0-255)"
 
 #. WuKong2040 robot library block
 msgid "WuKong2040 clear all rainbowLED"
@@ -6087,7 +6087,7 @@ msgstr "Nezha tón _ Hz po dobu _ ms"
 
 #. NeZha2 robot library block
 msgid "Nezha set _ servo _ angle to _"
-msgstr "Nezha nastav servo _ na úhel _ stupňů"
+msgstr "Nezha nastav servo _ _ na úhel _ stupňů"
 
 #. NeZha2 robot library block
 msgid "Nezha trim pot _"

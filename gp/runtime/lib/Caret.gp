@@ -10,6 +10,7 @@ method initialize Caret aText initialSlot {
 	morph = (newMorph this)
 	setFPS morph 2
 	if (notNil aText) {
+		if ('Browser' == (platform)) { setEditText (text aText) }
 		edit this aText initialSlot
 		showKeyboard true
 	}

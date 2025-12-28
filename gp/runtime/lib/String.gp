@@ -618,6 +618,18 @@ method varMustBeQuoted String {
 	return false
 }
 
+method urlParameter String pName {
+	// Return the value of the given parameter in this URL or nil if missing.
+
+	i = (findSubstring (join pName '=') this)
+	if (isNil i) { return nil }
+	start = (+ i (count pName) 1)
+	end = (count this)
+	i = (findSubstring '&' this start)
+	if (notNil i) { end = (i - 1) }
+	return (substring this start end)
+}
+
 // Unicode encoding
 
 method codePoints String {

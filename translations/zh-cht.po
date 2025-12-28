@@ -1613,7 +1613,7 @@ msgstr "播放 WAV 文件 _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch Tail _ Red _ Green _ Blue _"
-msgstr "Finch 尾部 紅 _ 綠 _ 藍 _"
+msgstr "Finch 尾部 _ 紅 _ 綠 _ 藍 _"
 
 #. BirdBrain Technologies Finch Robot library block
 msgid "Finch _ Encoder"
@@ -1813,7 +1813,7 @@ msgstr "左三角鐵"
 
 #. OLED Graphics library block
 msgid "_flip display top _"
-msgstr "反轉顯示 上 _"
+msgstr "_反轉顯示 上 _"
 
 #. Button Events library block
 msgid "button _ double pressed"

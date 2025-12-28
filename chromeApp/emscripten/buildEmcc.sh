@@ -26,6 +26,7 @@ cp -r ../../translations .
 cp -r ../../img .
 
 emcc -std=gnu99 -Wall -O3 \
+-Wno-macro-redefined \
 -D EMSCRIPTEN \
 -D NO_JPEG \
 -D NO_SDL \
@@ -36,6 +37,7 @@ emcc -std=gnu99 -Wall -O3 \
 -s TOTAL_MEMORY=268435456 \
 -s ALLOW_MEMORY_GROWTH=0 \
 -s WASM=1 \
+-s EXPORTED_RUNTIME_METHODS=HEAPU8,HEAPU32 \
 browserPrims.c cache.c dict.c embeddedFS.c events.c gp.c httpPrims.c interp.c mem.c memGC.c oop.c parse.c \
 pathPrims.c prims.c serialPortPrims.c sha1.c sha2.c soundPrims.c textAndFontPrims.c vectorPrims.c \
 --preload-file Examples \
